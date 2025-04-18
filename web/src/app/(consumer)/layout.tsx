@@ -1,0 +1,9 @@
+import React from "react";
+
+type Props = { children: React.ReactNode };
+
+const ConsumerLayout = ({ children }: Props) => {
+  return <div>{children}</div>;
+};
+
+export default ConsumerLayout;
