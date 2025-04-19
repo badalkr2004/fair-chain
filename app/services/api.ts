@@ -7,10 +7,13 @@ import { Platform } from 'react-native';
 // For iOS simulator, use localhost
 // For physical devices, use the actual IP address of your backend server
 const isAndroid = Platform.OS === 'android';
-const DEFAULT_API_URL = isAndroid ? 'http://localhost:8080' : 'http://localhost:8080';
+// Use 10.0.2.2 for Android emulator to connect to host machine's localhost
+const DEFAULT_API_URL = isAndroid ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
 
-// Force API URL to 8080 for Expo Go
+// Hard-code the API URL to ensure it always uses port 8080
+// Overriding any potential environment variables that might be pointing to port 3000
 const API_URL = 'http://localhost:8080';
+console.log('📡 API connecting to:', API_URL);
 
 // Debug flag - set to true to log API requests/responses
 const DEBUG = true;
@@ -40,6 +43,15 @@ class ApiService {
     console.log(`🟢 ${method} ${endpoint}`, data || '');
   }
 
+  // Handle network errors better
+  private handleNetworkError(error: any, method: string, endpoint: string): never {
+    if (error.message === 'Network request failed') {
+      console.error(`Network request failed for ${method} ${endpoint}`, error);
+      throw new Error(`Cannot connect to server at ${API_URL}. Please check your connection or server status.`);
+    }
+    throw error;
+  }
+
   async get<T>(endpoint: string): Promise<T> {
     try {
       const headers = await this.getHeaders();
@@ -60,7 +72,7 @@ class ApiService {
       return data;
     } catch (error) {
       this.logRequest('GET', endpoint, null, error);
-      throw error;
+      this.handleNetworkError(error, 'GET', endpoint);
     }
   }
 
@@ -85,7 +97,7 @@ class ApiService {
       return responseData;
     } catch (error) {
       this.logRequest('POST', endpoint, data, error);
-      throw error;
+      this.handleNetworkError(error, 'POST', endpoint);
     }
   }
 
@@ -110,7 +122,7 @@ class ApiService {
       return responseData;
     } catch (error) {
       this.logRequest('PUT', endpoint, data, error);
-      throw error;
+      this.handleNetworkError(error, 'PUT', endpoint);
     }
   }
 
@@ -134,7 +146,7 @@ class ApiService {
       return data;
     } catch (error) {
       this.logRequest('DELETE', endpoint, null, error);
-      throw error;
+      this.handleNetworkError(error, 'DELETE', endpoint);
     }
   }
   
