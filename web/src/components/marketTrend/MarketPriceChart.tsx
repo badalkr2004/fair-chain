@@ -41,20 +41,20 @@ export function MarketPriceChart({ data }: MarketPriceChartProps) {
   const config = {
     tomatoes: {
       theme: {
-        light: "#10B981", // emerald-500
-        dark: "#10B981",
+        light: "#EF4444", // red-500
+        dark: "#EF4444",
       },
     },
     potatoes: {
       theme: {
-        light: "#059669", // emerald-600
-        dark: "#059669",
+        light: "#3B82F6", // blue-500
+        dark: "#3B82F6",
       },
     },
     onions: {
       theme: {
-        light: "#047857", // emerald-700
-        dark: "#047857",
+        light: "#10B981", // emerald-500
+        dark: "#10B981",
       },
     },
   };
@@ -70,25 +70,25 @@ export function MarketPriceChart({ data }: MarketPriceChartProps) {
           </TabsList>
         </Tabs>
       </CardHeader>
-      <CardContent>
-        <ChartContainer className="h-[300px]" config={config}>
+      <CardContent className="p-4">
+        <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={formattedData}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
             >
               <defs>
                 <linearGradient id="colorTomatoes" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#EF4444" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorPotatoes" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#059669" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#059669" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorOnions" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#047857" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#047857" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis 
@@ -98,6 +98,7 @@ export function MarketPriceChart({ data }: MarketPriceChartProps) {
                 tickLine={false} 
                 axisLine={false}
                 tick={{ fill: "#6B7280" }}
+                padding={{ left: 10, right: 10 }}
               />
               <YAxis 
                 stroke="#6B7280" 
@@ -106,6 +107,7 @@ export function MarketPriceChart({ data }: MarketPriceChartProps) {
                 axisLine={false} 
                 tickFormatter={(value) => `₹${value}`}
                 tick={{ fill: "#6B7280" }}
+                width={60}
               />
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <Tooltip 
@@ -118,31 +120,40 @@ export function MarketPriceChart({ data }: MarketPriceChartProps) {
                 labelStyle={{ color: '#374151', fontWeight: 500 }}
                 itemStyle={{ color: '#374151' }}
               />
-              <Legend />
+              <Legend 
+                verticalAlign="top" 
+                height={36}
+                wrapperStyle={{
+                  paddingTop: '10px'
+                }}
+              />
               <Area 
                 type="monotone" 
                 dataKey="tomatoes" 
-                stroke="#10B981" 
+                name="Tomatoes" 
+                stroke="#EF4444" 
                 fillOpacity={1}
                 fill="url(#colorTomatoes)" 
               />
               <Area 
                 type="monotone" 
                 dataKey="potatoes" 
-                stroke="#059669" 
+                name="Potatoes" 
+                stroke="#3B82F6" 
                 fillOpacity={1}
                 fill="url(#colorPotatoes)" 
               />
               <Area 
                 type="monotone" 
                 dataKey="onions" 
-                stroke="#047857" 
+                name="Onions" 
+                stroke="#10B981" 
                 fillOpacity={1}
                 fill="url(#colorOnions)" 
               />
             </AreaChart>
           </ResponsiveContainer>
-        </ChartContainer>
+        </div>
       </CardContent>
     </Card>
   );

@@ -27,20 +27,20 @@ const nearbyMandis = [
 const mockCropRecommendations = [
   {
     crop: "Tomatoes",
-    recommendation: "Consider planting tomatoes in the next season",
+    recommendation: "High demand expected in next 2 weeks",
     confidence: "85%",
     trend: "upward" as const,
   },
   {
     crop: "Potatoes",
-    recommendation: "Current market conditions are favorable for potatoes",
+    recommendation: "Stable market, good time to harvest",
     confidence: "75%",
     trend: "stable" as const,
   },
   {
     crop: "Onions",
-    recommendation: "Market demand for onions is expected to increase",
-    confidence: "92%",
+    recommendation: "Slight price increase expected",
+    confidence: "65%",
     trend: "upward" as const,
   },
 ];
@@ -66,38 +66,40 @@ const mockMarketInsights = [
   },
 ];
 
-export default function MarketPriceTrends() {
-  const [selectedCrop, setSelectedCrop] = useState("tomatoes");
-
+export default function Suggestions() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Market Price Trends</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Market Suggestions</h1>
         <p className="mt-2 text-gray-600">
-          Track real-time mandi prices and market trends
+          Get AI-powered insights and recommendations for your farming decisions
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Price Trends (Last 6 Weeks)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <MarketPriceChart data={mockTrendData} />
-          </CardContent>
-        </Card>
+      <div className="grid gap-6 md:grid-cols-12">
+        <div className="md:col-span-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Price Trends (Last 6 Weeks)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <MarketPriceChart data={mockTrendData} />
+            </CardContent>
+          </Card>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Nearby Mandi Prices</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PriceComparison data={nearbyMandis} />
-          </CardContent>
-        </Card>
+        <div className="md:col-span-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Nearby Mandi Prices</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PriceComparison data={nearbyMandis} />
+            </CardContent>
+          </Card>
+        </div>
 
-        <Card className="md:col-span-2">
+        <Card className="md:col-span-12">
           <CardHeader>
             <CardTitle>Recommended Prices</CardTitle>
           </CardHeader>
@@ -118,3 +120,4 @@ export default function MarketPriceTrends() {
     </div>
   );
 }
+
