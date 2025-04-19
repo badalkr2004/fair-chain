@@ -44,6 +44,11 @@ export type Product = $Result.DefaultSelection<Prisma.$ProductPayload>
  */
 export type ProductAnalytics = $Result.DefaultSelection<Prisma.$ProductAnalyticsPayload>
 /**
+ * Model Bid
+ * 
+ */
+export type Bid = $Result.DefaultSelection<Prisma.$BidPayload>
+/**
  * Model SupplyChain
  * 
  */
@@ -149,11 +154,23 @@ export const ProductStatus: {
   DRAFT: 'DRAFT',
   LISTED: 'LISTED',
   SOLD: 'SOLD',
+  PROCESSING: 'PROCESSING',
   EXPIRED: 'EXPIRED',
   CANCELLED: 'CANCELLED'
 };
 
 export type ProductStatus = (typeof ProductStatus)[keyof typeof ProductStatus]
+
+
+export const BidStatus: {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED'
+};
+
+export type BidStatus = (typeof BidStatus)[keyof typeof BidStatus]
 
 
 export const OrderStatus: {
@@ -172,7 +189,10 @@ export const TransactionType: {
   REFUND: 'REFUND',
   COMMISSION: 'COMMISSION',
   ESCROW_DEPOSIT: 'ESCROW_DEPOSIT',
-  ESCROW_RELEASE: 'ESCROW_RELEASE'
+  ESCROW_RELEASE: 'ESCROW_RELEASE',
+  PURCHASE: 'PURCHASE',
+  SALE: 'SALE',
+  TRANSFER: 'TRANSFER'
 };
 
 export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]
@@ -180,6 +200,8 @@ export type TransactionType = (typeof TransactionType)[keyof typeof TransactionT
 
 export const TransactionStatus: {
   PENDING: 'PENDING',
+  PAID: 'PAID',
+  DELIVERED: 'DELIVERED',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
   CANCELLED: 'CANCELLED'
@@ -208,6 +230,10 @@ export const ProductCategory: typeof $Enums.ProductCategory
 export type ProductStatus = $Enums.ProductStatus
 
 export const ProductStatus: typeof $Enums.ProductStatus
+
+export type BidStatus = $Enums.BidStatus
+
+export const BidStatus: typeof $Enums.BidStatus
 
 export type OrderStatus = $Enums.OrderStatus
 
@@ -405,6 +431,16 @@ export class PrismaClient<
     * ```
     */
   get productAnalytics(): Prisma.ProductAnalyticsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.bid`: Exposes CRUD operations for the **Bid** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Bids
+    * const bids = await prisma.bid.findMany()
+    * ```
+    */
+  get bid(): Prisma.BidDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.supplyChain`: Exposes CRUD operations for the **SupplyChain** model.
@@ -961,6 +997,7 @@ export namespace Prisma {
     ConsumerProfile: 'ConsumerProfile',
     Product: 'Product',
     ProductAnalytics: 'ProductAnalytics',
+    Bid: 'Bid',
     SupplyChain: 'SupplyChain',
     SupplyChainLink: 'SupplyChainLink',
     Order: 'Order',
@@ -990,7 +1027,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "farmerProfile" | "intermediaryProfile" | "consumerProfile" | "product" | "productAnalytics" | "supplyChain" | "supplyChainLink" | "order" | "orderItem" | "transaction" | "traceabilityRecord" | "rating" | "forecastModel" | "prediction" | "weatherData" | "marketPrice"
+      modelProps: "user" | "farmerProfile" | "intermediaryProfile" | "consumerProfile" | "product" | "productAnalytics" | "bid" | "supplyChain" | "supplyChainLink" | "order" | "orderItem" | "transaction" | "traceabilityRecord" | "rating" | "forecastModel" | "prediction" | "weatherData" | "marketPrice"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1435,6 +1472,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ProductAnalyticsCountArgs<ExtArgs>
             result: $Utils.Optional<ProductAnalyticsCountAggregateOutputType> | number
+          }
+        }
+      }
+      Bid: {
+        payload: Prisma.$BidPayload<ExtArgs>
+        fields: Prisma.BidFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BidFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BidPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BidFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BidPayload>
+          }
+          findFirst: {
+            args: Prisma.BidFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BidPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BidFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BidPayload>
+          }
+          findMany: {
+            args: Prisma.BidFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BidPayload>[]
+          }
+          create: {
+            args: Prisma.BidCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BidPayload>
+          }
+          createMany: {
+            args: Prisma.BidCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BidCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BidPayload>[]
+          }
+          delete: {
+            args: Prisma.BidDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BidPayload>
+          }
+          update: {
+            args: Prisma.BidUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BidPayload>
+          }
+          deleteMany: {
+            args: Prisma.BidDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BidUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BidUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BidPayload>[]
+          }
+          upsert: {
+            args: Prisma.BidUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BidPayload>
+          }
+          aggregate: {
+            args: Prisma.BidAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBid>
+          }
+          groupBy: {
+            args: Prisma.BidGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BidGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BidCountArgs<ExtArgs>
+            result: $Utils.Optional<BidCountAggregateOutputType> | number
           }
         }
       }
@@ -2342,6 +2453,7 @@ export namespace Prisma {
     consumerProfile?: ConsumerProfileOmit
     product?: ProductOmit
     productAnalytics?: ProductAnalyticsOmit
+    bid?: BidOmit
     supplyChain?: SupplyChainOmit
     supplyChainLink?: SupplyChainLinkOmit
     order?: OrderOmit
@@ -2452,6 +2564,7 @@ export namespace Prisma {
     ratings: number
     ratedBy: number
     transactions: number
+    bidsCreated: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2460,6 +2573,7 @@ export namespace Prisma {
     ratings?: boolean | UserCountOutputTypeCountRatingsArgs
     ratedBy?: boolean | UserCountOutputTypeCountRatedByArgs
     transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
+    bidsCreated?: boolean | UserCountOutputTypeCountBidsCreatedArgs
   }
 
   // Custom InputTypes
@@ -2508,6 +2622,13 @@ export namespace Prisma {
     where?: TransactionWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountBidsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BidWhereInput
+  }
+
 
   /**
    * Count Type IntermediaryProfileCountOutputType
@@ -2547,11 +2668,13 @@ export namespace Prisma {
   export type ProductCountOutputType = {
     orders: number
     traceability: number
+    bids: number
   }
 
   export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | ProductCountOutputTypeCountOrdersArgs
     traceability?: boolean | ProductCountOutputTypeCountTraceabilityArgs
+    bids?: boolean | ProductCountOutputTypeCountBidsArgs
   }
 
   // Custom InputTypes
@@ -2577,6 +2700,13 @@ export namespace Prisma {
    */
   export type ProductCountOutputTypeCountTraceabilityArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TraceabilityRecordWhereInput
+  }
+
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountBidsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BidWhereInput
   }
 
 
@@ -2903,6 +3033,7 @@ export namespace Prisma {
     ratings?: boolean | User$ratingsArgs<ExtArgs>
     ratedBy?: boolean | User$ratedByArgs<ExtArgs>
     transactions?: boolean | User$transactionsArgs<ExtArgs>
+    bidsCreated?: boolean | User$bidsCreatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2955,6 +3086,7 @@ export namespace Prisma {
     ratings?: boolean | User$ratingsArgs<ExtArgs>
     ratedBy?: boolean | User$ratedByArgs<ExtArgs>
     transactions?: boolean | User$transactionsArgs<ExtArgs>
+    bidsCreated?: boolean | User$bidsCreatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2971,6 +3103,7 @@ export namespace Prisma {
       ratings: Prisma.$RatingPayload<ExtArgs>[]
       ratedBy: Prisma.$RatingPayload<ExtArgs>[]
       transactions: Prisma.$TransactionPayload<ExtArgs>[]
+      bidsCreated: Prisma.$BidPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3385,6 +3518,7 @@ export namespace Prisma {
     ratings<T extends User$ratingsArgs<ExtArgs> = {}>(args?: Subset<T, User$ratingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RatingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     ratedBy<T extends User$ratedByArgs<ExtArgs> = {}>(args?: Subset<T, User$ratedByArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RatingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     transactions<T extends User$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    bidsCreated<T extends User$bidsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$bidsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3986,6 +4120,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * User.bidsCreated
+   */
+  export type User$bidsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+    where?: BidWhereInput
+    orderBy?: BidOrderByWithRelationInput | BidOrderByWithRelationInput[]
+    cursor?: BidWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BidScalarFieldEnum | BidScalarFieldEnum[]
   }
 
   /**
@@ -7677,6 +7835,7 @@ export namespace Prisma {
     supplyChain?: boolean | Product$supplyChainArgs<ExtArgs>
     traceability?: boolean | Product$traceabilityArgs<ExtArgs>
     productAnalytics?: boolean | Product$productAnalyticsArgs<ExtArgs>
+    bids?: boolean | Product$bidsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -7749,6 +7908,7 @@ export namespace Prisma {
     supplyChain?: boolean | Product$supplyChainArgs<ExtArgs>
     traceability?: boolean | Product$traceabilityArgs<ExtArgs>
     productAnalytics?: boolean | Product$productAnalyticsArgs<ExtArgs>
+    bids?: boolean | Product$bidsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7766,6 +7926,7 @@ export namespace Prisma {
       supplyChain: Prisma.$SupplyChainPayload<ExtArgs> | null
       traceability: Prisma.$TraceabilityRecordPayload<ExtArgs>[]
       productAnalytics: Prisma.$ProductAnalyticsPayload<ExtArgs> | null
+      bids: Prisma.$BidPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8184,6 +8345,7 @@ export namespace Prisma {
     supplyChain<T extends Product$supplyChainArgs<ExtArgs> = {}>(args?: Subset<T, Product$supplyChainArgs<ExtArgs>>): Prisma__SupplyChainClient<$Result.GetResult<Prisma.$SupplyChainPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     traceability<T extends Product$traceabilityArgs<ExtArgs> = {}>(args?: Subset<T, Product$traceabilityArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TraceabilityRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     productAnalytics<T extends Product$productAnalyticsArgs<ExtArgs> = {}>(args?: Subset<T, Product$productAnalyticsArgs<ExtArgs>>): Prisma__ProductAnalyticsClient<$Result.GetResult<Prisma.$ProductAnalyticsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    bids<T extends Product$bidsArgs<ExtArgs> = {}>(args?: Subset<T, Product$bidsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8709,6 +8871,30 @@ export namespace Prisma {
      */
     include?: ProductAnalyticsInclude<ExtArgs> | null
     where?: ProductAnalyticsWhereInput
+  }
+
+  /**
+   * Product.bids
+   */
+  export type Product$bidsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+    where?: BidWhereInput
+    orderBy?: BidOrderByWithRelationInput | BidOrderByWithRelationInput[]
+    cursor?: BidWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BidScalarFieldEnum | BidScalarFieldEnum[]
   }
 
   /**
@@ -9858,6 +10044,1214 @@ export namespace Prisma {
 
 
   /**
+   * Model Bid
+   */
+
+  export type AggregateBid = {
+    _count: BidCountAggregateOutputType | null
+    _avg: BidAvgAggregateOutputType | null
+    _sum: BidSumAggregateOutputType | null
+    _min: BidMinAggregateOutputType | null
+    _max: BidMaxAggregateOutputType | null
+  }
+
+  export type BidAvgAggregateOutputType = {
+    price: number | null
+    quantity: number | null
+  }
+
+  export type BidSumAggregateOutputType = {
+    price: number | null
+    quantity: number | null
+  }
+
+  export type BidMinAggregateOutputType = {
+    id: string | null
+    productId: string | null
+    intermediaryId: string | null
+    price: number | null
+    quantity: number | null
+    serviceType: string | null
+    description: string | null
+    validUntil: Date | null
+    terms: string | null
+    status: $Enums.BidStatus | null
+    responseReason: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type BidMaxAggregateOutputType = {
+    id: string | null
+    productId: string | null
+    intermediaryId: string | null
+    price: number | null
+    quantity: number | null
+    serviceType: string | null
+    description: string | null
+    validUntil: Date | null
+    terms: string | null
+    status: $Enums.BidStatus | null
+    responseReason: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type BidCountAggregateOutputType = {
+    id: number
+    productId: number
+    intermediaryId: number
+    price: number
+    quantity: number
+    serviceType: number
+    description: number
+    validUntil: number
+    terms: number
+    status: number
+    responseReason: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type BidAvgAggregateInputType = {
+    price?: true
+    quantity?: true
+  }
+
+  export type BidSumAggregateInputType = {
+    price?: true
+    quantity?: true
+  }
+
+  export type BidMinAggregateInputType = {
+    id?: true
+    productId?: true
+    intermediaryId?: true
+    price?: true
+    quantity?: true
+    serviceType?: true
+    description?: true
+    validUntil?: true
+    terms?: true
+    status?: true
+    responseReason?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type BidMaxAggregateInputType = {
+    id?: true
+    productId?: true
+    intermediaryId?: true
+    price?: true
+    quantity?: true
+    serviceType?: true
+    description?: true
+    validUntil?: true
+    terms?: true
+    status?: true
+    responseReason?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type BidCountAggregateInputType = {
+    id?: true
+    productId?: true
+    intermediaryId?: true
+    price?: true
+    quantity?: true
+    serviceType?: true
+    description?: true
+    validUntil?: true
+    terms?: true
+    status?: true
+    responseReason?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type BidAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Bid to aggregate.
+     */
+    where?: BidWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Bids to fetch.
+     */
+    orderBy?: BidOrderByWithRelationInput | BidOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BidWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Bids from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Bids.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Bids
+    **/
+    _count?: true | BidCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BidAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BidSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BidMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BidMaxAggregateInputType
+  }
+
+  export type GetBidAggregateType<T extends BidAggregateArgs> = {
+        [P in keyof T & keyof AggregateBid]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBid[P]>
+      : GetScalarType<T[P], AggregateBid[P]>
+  }
+
+
+
+
+  export type BidGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BidWhereInput
+    orderBy?: BidOrderByWithAggregationInput | BidOrderByWithAggregationInput[]
+    by: BidScalarFieldEnum[] | BidScalarFieldEnum
+    having?: BidScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BidCountAggregateInputType | true
+    _avg?: BidAvgAggregateInputType
+    _sum?: BidSumAggregateInputType
+    _min?: BidMinAggregateInputType
+    _max?: BidMaxAggregateInputType
+  }
+
+  export type BidGroupByOutputType = {
+    id: string
+    productId: string
+    intermediaryId: string
+    price: number
+    quantity: number
+    serviceType: string
+    description: string
+    validUntil: Date
+    terms: string | null
+    status: $Enums.BidStatus
+    responseReason: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: BidCountAggregateOutputType | null
+    _avg: BidAvgAggregateOutputType | null
+    _sum: BidSumAggregateOutputType | null
+    _min: BidMinAggregateOutputType | null
+    _max: BidMaxAggregateOutputType | null
+  }
+
+  type GetBidGroupByPayload<T extends BidGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BidGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BidGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BidGroupByOutputType[P]>
+            : GetScalarType<T[P], BidGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BidSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    productId?: boolean
+    intermediaryId?: boolean
+    price?: boolean
+    quantity?: boolean
+    serviceType?: boolean
+    description?: boolean
+    validUntil?: boolean
+    terms?: boolean
+    status?: boolean
+    responseReason?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    intermediary?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bid"]>
+
+  export type BidSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    productId?: boolean
+    intermediaryId?: boolean
+    price?: boolean
+    quantity?: boolean
+    serviceType?: boolean
+    description?: boolean
+    validUntil?: boolean
+    terms?: boolean
+    status?: boolean
+    responseReason?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    intermediary?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bid"]>
+
+  export type BidSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    productId?: boolean
+    intermediaryId?: boolean
+    price?: boolean
+    quantity?: boolean
+    serviceType?: boolean
+    description?: boolean
+    validUntil?: boolean
+    terms?: boolean
+    status?: boolean
+    responseReason?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    intermediary?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bid"]>
+
+  export type BidSelectScalar = {
+    id?: boolean
+    productId?: boolean
+    intermediaryId?: boolean
+    price?: boolean
+    quantity?: boolean
+    serviceType?: boolean
+    description?: boolean
+    validUntil?: boolean
+    terms?: boolean
+    status?: boolean
+    responseReason?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type BidOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "intermediaryId" | "price" | "quantity" | "serviceType" | "description" | "validUntil" | "terms" | "status" | "responseReason" | "createdAt" | "updatedAt", ExtArgs["result"]["bid"]>
+  export type BidInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    intermediary?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type BidIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    intermediary?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type BidIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    intermediary?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $BidPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Bid"
+    objects: {
+      product: Prisma.$ProductPayload<ExtArgs>
+      intermediary: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      productId: string
+      intermediaryId: string
+      price: number
+      quantity: number
+      serviceType: string
+      description: string
+      validUntil: Date
+      terms: string | null
+      status: $Enums.BidStatus
+      responseReason: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["bid"]>
+    composites: {}
+  }
+
+  type BidGetPayload<S extends boolean | null | undefined | BidDefaultArgs> = $Result.GetResult<Prisma.$BidPayload, S>
+
+  type BidCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BidFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BidCountAggregateInputType | true
+    }
+
+  export interface BidDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Bid'], meta: { name: 'Bid' } }
+    /**
+     * Find zero or one Bid that matches the filter.
+     * @param {BidFindUniqueArgs} args - Arguments to find a Bid
+     * @example
+     * // Get one Bid
+     * const bid = await prisma.bid.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BidFindUniqueArgs>(args: SelectSubset<T, BidFindUniqueArgs<ExtArgs>>): Prisma__BidClient<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Bid that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BidFindUniqueOrThrowArgs} args - Arguments to find a Bid
+     * @example
+     * // Get one Bid
+     * const bid = await prisma.bid.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BidFindUniqueOrThrowArgs>(args: SelectSubset<T, BidFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BidClient<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Bid that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BidFindFirstArgs} args - Arguments to find a Bid
+     * @example
+     * // Get one Bid
+     * const bid = await prisma.bid.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BidFindFirstArgs>(args?: SelectSubset<T, BidFindFirstArgs<ExtArgs>>): Prisma__BidClient<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Bid that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BidFindFirstOrThrowArgs} args - Arguments to find a Bid
+     * @example
+     * // Get one Bid
+     * const bid = await prisma.bid.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BidFindFirstOrThrowArgs>(args?: SelectSubset<T, BidFindFirstOrThrowArgs<ExtArgs>>): Prisma__BidClient<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Bids that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BidFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Bids
+     * const bids = await prisma.bid.findMany()
+     * 
+     * // Get first 10 Bids
+     * const bids = await prisma.bid.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const bidWithIdOnly = await prisma.bid.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BidFindManyArgs>(args?: SelectSubset<T, BidFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Bid.
+     * @param {BidCreateArgs} args - Arguments to create a Bid.
+     * @example
+     * // Create one Bid
+     * const Bid = await prisma.bid.create({
+     *   data: {
+     *     // ... data to create a Bid
+     *   }
+     * })
+     * 
+     */
+    create<T extends BidCreateArgs>(args: SelectSubset<T, BidCreateArgs<ExtArgs>>): Prisma__BidClient<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Bids.
+     * @param {BidCreateManyArgs} args - Arguments to create many Bids.
+     * @example
+     * // Create many Bids
+     * const bid = await prisma.bid.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BidCreateManyArgs>(args?: SelectSubset<T, BidCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Bids and returns the data saved in the database.
+     * @param {BidCreateManyAndReturnArgs} args - Arguments to create many Bids.
+     * @example
+     * // Create many Bids
+     * const bid = await prisma.bid.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Bids and only return the `id`
+     * const bidWithIdOnly = await prisma.bid.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BidCreateManyAndReturnArgs>(args?: SelectSubset<T, BidCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Bid.
+     * @param {BidDeleteArgs} args - Arguments to delete one Bid.
+     * @example
+     * // Delete one Bid
+     * const Bid = await prisma.bid.delete({
+     *   where: {
+     *     // ... filter to delete one Bid
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BidDeleteArgs>(args: SelectSubset<T, BidDeleteArgs<ExtArgs>>): Prisma__BidClient<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Bid.
+     * @param {BidUpdateArgs} args - Arguments to update one Bid.
+     * @example
+     * // Update one Bid
+     * const bid = await prisma.bid.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BidUpdateArgs>(args: SelectSubset<T, BidUpdateArgs<ExtArgs>>): Prisma__BidClient<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Bids.
+     * @param {BidDeleteManyArgs} args - Arguments to filter Bids to delete.
+     * @example
+     * // Delete a few Bids
+     * const { count } = await prisma.bid.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BidDeleteManyArgs>(args?: SelectSubset<T, BidDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Bids.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BidUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Bids
+     * const bid = await prisma.bid.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BidUpdateManyArgs>(args: SelectSubset<T, BidUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Bids and returns the data updated in the database.
+     * @param {BidUpdateManyAndReturnArgs} args - Arguments to update many Bids.
+     * @example
+     * // Update many Bids
+     * const bid = await prisma.bid.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Bids and only return the `id`
+     * const bidWithIdOnly = await prisma.bid.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BidUpdateManyAndReturnArgs>(args: SelectSubset<T, BidUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Bid.
+     * @param {BidUpsertArgs} args - Arguments to update or create a Bid.
+     * @example
+     * // Update or create a Bid
+     * const bid = await prisma.bid.upsert({
+     *   create: {
+     *     // ... data to create a Bid
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Bid we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BidUpsertArgs>(args: SelectSubset<T, BidUpsertArgs<ExtArgs>>): Prisma__BidClient<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Bids.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BidCountArgs} args - Arguments to filter Bids to count.
+     * @example
+     * // Count the number of Bids
+     * const count = await prisma.bid.count({
+     *   where: {
+     *     // ... the filter for the Bids we want to count
+     *   }
+     * })
+    **/
+    count<T extends BidCountArgs>(
+      args?: Subset<T, BidCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BidCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Bid.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BidAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BidAggregateArgs>(args: Subset<T, BidAggregateArgs>): Prisma.PrismaPromise<GetBidAggregateType<T>>
+
+    /**
+     * Group by Bid.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BidGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BidGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BidGroupByArgs['orderBy'] }
+        : { orderBy?: BidGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BidGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBidGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Bid model
+   */
+  readonly fields: BidFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Bid.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BidClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    intermediary<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Bid model
+   */
+  interface BidFieldRefs {
+    readonly id: FieldRef<"Bid", 'String'>
+    readonly productId: FieldRef<"Bid", 'String'>
+    readonly intermediaryId: FieldRef<"Bid", 'String'>
+    readonly price: FieldRef<"Bid", 'Float'>
+    readonly quantity: FieldRef<"Bid", 'Float'>
+    readonly serviceType: FieldRef<"Bid", 'String'>
+    readonly description: FieldRef<"Bid", 'String'>
+    readonly validUntil: FieldRef<"Bid", 'DateTime'>
+    readonly terms: FieldRef<"Bid", 'String'>
+    readonly status: FieldRef<"Bid", 'BidStatus'>
+    readonly responseReason: FieldRef<"Bid", 'String'>
+    readonly createdAt: FieldRef<"Bid", 'DateTime'>
+    readonly updatedAt: FieldRef<"Bid", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Bid findUnique
+   */
+  export type BidFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+    /**
+     * Filter, which Bid to fetch.
+     */
+    where: BidWhereUniqueInput
+  }
+
+  /**
+   * Bid findUniqueOrThrow
+   */
+  export type BidFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+    /**
+     * Filter, which Bid to fetch.
+     */
+    where: BidWhereUniqueInput
+  }
+
+  /**
+   * Bid findFirst
+   */
+  export type BidFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+    /**
+     * Filter, which Bid to fetch.
+     */
+    where?: BidWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Bids to fetch.
+     */
+    orderBy?: BidOrderByWithRelationInput | BidOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Bids.
+     */
+    cursor?: BidWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Bids from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Bids.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Bids.
+     */
+    distinct?: BidScalarFieldEnum | BidScalarFieldEnum[]
+  }
+
+  /**
+   * Bid findFirstOrThrow
+   */
+  export type BidFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+    /**
+     * Filter, which Bid to fetch.
+     */
+    where?: BidWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Bids to fetch.
+     */
+    orderBy?: BidOrderByWithRelationInput | BidOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Bids.
+     */
+    cursor?: BidWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Bids from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Bids.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Bids.
+     */
+    distinct?: BidScalarFieldEnum | BidScalarFieldEnum[]
+  }
+
+  /**
+   * Bid findMany
+   */
+  export type BidFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+    /**
+     * Filter, which Bids to fetch.
+     */
+    where?: BidWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Bids to fetch.
+     */
+    orderBy?: BidOrderByWithRelationInput | BidOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Bids.
+     */
+    cursor?: BidWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Bids from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Bids.
+     */
+    skip?: number
+    distinct?: BidScalarFieldEnum | BidScalarFieldEnum[]
+  }
+
+  /**
+   * Bid create
+   */
+  export type BidCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Bid.
+     */
+    data: XOR<BidCreateInput, BidUncheckedCreateInput>
+  }
+
+  /**
+   * Bid createMany
+   */
+  export type BidCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Bids.
+     */
+    data: BidCreateManyInput | BidCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Bid createManyAndReturn
+   */
+  export type BidCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * The data used to create many Bids.
+     */
+    data: BidCreateManyInput | BidCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Bid update
+   */
+  export type BidUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Bid.
+     */
+    data: XOR<BidUpdateInput, BidUncheckedUpdateInput>
+    /**
+     * Choose, which Bid to update.
+     */
+    where: BidWhereUniqueInput
+  }
+
+  /**
+   * Bid updateMany
+   */
+  export type BidUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Bids.
+     */
+    data: XOR<BidUpdateManyMutationInput, BidUncheckedUpdateManyInput>
+    /**
+     * Filter which Bids to update
+     */
+    where?: BidWhereInput
+    /**
+     * Limit how many Bids to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Bid updateManyAndReturn
+   */
+  export type BidUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * The data used to update Bids.
+     */
+    data: XOR<BidUpdateManyMutationInput, BidUncheckedUpdateManyInput>
+    /**
+     * Filter which Bids to update
+     */
+    where?: BidWhereInput
+    /**
+     * Limit how many Bids to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Bid upsert
+   */
+  export type BidUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Bid to update in case it exists.
+     */
+    where: BidWhereUniqueInput
+    /**
+     * In case the Bid found by the `where` argument doesn't exist, create a new Bid with this data.
+     */
+    create: XOR<BidCreateInput, BidUncheckedCreateInput>
+    /**
+     * In case the Bid was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BidUpdateInput, BidUncheckedUpdateInput>
+  }
+
+  /**
+   * Bid delete
+   */
+  export type BidDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+    /**
+     * Filter which Bid to delete.
+     */
+    where: BidWhereUniqueInput
+  }
+
+  /**
+   * Bid deleteMany
+   */
+  export type BidDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Bids to delete
+     */
+    where?: BidWhereInput
+    /**
+     * Limit how many Bids to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Bid without action
+   */
+  export type BidDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Bid
+     */
+    select?: BidSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Bid
+     */
+    omit?: BidOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BidInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model SupplyChain
    */
 
@@ -9870,7 +11264,12 @@ export namespace Prisma {
   export type SupplyChainMinAggregateOutputType = {
     id: string | null
     productId: string | null
-    status: string | null
+    startDate: Date | null
+    endDate: Date | null
+    isComplete: boolean | null
+    name: string | null
+    description: string | null
+    createdById: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -9878,7 +11277,12 @@ export namespace Prisma {
   export type SupplyChainMaxAggregateOutputType = {
     id: string | null
     productId: string | null
-    status: string | null
+    startDate: Date | null
+    endDate: Date | null
+    isComplete: boolean | null
+    name: string | null
+    description: string | null
+    createdById: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -9886,7 +11290,12 @@ export namespace Prisma {
   export type SupplyChainCountAggregateOutputType = {
     id: number
     productId: number
-    status: number
+    startDate: number
+    endDate: number
+    isComplete: number
+    name: number
+    description: number
+    createdById: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -9896,7 +11305,12 @@ export namespace Prisma {
   export type SupplyChainMinAggregateInputType = {
     id?: true
     productId?: true
-    status?: true
+    startDate?: true
+    endDate?: true
+    isComplete?: true
+    name?: true
+    description?: true
+    createdById?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -9904,7 +11318,12 @@ export namespace Prisma {
   export type SupplyChainMaxAggregateInputType = {
     id?: true
     productId?: true
-    status?: true
+    startDate?: true
+    endDate?: true
+    isComplete?: true
+    name?: true
+    description?: true
+    createdById?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -9912,7 +11331,12 @@ export namespace Prisma {
   export type SupplyChainCountAggregateInputType = {
     id?: true
     productId?: true
-    status?: true
+    startDate?: true
+    endDate?: true
+    isComplete?: true
+    name?: true
+    description?: true
+    createdById?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -9993,7 +11417,12 @@ export namespace Prisma {
   export type SupplyChainGroupByOutputType = {
     id: string
     productId: string
-    status: string
+    startDate: Date
+    endDate: Date | null
+    isComplete: boolean
+    name: string | null
+    description: string | null
+    createdById: string | null
     createdAt: Date
     updatedAt: Date
     _count: SupplyChainCountAggregateOutputType | null
@@ -10018,7 +11447,12 @@ export namespace Prisma {
   export type SupplyChainSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     productId?: boolean
-    status?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    isComplete?: boolean
+    name?: boolean
+    description?: boolean
+    createdById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -10029,7 +11463,12 @@ export namespace Prisma {
   export type SupplyChainSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     productId?: boolean
-    status?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    isComplete?: boolean
+    name?: boolean
+    description?: boolean
+    createdById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -10038,7 +11477,12 @@ export namespace Prisma {
   export type SupplyChainSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     productId?: boolean
-    status?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    isComplete?: boolean
+    name?: boolean
+    description?: boolean
+    createdById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -10047,12 +11491,17 @@ export namespace Prisma {
   export type SupplyChainSelectScalar = {
     id?: boolean
     productId?: boolean
-    status?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    isComplete?: boolean
+    name?: boolean
+    description?: boolean
+    createdById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type SupplyChainOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["supplyChain"]>
+  export type SupplyChainOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "startDate" | "endDate" | "isComplete" | "name" | "description" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["supplyChain"]>
   export type SupplyChainInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
     links?: boolean | SupplyChain$linksArgs<ExtArgs>
@@ -10074,7 +11523,12 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       productId: string
-      status: string
+      startDate: Date
+      endDate: Date | null
+      isComplete: boolean
+      name: string | null
+      description: string | null
+      createdById: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["supplyChain"]>
@@ -10504,7 +11958,12 @@ export namespace Prisma {
   interface SupplyChainFieldRefs {
     readonly id: FieldRef<"SupplyChain", 'String'>
     readonly productId: FieldRef<"SupplyChain", 'String'>
-    readonly status: FieldRef<"SupplyChain", 'String'>
+    readonly startDate: FieldRef<"SupplyChain", 'DateTime'>
+    readonly endDate: FieldRef<"SupplyChain", 'DateTime'>
+    readonly isComplete: FieldRef<"SupplyChain", 'Boolean'>
+    readonly name: FieldRef<"SupplyChain", 'String'>
+    readonly description: FieldRef<"SupplyChain", 'String'>
+    readonly createdById: FieldRef<"SupplyChain", 'String'>
     readonly createdAt: FieldRef<"SupplyChain", 'DateTime'>
     readonly updatedAt: FieldRef<"SupplyChain", 'DateTime'>
   }
@@ -10958,103 +12417,105 @@ export namespace Prisma {
   }
 
   export type SupplyChainLinkAvgAggregateOutputType = {
-    cost: number | null
+    carbonFootprint: number | null
   }
 
   export type SupplyChainLinkSumAggregateOutputType = {
-    cost: number | null
+    carbonFootprint: number | null
   }
 
   export type SupplyChainLinkMinAggregateOutputType = {
     id: string | null
     supplyChainId: string | null
-    serviceProviderId: string | null
-    serviceType: string | null
-    startTime: Date | null
-    endTime: Date | null
-    cost: number | null
-    status: string | null
+    type: string | null
+    fromUserId: string | null
+    toUserId: string | null
+    timestamp: Date | null
+    carbonFootprint: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    serviceProviderId: string | null
   }
 
   export type SupplyChainLinkMaxAggregateOutputType = {
     id: string | null
     supplyChainId: string | null
-    serviceProviderId: string | null
-    serviceType: string | null
-    startTime: Date | null
-    endTime: Date | null
-    cost: number | null
-    status: string | null
+    type: string | null
+    fromUserId: string | null
+    toUserId: string | null
+    timestamp: Date | null
+    carbonFootprint: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    serviceProviderId: string | null
   }
 
   export type SupplyChainLinkCountAggregateOutputType = {
     id: number
     supplyChainId: number
-    serviceProviderId: number
-    serviceType: number
-    fromLocation: number
-    toLocation: number
-    startTime: number
-    endTime: number
-    cost: number
-    status: number
+    type: number
+    fromUserId: number
+    toUserId: number
+    timestamp: number
+    location: number
+    details: number
+    carbonFootprint: number
+    certifications: number
     createdAt: number
     updatedAt: number
+    serviceProviderId: number
     _all: number
   }
 
 
   export type SupplyChainLinkAvgAggregateInputType = {
-    cost?: true
+    carbonFootprint?: true
   }
 
   export type SupplyChainLinkSumAggregateInputType = {
-    cost?: true
+    carbonFootprint?: true
   }
 
   export type SupplyChainLinkMinAggregateInputType = {
     id?: true
     supplyChainId?: true
-    serviceProviderId?: true
-    serviceType?: true
-    startTime?: true
-    endTime?: true
-    cost?: true
-    status?: true
+    type?: true
+    fromUserId?: true
+    toUserId?: true
+    timestamp?: true
+    carbonFootprint?: true
     createdAt?: true
     updatedAt?: true
+    serviceProviderId?: true
   }
 
   export type SupplyChainLinkMaxAggregateInputType = {
     id?: true
     supplyChainId?: true
-    serviceProviderId?: true
-    serviceType?: true
-    startTime?: true
-    endTime?: true
-    cost?: true
-    status?: true
+    type?: true
+    fromUserId?: true
+    toUserId?: true
+    timestamp?: true
+    carbonFootprint?: true
     createdAt?: true
     updatedAt?: true
+    serviceProviderId?: true
   }
 
   export type SupplyChainLinkCountAggregateInputType = {
     id?: true
     supplyChainId?: true
-    serviceProviderId?: true
-    serviceType?: true
-    fromLocation?: true
-    toLocation?: true
-    startTime?: true
-    endTime?: true
-    cost?: true
-    status?: true
+    type?: true
+    fromUserId?: true
+    toUserId?: true
+    timestamp?: true
+    location?: true
+    details?: true
+    carbonFootprint?: true
+    certifications?: true
     createdAt?: true
     updatedAt?: true
+    serviceProviderId?: true
     _all?: true
   }
 
@@ -11147,16 +12608,17 @@ export namespace Prisma {
   export type SupplyChainLinkGroupByOutputType = {
     id: string
     supplyChainId: string
-    serviceProviderId: string
-    serviceType: string
-    fromLocation: JsonValue | null
-    toLocation: JsonValue | null
-    startTime: Date | null
-    endTime: Date | null
-    cost: number
-    status: string
+    type: string
+    fromUserId: string
+    toUserId: string
+    timestamp: Date
+    location: JsonValue | null
+    details: JsonValue | null
+    carbonFootprint: number | null
+    certifications: string[]
     createdAt: Date
     updatedAt: Date
+    serviceProviderId: string | null
     _count: SupplyChainLinkCountAggregateOutputType | null
     _avg: SupplyChainLinkAvgAggregateOutputType | null
     _sum: SupplyChainLinkSumAggregateOutputType | null
@@ -11181,102 +12643,107 @@ export namespace Prisma {
   export type SupplyChainLinkSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     supplyChainId?: boolean
-    serviceProviderId?: boolean
-    serviceType?: boolean
-    fromLocation?: boolean
-    toLocation?: boolean
-    startTime?: boolean
-    endTime?: boolean
-    cost?: boolean
-    status?: boolean
+    type?: boolean
+    fromUserId?: boolean
+    toUserId?: boolean
+    timestamp?: boolean
+    location?: boolean
+    details?: boolean
+    carbonFootprint?: boolean
+    certifications?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    serviceProviderId?: boolean
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
-    serviceProvider?: boolean | IntermediaryProfileDefaultArgs<ExtArgs>
+    serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }, ExtArgs["result"]["supplyChainLink"]>
 
   export type SupplyChainLinkSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     supplyChainId?: boolean
-    serviceProviderId?: boolean
-    serviceType?: boolean
-    fromLocation?: boolean
-    toLocation?: boolean
-    startTime?: boolean
-    endTime?: boolean
-    cost?: boolean
-    status?: boolean
+    type?: boolean
+    fromUserId?: boolean
+    toUserId?: boolean
+    timestamp?: boolean
+    location?: boolean
+    details?: boolean
+    carbonFootprint?: boolean
+    certifications?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    serviceProviderId?: boolean
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
-    serviceProvider?: boolean | IntermediaryProfileDefaultArgs<ExtArgs>
+    serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }, ExtArgs["result"]["supplyChainLink"]>
 
   export type SupplyChainLinkSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     supplyChainId?: boolean
-    serviceProviderId?: boolean
-    serviceType?: boolean
-    fromLocation?: boolean
-    toLocation?: boolean
-    startTime?: boolean
-    endTime?: boolean
-    cost?: boolean
-    status?: boolean
+    type?: boolean
+    fromUserId?: boolean
+    toUserId?: boolean
+    timestamp?: boolean
+    location?: boolean
+    details?: boolean
+    carbonFootprint?: boolean
+    certifications?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    serviceProviderId?: boolean
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
-    serviceProvider?: boolean | IntermediaryProfileDefaultArgs<ExtArgs>
+    serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }, ExtArgs["result"]["supplyChainLink"]>
 
   export type SupplyChainLinkSelectScalar = {
     id?: boolean
     supplyChainId?: boolean
-    serviceProviderId?: boolean
-    serviceType?: boolean
-    fromLocation?: boolean
-    toLocation?: boolean
-    startTime?: boolean
-    endTime?: boolean
-    cost?: boolean
-    status?: boolean
+    type?: boolean
+    fromUserId?: boolean
+    toUserId?: boolean
+    timestamp?: boolean
+    location?: boolean
+    details?: boolean
+    carbonFootprint?: boolean
+    certifications?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    serviceProviderId?: boolean
   }
 
-  export type SupplyChainLinkOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "supplyChainId" | "serviceProviderId" | "serviceType" | "fromLocation" | "toLocation" | "startTime" | "endTime" | "cost" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["supplyChainLink"]>
+  export type SupplyChainLinkOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "supplyChainId" | "type" | "fromUserId" | "toUserId" | "timestamp" | "location" | "details" | "carbonFootprint" | "certifications" | "createdAt" | "updatedAt" | "serviceProviderId", ExtArgs["result"]["supplyChainLink"]>
   export type SupplyChainLinkInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
-    serviceProvider?: boolean | IntermediaryProfileDefaultArgs<ExtArgs>
+    serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }
   export type SupplyChainLinkIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
-    serviceProvider?: boolean | IntermediaryProfileDefaultArgs<ExtArgs>
+    serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }
   export type SupplyChainLinkIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
-    serviceProvider?: boolean | IntermediaryProfileDefaultArgs<ExtArgs>
+    serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }
 
   export type $SupplyChainLinkPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SupplyChainLink"
     objects: {
       supplyChain: Prisma.$SupplyChainPayload<ExtArgs>
-      serviceProvider: Prisma.$IntermediaryProfilePayload<ExtArgs>
+      serviceProvider: Prisma.$IntermediaryProfilePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       supplyChainId: string
-      serviceProviderId: string
-      serviceType: string
-      fromLocation: Prisma.JsonValue | null
-      toLocation: Prisma.JsonValue | null
-      startTime: Date | null
-      endTime: Date | null
-      cost: number
-      status: string
+      type: string
+      fromUserId: string
+      toUserId: string
+      timestamp: Date
+      location: Prisma.JsonValue | null
+      details: Prisma.JsonValue | null
+      carbonFootprint: number | null
+      certifications: string[]
       createdAt: Date
       updatedAt: Date
+      serviceProviderId: string | null
     }, ExtArgs["result"]["supplyChainLink"]>
     composites: {}
   }
@@ -11672,7 +13139,7 @@ export namespace Prisma {
   export interface Prisma__SupplyChainLinkClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     supplyChain<T extends SupplyChainDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SupplyChainDefaultArgs<ExtArgs>>): Prisma__SupplyChainClient<$Result.GetResult<Prisma.$SupplyChainPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    serviceProvider<T extends IntermediaryProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, IntermediaryProfileDefaultArgs<ExtArgs>>): Prisma__IntermediaryProfileClient<$Result.GetResult<Prisma.$IntermediaryProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    serviceProvider<T extends SupplyChainLink$serviceProviderArgs<ExtArgs> = {}>(args?: Subset<T, SupplyChainLink$serviceProviderArgs<ExtArgs>>): Prisma__IntermediaryProfileClient<$Result.GetResult<Prisma.$IntermediaryProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11704,16 +13171,17 @@ export namespace Prisma {
   interface SupplyChainLinkFieldRefs {
     readonly id: FieldRef<"SupplyChainLink", 'String'>
     readonly supplyChainId: FieldRef<"SupplyChainLink", 'String'>
-    readonly serviceProviderId: FieldRef<"SupplyChainLink", 'String'>
-    readonly serviceType: FieldRef<"SupplyChainLink", 'String'>
-    readonly fromLocation: FieldRef<"SupplyChainLink", 'Json'>
-    readonly toLocation: FieldRef<"SupplyChainLink", 'Json'>
-    readonly startTime: FieldRef<"SupplyChainLink", 'DateTime'>
-    readonly endTime: FieldRef<"SupplyChainLink", 'DateTime'>
-    readonly cost: FieldRef<"SupplyChainLink", 'Float'>
-    readonly status: FieldRef<"SupplyChainLink", 'String'>
+    readonly type: FieldRef<"SupplyChainLink", 'String'>
+    readonly fromUserId: FieldRef<"SupplyChainLink", 'String'>
+    readonly toUserId: FieldRef<"SupplyChainLink", 'String'>
+    readonly timestamp: FieldRef<"SupplyChainLink", 'DateTime'>
+    readonly location: FieldRef<"SupplyChainLink", 'Json'>
+    readonly details: FieldRef<"SupplyChainLink", 'Json'>
+    readonly carbonFootprint: FieldRef<"SupplyChainLink", 'Float'>
+    readonly certifications: FieldRef<"SupplyChainLink", 'String[]'>
     readonly createdAt: FieldRef<"SupplyChainLink", 'DateTime'>
     readonly updatedAt: FieldRef<"SupplyChainLink", 'DateTime'>
+    readonly serviceProviderId: FieldRef<"SupplyChainLink", 'String'>
   }
     
 
@@ -12107,6 +13575,25 @@ export namespace Prisma {
      * Limit how many SupplyChainLinks to delete.
      */
     limit?: number
+  }
+
+  /**
+   * SupplyChainLink.serviceProvider
+   */
+  export type SupplyChainLink$serviceProviderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntermediaryProfile
+     */
+    select?: IntermediaryProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntermediaryProfile
+     */
+    omit?: IntermediaryProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntermediaryProfileInclude<ExtArgs> | null
+    where?: IntermediaryProfileWhereInput
   }
 
   /**
@@ -14515,49 +16002,77 @@ export namespace Prisma {
 
   export type TransactionAvgAggregateOutputType = {
     amount: number | null
+    quantity: number | null
   }
 
   export type TransactionSumAggregateOutputType = {
     amount: number | null
+    quantity: number | null
   }
 
   export type TransactionMinAggregateOutputType = {
     id: string | null
-    transactionId: string | null
-    orderId: string | null
-    userId: string | null
+    productId: string | null
+    senderId: string | null
+    receiverId: string | null
     amount: number | null
+    quantity: number | null
+    unit: string | null
     type: $Enums.TransactionType | null
     status: $Enums.TransactionStatus | null
     paymentMethod: string | null
+    paymentReference: string | null
+    paymentDate: Date | null
+    deliveryDate: Date | null
+    notes: string | null
+    transactionId: string | null
+    orderId: string | null
+    userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
 
   export type TransactionMaxAggregateOutputType = {
     id: string | null
-    transactionId: string | null
-    orderId: string | null
-    userId: string | null
+    productId: string | null
+    senderId: string | null
+    receiverId: string | null
     amount: number | null
+    quantity: number | null
+    unit: string | null
     type: $Enums.TransactionType | null
     status: $Enums.TransactionStatus | null
     paymentMethod: string | null
+    paymentReference: string | null
+    paymentDate: Date | null
+    deliveryDate: Date | null
+    notes: string | null
+    transactionId: string | null
+    orderId: string | null
+    userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
 
   export type TransactionCountAggregateOutputType = {
     id: number
-    transactionId: number
-    orderId: number
-    userId: number
+    productId: number
+    senderId: number
+    receiverId: number
     amount: number
+    quantity: number
+    unit: number
     type: number
     status: number
     paymentMethod: number
-    paymentDetails: number
-    profitSplit: number
+    paymentReference: number
+    paymentDate: number
+    deliveryDate: number
+    notes: number
+    metadata: number
+    transactionId: number
+    orderId: number
+    userId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -14566,49 +16081,77 @@ export namespace Prisma {
 
   export type TransactionAvgAggregateInputType = {
     amount?: true
+    quantity?: true
   }
 
   export type TransactionSumAggregateInputType = {
     amount?: true
+    quantity?: true
   }
 
   export type TransactionMinAggregateInputType = {
     id?: true
-    transactionId?: true
-    orderId?: true
-    userId?: true
+    productId?: true
+    senderId?: true
+    receiverId?: true
     amount?: true
+    quantity?: true
+    unit?: true
     type?: true
     status?: true
     paymentMethod?: true
+    paymentReference?: true
+    paymentDate?: true
+    deliveryDate?: true
+    notes?: true
+    transactionId?: true
+    orderId?: true
+    userId?: true
     createdAt?: true
     updatedAt?: true
   }
 
   export type TransactionMaxAggregateInputType = {
     id?: true
-    transactionId?: true
-    orderId?: true
-    userId?: true
+    productId?: true
+    senderId?: true
+    receiverId?: true
     amount?: true
+    quantity?: true
+    unit?: true
     type?: true
     status?: true
     paymentMethod?: true
+    paymentReference?: true
+    paymentDate?: true
+    deliveryDate?: true
+    notes?: true
+    transactionId?: true
+    orderId?: true
+    userId?: true
     createdAt?: true
     updatedAt?: true
   }
 
   export type TransactionCountAggregateInputType = {
     id?: true
-    transactionId?: true
-    orderId?: true
-    userId?: true
+    productId?: true
+    senderId?: true
+    receiverId?: true
     amount?: true
+    quantity?: true
+    unit?: true
     type?: true
     status?: true
     paymentMethod?: true
-    paymentDetails?: true
-    profitSplit?: true
+    paymentReference?: true
+    paymentDate?: true
+    deliveryDate?: true
+    notes?: true
+    metadata?: true
+    transactionId?: true
+    orderId?: true
+    userId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -14702,15 +16245,23 @@ export namespace Prisma {
 
   export type TransactionGroupByOutputType = {
     id: string
-    transactionId: string
-    orderId: string | null
-    userId: string
+    productId: string | null
+    senderId: string
+    receiverId: string
     amount: number
+    quantity: number | null
+    unit: string | null
     type: $Enums.TransactionType
     status: $Enums.TransactionStatus
     paymentMethod: string | null
-    paymentDetails: JsonValue | null
-    profitSplit: JsonValue | null
+    paymentReference: string | null
+    paymentDate: Date | null
+    deliveryDate: Date | null
+    notes: string | null
+    metadata: JsonValue | null
+    transactionId: string | null
+    orderId: string | null
+    userId: string | null
     createdAt: Date
     updatedAt: Date
     _count: TransactionCountAggregateOutputType | null
@@ -14736,101 +16287,141 @@ export namespace Prisma {
 
   export type TransactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    transactionId?: boolean
-    orderId?: boolean
-    userId?: boolean
+    productId?: boolean
+    senderId?: boolean
+    receiverId?: boolean
     amount?: boolean
+    quantity?: boolean
+    unit?: boolean
     type?: boolean
     status?: boolean
     paymentMethod?: boolean
-    paymentDetails?: boolean
-    profitSplit?: boolean
+    paymentReference?: boolean
+    paymentDate?: boolean
+    deliveryDate?: boolean
+    notes?: boolean
+    metadata?: boolean
+    transactionId?: boolean
+    orderId?: boolean
+    userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     order?: boolean | Transaction$orderArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Transaction$userArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    transactionId?: boolean
-    orderId?: boolean
-    userId?: boolean
+    productId?: boolean
+    senderId?: boolean
+    receiverId?: boolean
     amount?: boolean
+    quantity?: boolean
+    unit?: boolean
     type?: boolean
     status?: boolean
     paymentMethod?: boolean
-    paymentDetails?: boolean
-    profitSplit?: boolean
+    paymentReference?: boolean
+    paymentDate?: boolean
+    deliveryDate?: boolean
+    notes?: boolean
+    metadata?: boolean
+    transactionId?: boolean
+    orderId?: boolean
+    userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     order?: boolean | Transaction$orderArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Transaction$userArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    transactionId?: boolean
-    orderId?: boolean
-    userId?: boolean
+    productId?: boolean
+    senderId?: boolean
+    receiverId?: boolean
     amount?: boolean
+    quantity?: boolean
+    unit?: boolean
     type?: boolean
     status?: boolean
     paymentMethod?: boolean
-    paymentDetails?: boolean
-    profitSplit?: boolean
+    paymentReference?: boolean
+    paymentDate?: boolean
+    deliveryDate?: boolean
+    notes?: boolean
+    metadata?: boolean
+    transactionId?: boolean
+    orderId?: boolean
+    userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     order?: boolean | Transaction$orderArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Transaction$userArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectScalar = {
     id?: boolean
-    transactionId?: boolean
-    orderId?: boolean
-    userId?: boolean
+    productId?: boolean
+    senderId?: boolean
+    receiverId?: boolean
     amount?: boolean
+    quantity?: boolean
+    unit?: boolean
     type?: boolean
     status?: boolean
     paymentMethod?: boolean
-    paymentDetails?: boolean
-    profitSplit?: boolean
+    paymentReference?: boolean
+    paymentDate?: boolean
+    deliveryDate?: boolean
+    notes?: boolean
+    metadata?: boolean
+    transactionId?: boolean
+    orderId?: boolean
+    userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transactionId" | "orderId" | "userId" | "amount" | "type" | "status" | "paymentMethod" | "paymentDetails" | "profitSplit" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
+  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "senderId" | "receiverId" | "amount" | "quantity" | "unit" | "type" | "status" | "paymentMethod" | "paymentReference" | "paymentDate" | "deliveryDate" | "notes" | "metadata" | "transactionId" | "orderId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | Transaction$orderArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Transaction$userArgs<ExtArgs>
   }
   export type TransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | Transaction$orderArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Transaction$userArgs<ExtArgs>
   }
   export type TransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | Transaction$orderArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | Transaction$userArgs<ExtArgs>
   }
 
   export type $TransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Transaction"
     objects: {
       order: Prisma.$OrderPayload<ExtArgs> | null
-      user: Prisma.$UserPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      transactionId: string
-      orderId: string | null
-      userId: string
+      productId: string | null
+      senderId: string
+      receiverId: string
       amount: number
+      quantity: number | null
+      unit: string | null
       type: $Enums.TransactionType
       status: $Enums.TransactionStatus
       paymentMethod: string | null
-      paymentDetails: Prisma.JsonValue | null
-      profitSplit: Prisma.JsonValue | null
+      paymentReference: string | null
+      paymentDate: Date | null
+      deliveryDate: Date | null
+      notes: string | null
+      metadata: Prisma.JsonValue | null
+      transactionId: string | null
+      orderId: string | null
+      userId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["transaction"]>
@@ -15228,7 +16819,7 @@ export namespace Prisma {
   export interface Prisma__TransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     order<T extends Transaction$orderArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$orderArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends Transaction$userArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15259,15 +16850,23 @@ export namespace Prisma {
    */
   interface TransactionFieldRefs {
     readonly id: FieldRef<"Transaction", 'String'>
-    readonly transactionId: FieldRef<"Transaction", 'String'>
-    readonly orderId: FieldRef<"Transaction", 'String'>
-    readonly userId: FieldRef<"Transaction", 'String'>
+    readonly productId: FieldRef<"Transaction", 'String'>
+    readonly senderId: FieldRef<"Transaction", 'String'>
+    readonly receiverId: FieldRef<"Transaction", 'String'>
     readonly amount: FieldRef<"Transaction", 'Float'>
+    readonly quantity: FieldRef<"Transaction", 'Float'>
+    readonly unit: FieldRef<"Transaction", 'String'>
     readonly type: FieldRef<"Transaction", 'TransactionType'>
     readonly status: FieldRef<"Transaction", 'TransactionStatus'>
     readonly paymentMethod: FieldRef<"Transaction", 'String'>
-    readonly paymentDetails: FieldRef<"Transaction", 'Json'>
-    readonly profitSplit: FieldRef<"Transaction", 'Json'>
+    readonly paymentReference: FieldRef<"Transaction", 'String'>
+    readonly paymentDate: FieldRef<"Transaction", 'DateTime'>
+    readonly deliveryDate: FieldRef<"Transaction", 'DateTime'>
+    readonly notes: FieldRef<"Transaction", 'String'>
+    readonly metadata: FieldRef<"Transaction", 'Json'>
+    readonly transactionId: FieldRef<"Transaction", 'String'>
+    readonly orderId: FieldRef<"Transaction", 'String'>
+    readonly userId: FieldRef<"Transaction", 'String'>
     readonly createdAt: FieldRef<"Transaction", 'DateTime'>
     readonly updatedAt: FieldRef<"Transaction", 'DateTime'>
   }
@@ -15682,6 +17281,25 @@ export namespace Prisma {
      */
     include?: OrderInclude<ExtArgs> | null
     where?: OrderWhereInput
+  }
+
+  /**
+   * Transaction.user
+   */
+  export type Transaction$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -22662,10 +24280,34 @@ export namespace Prisma {
   export type ProductAnalyticsScalarFieldEnum = (typeof ProductAnalyticsScalarFieldEnum)[keyof typeof ProductAnalyticsScalarFieldEnum]
 
 
+  export const BidScalarFieldEnum: {
+    id: 'id',
+    productId: 'productId',
+    intermediaryId: 'intermediaryId',
+    price: 'price',
+    quantity: 'quantity',
+    serviceType: 'serviceType',
+    description: 'description',
+    validUntil: 'validUntil',
+    terms: 'terms',
+    status: 'status',
+    responseReason: 'responseReason',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type BidScalarFieldEnum = (typeof BidScalarFieldEnum)[keyof typeof BidScalarFieldEnum]
+
+
   export const SupplyChainScalarFieldEnum: {
     id: 'id',
     productId: 'productId',
-    status: 'status',
+    startDate: 'startDate',
+    endDate: 'endDate',
+    isComplete: 'isComplete',
+    name: 'name',
+    description: 'description',
+    createdById: 'createdById',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -22676,16 +24318,17 @@ export namespace Prisma {
   export const SupplyChainLinkScalarFieldEnum: {
     id: 'id',
     supplyChainId: 'supplyChainId',
-    serviceProviderId: 'serviceProviderId',
-    serviceType: 'serviceType',
-    fromLocation: 'fromLocation',
-    toLocation: 'toLocation',
-    startTime: 'startTime',
-    endTime: 'endTime',
-    cost: 'cost',
-    status: 'status',
+    type: 'type',
+    fromUserId: 'fromUserId',
+    toUserId: 'toUserId',
+    timestamp: 'timestamp',
+    location: 'location',
+    details: 'details',
+    carbonFootprint: 'carbonFootprint',
+    certifications: 'certifications',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    serviceProviderId: 'serviceProviderId'
   };
 
   export type SupplyChainLinkScalarFieldEnum = (typeof SupplyChainLinkScalarFieldEnum)[keyof typeof SupplyChainLinkScalarFieldEnum]
@@ -22722,15 +24365,23 @@ export namespace Prisma {
 
   export const TransactionScalarFieldEnum: {
     id: 'id',
-    transactionId: 'transactionId',
-    orderId: 'orderId',
-    userId: 'userId',
+    productId: 'productId',
+    senderId: 'senderId',
+    receiverId: 'receiverId',
     amount: 'amount',
+    quantity: 'quantity',
+    unit: 'unit',
     type: 'type',
     status: 'status',
     paymentMethod: 'paymentMethod',
-    paymentDetails: 'paymentDetails',
-    profitSplit: 'profitSplit',
+    paymentReference: 'paymentReference',
+    paymentDate: 'paymentDate',
+    deliveryDate: 'deliveryDate',
+    notes: 'notes',
+    metadata: 'metadata',
+    transactionId: 'transactionId',
+    orderId: 'orderId',
+    userId: 'userId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -23043,6 +24694,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'BidStatus'
+   */
+  export type EnumBidStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BidStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'BidStatus[]'
+   */
+  export type ListEnumBidStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BidStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'OrderStatus'
    */
   export type EnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus'>
@@ -23109,6 +24774,7 @@ export namespace Prisma {
     ratings?: RatingListRelationFilter
     ratedBy?: RatingListRelationFilter
     transactions?: TransactionListRelationFilter
+    bidsCreated?: BidListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -23130,6 +24796,7 @@ export namespace Prisma {
     ratings?: RatingOrderByRelationAggregateInput
     ratedBy?: RatingOrderByRelationAggregateInput
     transactions?: TransactionOrderByRelationAggregateInput
+    bidsCreated?: BidOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -23154,6 +24821,7 @@ export namespace Prisma {
     ratings?: RatingListRelationFilter
     ratedBy?: RatingListRelationFilter
     transactions?: TransactionListRelationFilter
+    bidsCreated?: BidListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -23449,6 +25117,7 @@ export namespace Prisma {
     supplyChain?: XOR<SupplyChainNullableScalarRelationFilter, SupplyChainWhereInput> | null
     traceability?: TraceabilityRecordListRelationFilter
     productAnalytics?: XOR<ProductAnalyticsNullableScalarRelationFilter, ProductAnalyticsWhereInput> | null
+    bids?: BidListRelationFilter
   }
 
   export type ProductOrderByWithRelationInput = {
@@ -23474,6 +25143,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainOrderByWithRelationInput
     traceability?: TraceabilityRecordOrderByRelationAggregateInput
     productAnalytics?: ProductAnalyticsOrderByWithRelationInput
+    bids?: BidOrderByRelationAggregateInput
   }
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -23502,6 +25172,7 @@ export namespace Prisma {
     supplyChain?: XOR<SupplyChainNullableScalarRelationFilter, SupplyChainWhereInput> | null
     traceability?: TraceabilityRecordListRelationFilter
     productAnalytics?: XOR<ProductAnalyticsNullableScalarRelationFilter, ProductAnalyticsWhereInput> | null
+    bids?: BidListRelationFilter
   }, "id">
 
   export type ProductOrderByWithAggregationInput = {
@@ -23624,13 +25295,118 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"ProductAnalytics"> | Date | string
   }
 
+  export type BidWhereInput = {
+    AND?: BidWhereInput | BidWhereInput[]
+    OR?: BidWhereInput[]
+    NOT?: BidWhereInput | BidWhereInput[]
+    id?: StringFilter<"Bid"> | string
+    productId?: StringFilter<"Bid"> | string
+    intermediaryId?: StringFilter<"Bid"> | string
+    price?: FloatFilter<"Bid"> | number
+    quantity?: FloatFilter<"Bid"> | number
+    serviceType?: StringFilter<"Bid"> | string
+    description?: StringFilter<"Bid"> | string
+    validUntil?: DateTimeFilter<"Bid"> | Date | string
+    terms?: StringNullableFilter<"Bid"> | string | null
+    status?: EnumBidStatusFilter<"Bid"> | $Enums.BidStatus
+    responseReason?: StringNullableFilter<"Bid"> | string | null
+    createdAt?: DateTimeFilter<"Bid"> | Date | string
+    updatedAt?: DateTimeFilter<"Bid"> | Date | string
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    intermediary?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type BidOrderByWithRelationInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    intermediaryId?: SortOrder
+    price?: SortOrder
+    quantity?: SortOrder
+    serviceType?: SortOrder
+    description?: SortOrder
+    validUntil?: SortOrder
+    terms?: SortOrderInput | SortOrder
+    status?: SortOrder
+    responseReason?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    product?: ProductOrderByWithRelationInput
+    intermediary?: UserOrderByWithRelationInput
+  }
+
+  export type BidWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: BidWhereInput | BidWhereInput[]
+    OR?: BidWhereInput[]
+    NOT?: BidWhereInput | BidWhereInput[]
+    productId?: StringFilter<"Bid"> | string
+    intermediaryId?: StringFilter<"Bid"> | string
+    price?: FloatFilter<"Bid"> | number
+    quantity?: FloatFilter<"Bid"> | number
+    serviceType?: StringFilter<"Bid"> | string
+    description?: StringFilter<"Bid"> | string
+    validUntil?: DateTimeFilter<"Bid"> | Date | string
+    terms?: StringNullableFilter<"Bid"> | string | null
+    status?: EnumBidStatusFilter<"Bid"> | $Enums.BidStatus
+    responseReason?: StringNullableFilter<"Bid"> | string | null
+    createdAt?: DateTimeFilter<"Bid"> | Date | string
+    updatedAt?: DateTimeFilter<"Bid"> | Date | string
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    intermediary?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type BidOrderByWithAggregationInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    intermediaryId?: SortOrder
+    price?: SortOrder
+    quantity?: SortOrder
+    serviceType?: SortOrder
+    description?: SortOrder
+    validUntil?: SortOrder
+    terms?: SortOrderInput | SortOrder
+    status?: SortOrder
+    responseReason?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: BidCountOrderByAggregateInput
+    _avg?: BidAvgOrderByAggregateInput
+    _max?: BidMaxOrderByAggregateInput
+    _min?: BidMinOrderByAggregateInput
+    _sum?: BidSumOrderByAggregateInput
+  }
+
+  export type BidScalarWhereWithAggregatesInput = {
+    AND?: BidScalarWhereWithAggregatesInput | BidScalarWhereWithAggregatesInput[]
+    OR?: BidScalarWhereWithAggregatesInput[]
+    NOT?: BidScalarWhereWithAggregatesInput | BidScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Bid"> | string
+    productId?: StringWithAggregatesFilter<"Bid"> | string
+    intermediaryId?: StringWithAggregatesFilter<"Bid"> | string
+    price?: FloatWithAggregatesFilter<"Bid"> | number
+    quantity?: FloatWithAggregatesFilter<"Bid"> | number
+    serviceType?: StringWithAggregatesFilter<"Bid"> | string
+    description?: StringWithAggregatesFilter<"Bid"> | string
+    validUntil?: DateTimeWithAggregatesFilter<"Bid"> | Date | string
+    terms?: StringNullableWithAggregatesFilter<"Bid"> | string | null
+    status?: EnumBidStatusWithAggregatesFilter<"Bid"> | $Enums.BidStatus
+    responseReason?: StringNullableWithAggregatesFilter<"Bid"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Bid"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Bid"> | Date | string
+  }
+
   export type SupplyChainWhereInput = {
     AND?: SupplyChainWhereInput | SupplyChainWhereInput[]
     OR?: SupplyChainWhereInput[]
     NOT?: SupplyChainWhereInput | SupplyChainWhereInput[]
     id?: StringFilter<"SupplyChain"> | string
     productId?: StringFilter<"SupplyChain"> | string
-    status?: StringFilter<"SupplyChain"> | string
+    startDate?: DateTimeFilter<"SupplyChain"> | Date | string
+    endDate?: DateTimeNullableFilter<"SupplyChain"> | Date | string | null
+    isComplete?: BoolFilter<"SupplyChain"> | boolean
+    name?: StringNullableFilter<"SupplyChain"> | string | null
+    description?: StringNullableFilter<"SupplyChain"> | string | null
+    createdById?: StringNullableFilter<"SupplyChain"> | string | null
     createdAt?: DateTimeFilter<"SupplyChain"> | Date | string
     updatedAt?: DateTimeFilter<"SupplyChain"> | Date | string
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
@@ -23640,7 +25416,12 @@ export namespace Prisma {
   export type SupplyChainOrderByWithRelationInput = {
     id?: SortOrder
     productId?: SortOrder
-    status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrderInput | SortOrder
+    isComplete?: SortOrder
+    name?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     product?: ProductOrderByWithRelationInput
@@ -23653,7 +25434,12 @@ export namespace Prisma {
     AND?: SupplyChainWhereInput | SupplyChainWhereInput[]
     OR?: SupplyChainWhereInput[]
     NOT?: SupplyChainWhereInput | SupplyChainWhereInput[]
-    status?: StringFilter<"SupplyChain"> | string
+    startDate?: DateTimeFilter<"SupplyChain"> | Date | string
+    endDate?: DateTimeNullableFilter<"SupplyChain"> | Date | string | null
+    isComplete?: BoolFilter<"SupplyChain"> | boolean
+    name?: StringNullableFilter<"SupplyChain"> | string | null
+    description?: StringNullableFilter<"SupplyChain"> | string | null
+    createdById?: StringNullableFilter<"SupplyChain"> | string | null
     createdAt?: DateTimeFilter<"SupplyChain"> | Date | string
     updatedAt?: DateTimeFilter<"SupplyChain"> | Date | string
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
@@ -23663,7 +25449,12 @@ export namespace Prisma {
   export type SupplyChainOrderByWithAggregationInput = {
     id?: SortOrder
     productId?: SortOrder
-    status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrderInput | SortOrder
+    isComplete?: SortOrder
+    name?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: SupplyChainCountOrderByAggregateInput
@@ -23677,7 +25468,12 @@ export namespace Prisma {
     NOT?: SupplyChainScalarWhereWithAggregatesInput | SupplyChainScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"SupplyChain"> | string
     productId?: StringWithAggregatesFilter<"SupplyChain"> | string
-    status?: StringWithAggregatesFilter<"SupplyChain"> | string
+    startDate?: DateTimeWithAggregatesFilter<"SupplyChain"> | Date | string
+    endDate?: DateTimeNullableWithAggregatesFilter<"SupplyChain"> | Date | string | null
+    isComplete?: BoolWithAggregatesFilter<"SupplyChain"> | boolean
+    name?: StringNullableWithAggregatesFilter<"SupplyChain"> | string | null
+    description?: StringNullableWithAggregatesFilter<"SupplyChain"> | string | null
+    createdById?: StringNullableWithAggregatesFilter<"SupplyChain"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"SupplyChain"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SupplyChain"> | Date | string
   }
@@ -23688,33 +25484,35 @@ export namespace Prisma {
     NOT?: SupplyChainLinkWhereInput | SupplyChainLinkWhereInput[]
     id?: StringFilter<"SupplyChainLink"> | string
     supplyChainId?: StringFilter<"SupplyChainLink"> | string
-    serviceProviderId?: StringFilter<"SupplyChainLink"> | string
-    serviceType?: StringFilter<"SupplyChainLink"> | string
-    fromLocation?: JsonNullableFilter<"SupplyChainLink">
-    toLocation?: JsonNullableFilter<"SupplyChainLink">
-    startTime?: DateTimeNullableFilter<"SupplyChainLink"> | Date | string | null
-    endTime?: DateTimeNullableFilter<"SupplyChainLink"> | Date | string | null
-    cost?: FloatFilter<"SupplyChainLink"> | number
-    status?: StringFilter<"SupplyChainLink"> | string
+    type?: StringFilter<"SupplyChainLink"> | string
+    fromUserId?: StringFilter<"SupplyChainLink"> | string
+    toUserId?: StringFilter<"SupplyChainLink"> | string
+    timestamp?: DateTimeFilter<"SupplyChainLink"> | Date | string
+    location?: JsonNullableFilter<"SupplyChainLink">
+    details?: JsonNullableFilter<"SupplyChainLink">
+    carbonFootprint?: FloatNullableFilter<"SupplyChainLink"> | number | null
+    certifications?: StringNullableListFilter<"SupplyChainLink">
     createdAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
     updatedAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
+    serviceProviderId?: StringNullableFilter<"SupplyChainLink"> | string | null
     supplyChain?: XOR<SupplyChainScalarRelationFilter, SupplyChainWhereInput>
-    serviceProvider?: XOR<IntermediaryProfileScalarRelationFilter, IntermediaryProfileWhereInput>
+    serviceProvider?: XOR<IntermediaryProfileNullableScalarRelationFilter, IntermediaryProfileWhereInput> | null
   }
 
   export type SupplyChainLinkOrderByWithRelationInput = {
     id?: SortOrder
     supplyChainId?: SortOrder
-    serviceProviderId?: SortOrder
-    serviceType?: SortOrder
-    fromLocation?: SortOrderInput | SortOrder
-    toLocation?: SortOrderInput | SortOrder
-    startTime?: SortOrderInput | SortOrder
-    endTime?: SortOrderInput | SortOrder
-    cost?: SortOrder
-    status?: SortOrder
+    type?: SortOrder
+    fromUserId?: SortOrder
+    toUserId?: SortOrder
+    timestamp?: SortOrder
+    location?: SortOrderInput | SortOrder
+    details?: SortOrderInput | SortOrder
+    carbonFootprint?: SortOrderInput | SortOrder
+    certifications?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    serviceProviderId?: SortOrderInput | SortOrder
     supplyChain?: SupplyChainOrderByWithRelationInput
     serviceProvider?: IntermediaryProfileOrderByWithRelationInput
   }
@@ -23725,33 +25523,35 @@ export namespace Prisma {
     OR?: SupplyChainLinkWhereInput[]
     NOT?: SupplyChainLinkWhereInput | SupplyChainLinkWhereInput[]
     supplyChainId?: StringFilter<"SupplyChainLink"> | string
-    serviceProviderId?: StringFilter<"SupplyChainLink"> | string
-    serviceType?: StringFilter<"SupplyChainLink"> | string
-    fromLocation?: JsonNullableFilter<"SupplyChainLink">
-    toLocation?: JsonNullableFilter<"SupplyChainLink">
-    startTime?: DateTimeNullableFilter<"SupplyChainLink"> | Date | string | null
-    endTime?: DateTimeNullableFilter<"SupplyChainLink"> | Date | string | null
-    cost?: FloatFilter<"SupplyChainLink"> | number
-    status?: StringFilter<"SupplyChainLink"> | string
+    type?: StringFilter<"SupplyChainLink"> | string
+    fromUserId?: StringFilter<"SupplyChainLink"> | string
+    toUserId?: StringFilter<"SupplyChainLink"> | string
+    timestamp?: DateTimeFilter<"SupplyChainLink"> | Date | string
+    location?: JsonNullableFilter<"SupplyChainLink">
+    details?: JsonNullableFilter<"SupplyChainLink">
+    carbonFootprint?: FloatNullableFilter<"SupplyChainLink"> | number | null
+    certifications?: StringNullableListFilter<"SupplyChainLink">
     createdAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
     updatedAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
+    serviceProviderId?: StringNullableFilter<"SupplyChainLink"> | string | null
     supplyChain?: XOR<SupplyChainScalarRelationFilter, SupplyChainWhereInput>
-    serviceProvider?: XOR<IntermediaryProfileScalarRelationFilter, IntermediaryProfileWhereInput>
+    serviceProvider?: XOR<IntermediaryProfileNullableScalarRelationFilter, IntermediaryProfileWhereInput> | null
   }, "id">
 
   export type SupplyChainLinkOrderByWithAggregationInput = {
     id?: SortOrder
     supplyChainId?: SortOrder
-    serviceProviderId?: SortOrder
-    serviceType?: SortOrder
-    fromLocation?: SortOrderInput | SortOrder
-    toLocation?: SortOrderInput | SortOrder
-    startTime?: SortOrderInput | SortOrder
-    endTime?: SortOrderInput | SortOrder
-    cost?: SortOrder
-    status?: SortOrder
+    type?: SortOrder
+    fromUserId?: SortOrder
+    toUserId?: SortOrder
+    timestamp?: SortOrder
+    location?: SortOrderInput | SortOrder
+    details?: SortOrderInput | SortOrder
+    carbonFootprint?: SortOrderInput | SortOrder
+    certifications?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    serviceProviderId?: SortOrderInput | SortOrder
     _count?: SupplyChainLinkCountOrderByAggregateInput
     _avg?: SupplyChainLinkAvgOrderByAggregateInput
     _max?: SupplyChainLinkMaxOrderByAggregateInput
@@ -23765,16 +25565,17 @@ export namespace Prisma {
     NOT?: SupplyChainLinkScalarWhereWithAggregatesInput | SupplyChainLinkScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"SupplyChainLink"> | string
     supplyChainId?: StringWithAggregatesFilter<"SupplyChainLink"> | string
-    serviceProviderId?: StringWithAggregatesFilter<"SupplyChainLink"> | string
-    serviceType?: StringWithAggregatesFilter<"SupplyChainLink"> | string
-    fromLocation?: JsonNullableWithAggregatesFilter<"SupplyChainLink">
-    toLocation?: JsonNullableWithAggregatesFilter<"SupplyChainLink">
-    startTime?: DateTimeNullableWithAggregatesFilter<"SupplyChainLink"> | Date | string | null
-    endTime?: DateTimeNullableWithAggregatesFilter<"SupplyChainLink"> | Date | string | null
-    cost?: FloatWithAggregatesFilter<"SupplyChainLink"> | number
-    status?: StringWithAggregatesFilter<"SupplyChainLink"> | string
+    type?: StringWithAggregatesFilter<"SupplyChainLink"> | string
+    fromUserId?: StringWithAggregatesFilter<"SupplyChainLink"> | string
+    toUserId?: StringWithAggregatesFilter<"SupplyChainLink"> | string
+    timestamp?: DateTimeWithAggregatesFilter<"SupplyChainLink"> | Date | string
+    location?: JsonNullableWithAggregatesFilter<"SupplyChainLink">
+    details?: JsonNullableWithAggregatesFilter<"SupplyChainLink">
+    carbonFootprint?: FloatNullableWithAggregatesFilter<"SupplyChainLink"> | number | null
+    certifications?: StringNullableListFilter<"SupplyChainLink">
     createdAt?: DateTimeWithAggregatesFilter<"SupplyChainLink"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SupplyChainLink"> | Date | string
+    serviceProviderId?: StringNullableWithAggregatesFilter<"SupplyChainLink"> | string | null
   }
 
   export type OrderWhereInput = {
@@ -23943,32 +25744,48 @@ export namespace Prisma {
     OR?: TransactionWhereInput[]
     NOT?: TransactionWhereInput | TransactionWhereInput[]
     id?: StringFilter<"Transaction"> | string
-    transactionId?: StringFilter<"Transaction"> | string
-    orderId?: StringNullableFilter<"Transaction"> | string | null
-    userId?: StringFilter<"Transaction"> | string
+    productId?: StringNullableFilter<"Transaction"> | string | null
+    senderId?: StringFilter<"Transaction"> | string
+    receiverId?: StringFilter<"Transaction"> | string
     amount?: FloatFilter<"Transaction"> | number
+    quantity?: FloatNullableFilter<"Transaction"> | number | null
+    unit?: StringNullableFilter<"Transaction"> | string | null
     type?: EnumTransactionTypeFilter<"Transaction"> | $Enums.TransactionType
     status?: EnumTransactionStatusFilter<"Transaction"> | $Enums.TransactionStatus
     paymentMethod?: StringNullableFilter<"Transaction"> | string | null
-    paymentDetails?: JsonNullableFilter<"Transaction">
-    profitSplit?: JsonNullableFilter<"Transaction">
+    paymentReference?: StringNullableFilter<"Transaction"> | string | null
+    paymentDate?: DateTimeNullableFilter<"Transaction"> | Date | string | null
+    deliveryDate?: DateTimeNullableFilter<"Transaction"> | Date | string | null
+    notes?: StringNullableFilter<"Transaction"> | string | null
+    metadata?: JsonNullableFilter<"Transaction">
+    transactionId?: StringNullableFilter<"Transaction"> | string | null
+    orderId?: StringNullableFilter<"Transaction"> | string | null
+    userId?: StringNullableFilter<"Transaction"> | string | null
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
     order?: XOR<OrderNullableScalarRelationFilter, OrderWhereInput> | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type TransactionOrderByWithRelationInput = {
     id?: SortOrder
-    transactionId?: SortOrder
-    orderId?: SortOrderInput | SortOrder
-    userId?: SortOrder
+    productId?: SortOrderInput | SortOrder
+    senderId?: SortOrder
+    receiverId?: SortOrder
     amount?: SortOrder
+    quantity?: SortOrderInput | SortOrder
+    unit?: SortOrderInput | SortOrder
     type?: SortOrder
     status?: SortOrder
     paymentMethod?: SortOrderInput | SortOrder
-    paymentDetails?: SortOrderInput | SortOrder
-    profitSplit?: SortOrderInput | SortOrder
+    paymentReference?: SortOrderInput | SortOrder
+    paymentDate?: SortOrderInput | SortOrder
+    deliveryDate?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    transactionId?: SortOrderInput | SortOrder
+    orderId?: SortOrderInput | SortOrder
+    userId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     order?: OrderOrderByWithRelationInput
@@ -23977,35 +25794,51 @@ export namespace Prisma {
 
   export type TransactionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    transactionId?: string
     AND?: TransactionWhereInput | TransactionWhereInput[]
     OR?: TransactionWhereInput[]
     NOT?: TransactionWhereInput | TransactionWhereInput[]
-    orderId?: StringNullableFilter<"Transaction"> | string | null
-    userId?: StringFilter<"Transaction"> | string
+    productId?: StringNullableFilter<"Transaction"> | string | null
+    senderId?: StringFilter<"Transaction"> | string
+    receiverId?: StringFilter<"Transaction"> | string
     amount?: FloatFilter<"Transaction"> | number
+    quantity?: FloatNullableFilter<"Transaction"> | number | null
+    unit?: StringNullableFilter<"Transaction"> | string | null
     type?: EnumTransactionTypeFilter<"Transaction"> | $Enums.TransactionType
     status?: EnumTransactionStatusFilter<"Transaction"> | $Enums.TransactionStatus
     paymentMethod?: StringNullableFilter<"Transaction"> | string | null
-    paymentDetails?: JsonNullableFilter<"Transaction">
-    profitSplit?: JsonNullableFilter<"Transaction">
+    paymentReference?: StringNullableFilter<"Transaction"> | string | null
+    paymentDate?: DateTimeNullableFilter<"Transaction"> | Date | string | null
+    deliveryDate?: DateTimeNullableFilter<"Transaction"> | Date | string | null
+    notes?: StringNullableFilter<"Transaction"> | string | null
+    metadata?: JsonNullableFilter<"Transaction">
+    transactionId?: StringNullableFilter<"Transaction"> | string | null
+    orderId?: StringNullableFilter<"Transaction"> | string | null
+    userId?: StringNullableFilter<"Transaction"> | string | null
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
     order?: XOR<OrderNullableScalarRelationFilter, OrderWhereInput> | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "transactionId">
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
 
   export type TransactionOrderByWithAggregationInput = {
     id?: SortOrder
-    transactionId?: SortOrder
-    orderId?: SortOrderInput | SortOrder
-    userId?: SortOrder
+    productId?: SortOrderInput | SortOrder
+    senderId?: SortOrder
+    receiverId?: SortOrder
     amount?: SortOrder
+    quantity?: SortOrderInput | SortOrder
+    unit?: SortOrderInput | SortOrder
     type?: SortOrder
     status?: SortOrder
     paymentMethod?: SortOrderInput | SortOrder
-    paymentDetails?: SortOrderInput | SortOrder
-    profitSplit?: SortOrderInput | SortOrder
+    paymentReference?: SortOrderInput | SortOrder
+    paymentDate?: SortOrderInput | SortOrder
+    deliveryDate?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    transactionId?: SortOrderInput | SortOrder
+    orderId?: SortOrderInput | SortOrder
+    userId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: TransactionCountOrderByAggregateInput
@@ -24020,15 +25853,23 @@ export namespace Prisma {
     OR?: TransactionScalarWhereWithAggregatesInput[]
     NOT?: TransactionScalarWhereWithAggregatesInput | TransactionScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Transaction"> | string
-    transactionId?: StringWithAggregatesFilter<"Transaction"> | string
-    orderId?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
-    userId?: StringWithAggregatesFilter<"Transaction"> | string
+    productId?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
+    senderId?: StringWithAggregatesFilter<"Transaction"> | string
+    receiverId?: StringWithAggregatesFilter<"Transaction"> | string
     amount?: FloatWithAggregatesFilter<"Transaction"> | number
+    quantity?: FloatNullableWithAggregatesFilter<"Transaction"> | number | null
+    unit?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
     type?: EnumTransactionTypeWithAggregatesFilter<"Transaction"> | $Enums.TransactionType
     status?: EnumTransactionStatusWithAggregatesFilter<"Transaction"> | $Enums.TransactionStatus
     paymentMethod?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
-    paymentDetails?: JsonNullableWithAggregatesFilter<"Transaction">
-    profitSplit?: JsonNullableWithAggregatesFilter<"Transaction">
+    paymentReference?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
+    paymentDate?: DateTimeNullableWithAggregatesFilter<"Transaction"> | Date | string | null
+    deliveryDate?: DateTimeNullableWithAggregatesFilter<"Transaction"> | Date | string | null
+    notes?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
+    metadata?: JsonNullableWithAggregatesFilter<"Transaction">
+    transactionId?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
+    orderId?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
+    userId?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
   }
@@ -24547,6 +26388,7 @@ export namespace Prisma {
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -24568,6 +26410,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserUpdateInput = {
@@ -24589,6 +26432,7 @@ export namespace Prisma {
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -24610,6 +26454,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -24933,6 +26778,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
+    bids?: BidCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateInput = {
@@ -24957,6 +26803,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
+    bids?: BidUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductUpdateInput = {
@@ -24981,6 +26828,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
+    bids?: BidUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateInput = {
@@ -25005,6 +26853,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
+    bids?: BidUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductCreateManyInput = {
@@ -25142,9 +26991,124 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BidCreateInput = {
+    id?: string
+    price: number
+    quantity: number
+    serviceType: string
+    description: string
+    validUntil: Date | string
+    terms?: string | null
+    status?: $Enums.BidStatus
+    responseReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutBidsInput
+    intermediary: UserCreateNestedOneWithoutBidsCreatedInput
+  }
+
+  export type BidUncheckedCreateInput = {
+    id?: string
+    productId: string
+    intermediaryId: string
+    price: number
+    quantity: number
+    serviceType: string
+    description: string
+    validUntil: Date | string
+    terms?: string | null
+    status?: $Enums.BidStatus
+    responseReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BidUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    serviceType?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    terms?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumBidStatusFieldUpdateOperationsInput | $Enums.BidStatus
+    responseReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutBidsNestedInput
+    intermediary?: UserUpdateOneRequiredWithoutBidsCreatedNestedInput
+  }
+
+  export type BidUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    intermediaryId?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    serviceType?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    terms?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumBidStatusFieldUpdateOperationsInput | $Enums.BidStatus
+    responseReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BidCreateManyInput = {
+    id?: string
+    productId: string
+    intermediaryId: string
+    price: number
+    quantity: number
+    serviceType: string
+    description: string
+    validUntil: Date | string
+    terms?: string | null
+    status?: $Enums.BidStatus
+    responseReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BidUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    serviceType?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    terms?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumBidStatusFieldUpdateOperationsInput | $Enums.BidStatus
+    responseReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BidUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    intermediaryId?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    serviceType?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    terms?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumBidStatusFieldUpdateOperationsInput | $Enums.BidStatus
+    responseReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SupplyChainCreateInput = {
     id?: string
-    status: string
+    startDate?: Date | string
+    endDate?: Date | string | null
+    isComplete?: boolean
+    name?: string | null
+    description?: string | null
+    createdById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     product: ProductCreateNestedOneWithoutSupplyChainInput
@@ -25154,7 +27118,12 @@ export namespace Prisma {
   export type SupplyChainUncheckedCreateInput = {
     id?: string
     productId: string
-    status: string
+    startDate?: Date | string
+    endDate?: Date | string | null
+    isComplete?: boolean
+    name?: string | null
+    description?: string | null
+    createdById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     links?: SupplyChainLinkUncheckedCreateNestedManyWithoutSupplyChainInput
@@ -25162,7 +27131,12 @@ export namespace Prisma {
 
   export type SupplyChainUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isComplete?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutSupplyChainNestedInput
@@ -25172,7 +27146,12 @@ export namespace Prisma {
   export type SupplyChainUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isComplete?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     links?: SupplyChainLinkUncheckedUpdateManyWithoutSupplyChainNestedInput
@@ -25181,14 +27160,24 @@ export namespace Prisma {
   export type SupplyChainCreateManyInput = {
     id?: string
     productId: string
-    status: string
+    startDate?: Date | string
+    endDate?: Date | string | null
+    isComplete?: boolean
+    name?: string | null
+    description?: string | null
+    createdById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type SupplyChainUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isComplete?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25196,95 +27185,106 @@ export namespace Prisma {
   export type SupplyChainUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isComplete?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SupplyChainLinkCreateInput = {
     id?: string
-    serviceType: string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: Date | string | null
-    endTime?: Date | string | null
-    cost: number
-    status: string
+    type: string
+    fromUserId: string
+    toUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
     supplyChain: SupplyChainCreateNestedOneWithoutLinksInput
-    serviceProvider: IntermediaryProfileCreateNestedOneWithoutSupplyChainLinksInput
+    serviceProvider?: IntermediaryProfileCreateNestedOneWithoutSupplyChainLinksInput
   }
 
   export type SupplyChainLinkUncheckedCreateInput = {
     id?: string
     supplyChainId: string
-    serviceProviderId: string
-    serviceType: string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: Date | string | null
-    endTime?: Date | string | null
-    cost: number
-    status: string
+    type: string
+    fromUserId: string
+    toUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    serviceProviderId?: string | null
   }
 
   export type SupplyChainLinkUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceType?: StringFieldUpdateOperationsInput | string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     supplyChain?: SupplyChainUpdateOneRequiredWithoutLinksNestedInput
-    serviceProvider?: IntermediaryProfileUpdateOneRequiredWithoutSupplyChainLinksNestedInput
+    serviceProvider?: IntermediaryProfileUpdateOneWithoutSupplyChainLinksNestedInput
   }
 
   export type SupplyChainLinkUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     supplyChainId?: StringFieldUpdateOperationsInput | string
-    serviceProviderId?: StringFieldUpdateOperationsInput | string
-    serviceType?: StringFieldUpdateOperationsInput | string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceProviderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SupplyChainLinkCreateManyInput = {
     id?: string
     supplyChainId: string
-    serviceProviderId: string
-    serviceType: string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: Date | string | null
-    endTime?: Date | string | null
-    cost: number
-    status: string
+    type: string
+    fromUserId: string
+    toUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    serviceProviderId?: string | null
   }
 
   export type SupplyChainLinkUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceType?: StringFieldUpdateOperationsInput | string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25292,16 +27292,17 @@ export namespace Prisma {
   export type SupplyChainLinkUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     supplyChainId?: StringFieldUpdateOperationsInput | string
-    serviceProviderId?: StringFieldUpdateOperationsInput | string
-    serviceType?: StringFieldUpdateOperationsInput | string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceProviderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderCreateInput = {
@@ -25476,103 +27477,159 @@ export namespace Prisma {
 
   export type TransactionCreateInput = {
     id?: string
-    transactionId: string
+    productId?: string | null
+    senderId: string
+    receiverId: string
     amount: number
+    quantity?: number | null
+    unit?: string | null
     type: $Enums.TransactionType
     status: $Enums.TransactionStatus
     paymentMethod?: string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     order?: OrderCreateNestedOneWithoutTransactionsInput
-    user: UserCreateNestedOneWithoutTransactionsInput
+    user?: UserCreateNestedOneWithoutTransactionsInput
   }
 
   export type TransactionUncheckedCreateInput = {
     id?: string
-    transactionId: string
-    orderId?: string | null
-    userId: string
+    productId?: string | null
+    senderId: string
+    receiverId: string
     amount: number
+    quantity?: number | null
+    unit?: string | null
     type: $Enums.TransactionType
     status: $Enums.TransactionStatus
     paymentMethod?: string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    orderId?: string | null
+    userId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type TransactionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    transactionId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
     paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     order?: OrderUpdateOneWithoutTransactionsNestedInput
-    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    user?: UserUpdateOneWithoutTransactionsNestedInput
   }
 
   export type TransactionUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    transactionId?: StringFieldUpdateOperationsInput | string
-    orderId?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
     paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransactionCreateManyInput = {
     id?: string
-    transactionId: string
-    orderId?: string | null
-    userId: string
+    productId?: string | null
+    senderId: string
+    receiverId: string
     amount: number
+    quantity?: number | null
+    unit?: string | null
     type: $Enums.TransactionType
     status: $Enums.TransactionStatus
     paymentMethod?: string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    orderId?: string | null
+    userId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type TransactionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    transactionId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
     paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransactionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    transactionId?: StringFieldUpdateOperationsInput | string
-    orderId?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
     paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26239,6 +28296,12 @@ export namespace Prisma {
     none?: TransactionWhereInput
   }
 
+  export type BidListRelationFilter = {
+    every?: BidWhereInput
+    some?: BidWhereInput
+    none?: BidWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -26257,6 +28320,10 @@ export namespace Prisma {
   }
 
   export type TransactionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BidOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -26850,10 +28917,90 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
+  export type EnumBidStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.BidStatus | EnumBidStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BidStatus[] | ListEnumBidStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BidStatus[] | ListEnumBidStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBidStatusFilter<$PrismaModel> | $Enums.BidStatus
+  }
+
+  export type BidCountOrderByAggregateInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    intermediaryId?: SortOrder
+    price?: SortOrder
+    quantity?: SortOrder
+    serviceType?: SortOrder
+    description?: SortOrder
+    validUntil?: SortOrder
+    terms?: SortOrder
+    status?: SortOrder
+    responseReason?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BidAvgOrderByAggregateInput = {
+    price?: SortOrder
+    quantity?: SortOrder
+  }
+
+  export type BidMaxOrderByAggregateInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    intermediaryId?: SortOrder
+    price?: SortOrder
+    quantity?: SortOrder
+    serviceType?: SortOrder
+    description?: SortOrder
+    validUntil?: SortOrder
+    terms?: SortOrder
+    status?: SortOrder
+    responseReason?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BidMinOrderByAggregateInput = {
+    id?: SortOrder
+    productId?: SortOrder
+    intermediaryId?: SortOrder
+    price?: SortOrder
+    quantity?: SortOrder
+    serviceType?: SortOrder
+    description?: SortOrder
+    validUntil?: SortOrder
+    terms?: SortOrder
+    status?: SortOrder
+    responseReason?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BidSumOrderByAggregateInput = {
+    price?: SortOrder
+    quantity?: SortOrder
+  }
+
+  export type EnumBidStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BidStatus | EnumBidStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BidStatus[] | ListEnumBidStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BidStatus[] | ListEnumBidStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBidStatusWithAggregatesFilter<$PrismaModel> | $Enums.BidStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBidStatusFilter<$PrismaModel>
+    _max?: NestedEnumBidStatusFilter<$PrismaModel>
+  }
+
   export type SupplyChainCountOrderByAggregateInput = {
     id?: SortOrder
     productId?: SortOrder
-    status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    isComplete?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    createdById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26861,7 +29008,12 @@ export namespace Prisma {
   export type SupplyChainMaxOrderByAggregateInput = {
     id?: SortOrder
     productId?: SortOrder
-    status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    isComplete?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    createdById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26869,7 +29021,12 @@ export namespace Prisma {
   export type SupplyChainMinOrderByAggregateInput = {
     id?: SortOrder
     productId?: SortOrder
-    status?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    isComplete?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    createdById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26879,58 +29036,54 @@ export namespace Prisma {
     isNot?: SupplyChainWhereInput
   }
 
-  export type IntermediaryProfileScalarRelationFilter = {
-    is?: IntermediaryProfileWhereInput
-    isNot?: IntermediaryProfileWhereInput
-  }
-
   export type SupplyChainLinkCountOrderByAggregateInput = {
     id?: SortOrder
     supplyChainId?: SortOrder
-    serviceProviderId?: SortOrder
-    serviceType?: SortOrder
-    fromLocation?: SortOrder
-    toLocation?: SortOrder
-    startTime?: SortOrder
-    endTime?: SortOrder
-    cost?: SortOrder
-    status?: SortOrder
+    type?: SortOrder
+    fromUserId?: SortOrder
+    toUserId?: SortOrder
+    timestamp?: SortOrder
+    location?: SortOrder
+    details?: SortOrder
+    carbonFootprint?: SortOrder
+    certifications?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    serviceProviderId?: SortOrder
   }
 
   export type SupplyChainLinkAvgOrderByAggregateInput = {
-    cost?: SortOrder
+    carbonFootprint?: SortOrder
   }
 
   export type SupplyChainLinkMaxOrderByAggregateInput = {
     id?: SortOrder
     supplyChainId?: SortOrder
-    serviceProviderId?: SortOrder
-    serviceType?: SortOrder
-    startTime?: SortOrder
-    endTime?: SortOrder
-    cost?: SortOrder
-    status?: SortOrder
+    type?: SortOrder
+    fromUserId?: SortOrder
+    toUserId?: SortOrder
+    timestamp?: SortOrder
+    carbonFootprint?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    serviceProviderId?: SortOrder
   }
 
   export type SupplyChainLinkMinOrderByAggregateInput = {
     id?: SortOrder
     supplyChainId?: SortOrder
-    serviceProviderId?: SortOrder
-    serviceType?: SortOrder
-    startTime?: SortOrder
-    endTime?: SortOrder
-    cost?: SortOrder
-    status?: SortOrder
+    type?: SortOrder
+    fromUserId?: SortOrder
+    toUserId?: SortOrder
+    timestamp?: SortOrder
+    carbonFootprint?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    serviceProviderId?: SortOrder
   }
 
   export type SupplyChainLinkSumOrderByAggregateInput = {
-    cost?: SortOrder
+    carbonFootprint?: SortOrder
   }
 
   export type EnumOrderStatusFilter<$PrismaModel = never> = {
@@ -27061,53 +29214,86 @@ export namespace Prisma {
     isNot?: OrderWhereInput | null
   }
 
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
   export type TransactionCountOrderByAggregateInput = {
     id?: SortOrder
-    transactionId?: SortOrder
-    orderId?: SortOrder
-    userId?: SortOrder
+    productId?: SortOrder
+    senderId?: SortOrder
+    receiverId?: SortOrder
     amount?: SortOrder
+    quantity?: SortOrder
+    unit?: SortOrder
     type?: SortOrder
     status?: SortOrder
     paymentMethod?: SortOrder
-    paymentDetails?: SortOrder
-    profitSplit?: SortOrder
+    paymentReference?: SortOrder
+    paymentDate?: SortOrder
+    deliveryDate?: SortOrder
+    notes?: SortOrder
+    metadata?: SortOrder
+    transactionId?: SortOrder
+    orderId?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type TransactionAvgOrderByAggregateInput = {
     amount?: SortOrder
+    quantity?: SortOrder
   }
 
   export type TransactionMaxOrderByAggregateInput = {
     id?: SortOrder
-    transactionId?: SortOrder
-    orderId?: SortOrder
-    userId?: SortOrder
+    productId?: SortOrder
+    senderId?: SortOrder
+    receiverId?: SortOrder
     amount?: SortOrder
+    quantity?: SortOrder
+    unit?: SortOrder
     type?: SortOrder
     status?: SortOrder
     paymentMethod?: SortOrder
+    paymentReference?: SortOrder
+    paymentDate?: SortOrder
+    deliveryDate?: SortOrder
+    notes?: SortOrder
+    transactionId?: SortOrder
+    orderId?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type TransactionMinOrderByAggregateInput = {
     id?: SortOrder
-    transactionId?: SortOrder
-    orderId?: SortOrder
-    userId?: SortOrder
+    productId?: SortOrder
+    senderId?: SortOrder
+    receiverId?: SortOrder
     amount?: SortOrder
+    quantity?: SortOrder
+    unit?: SortOrder
     type?: SortOrder
     status?: SortOrder
     paymentMethod?: SortOrder
+    paymentReference?: SortOrder
+    paymentDate?: SortOrder
+    deliveryDate?: SortOrder
+    notes?: SortOrder
+    transactionId?: SortOrder
+    orderId?: SortOrder
+    userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type TransactionSumOrderByAggregateInput = {
     amount?: SortOrder
+    quantity?: SortOrder
   }
 
   export type EnumTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -27543,6 +29729,13 @@ export namespace Prisma {
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
   }
 
+  export type BidCreateNestedManyWithoutIntermediaryInput = {
+    create?: XOR<BidCreateWithoutIntermediaryInput, BidUncheckedCreateWithoutIntermediaryInput> | BidCreateWithoutIntermediaryInput[] | BidUncheckedCreateWithoutIntermediaryInput[]
+    connectOrCreate?: BidCreateOrConnectWithoutIntermediaryInput | BidCreateOrConnectWithoutIntermediaryInput[]
+    createMany?: BidCreateManyIntermediaryInputEnvelope
+    connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+  }
+
   export type FarmerProfileUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<FarmerProfileCreateWithoutUserInput, FarmerProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: FarmerProfileCreateOrConnectWithoutUserInput
@@ -27594,6 +29787,13 @@ export namespace Prisma {
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
     createMany?: TransactionCreateManyUserInputEnvelope
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type BidUncheckedCreateNestedManyWithoutIntermediaryInput = {
+    create?: XOR<BidCreateWithoutIntermediaryInput, BidUncheckedCreateWithoutIntermediaryInput> | BidCreateWithoutIntermediaryInput[] | BidUncheckedCreateWithoutIntermediaryInput[]
+    connectOrCreate?: BidCreateOrConnectWithoutIntermediaryInput | BidCreateOrConnectWithoutIntermediaryInput[]
+    createMany?: BidCreateManyIntermediaryInputEnvelope
+    connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -27712,6 +29912,20 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
+  export type BidUpdateManyWithoutIntermediaryNestedInput = {
+    create?: XOR<BidCreateWithoutIntermediaryInput, BidUncheckedCreateWithoutIntermediaryInput> | BidCreateWithoutIntermediaryInput[] | BidUncheckedCreateWithoutIntermediaryInput[]
+    connectOrCreate?: BidCreateOrConnectWithoutIntermediaryInput | BidCreateOrConnectWithoutIntermediaryInput[]
+    upsert?: BidUpsertWithWhereUniqueWithoutIntermediaryInput | BidUpsertWithWhereUniqueWithoutIntermediaryInput[]
+    createMany?: BidCreateManyIntermediaryInputEnvelope
+    set?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    disconnect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    delete?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    update?: BidUpdateWithWhereUniqueWithoutIntermediaryInput | BidUpdateWithWhereUniqueWithoutIntermediaryInput[]
+    updateMany?: BidUpdateManyWithWhereWithoutIntermediaryInput | BidUpdateManyWithWhereWithoutIntermediaryInput[]
+    deleteMany?: BidScalarWhereInput | BidScalarWhereInput[]
+  }
+
   export type FarmerProfileUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<FarmerProfileCreateWithoutUserInput, FarmerProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: FarmerProfileCreateOrConnectWithoutUserInput
@@ -27810,6 +30024,20 @@ export namespace Prisma {
     update?: TransactionUpdateWithWhereUniqueWithoutUserInput | TransactionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: TransactionUpdateManyWithWhereWithoutUserInput | TransactionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type BidUncheckedUpdateManyWithoutIntermediaryNestedInput = {
+    create?: XOR<BidCreateWithoutIntermediaryInput, BidUncheckedCreateWithoutIntermediaryInput> | BidCreateWithoutIntermediaryInput[] | BidUncheckedCreateWithoutIntermediaryInput[]
+    connectOrCreate?: BidCreateOrConnectWithoutIntermediaryInput | BidCreateOrConnectWithoutIntermediaryInput[]
+    upsert?: BidUpsertWithWhereUniqueWithoutIntermediaryInput | BidUpsertWithWhereUniqueWithoutIntermediaryInput[]
+    createMany?: BidCreateManyIntermediaryInputEnvelope
+    set?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    disconnect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    delete?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    update?: BidUpdateWithWhereUniqueWithoutIntermediaryInput | BidUpdateWithWhereUniqueWithoutIntermediaryInput[]
+    updateMany?: BidUpdateManyWithWhereWithoutIntermediaryInput | BidUpdateManyWithWhereWithoutIntermediaryInput[]
+    deleteMany?: BidScalarWhereInput | BidScalarWhereInput[]
   }
 
   export type FarmerProfileCreatecropTypesInput = {
@@ -27993,6 +30221,13 @@ export namespace Prisma {
     connect?: ProductAnalyticsWhereUniqueInput
   }
 
+  export type BidCreateNestedManyWithoutProductInput = {
+    create?: XOR<BidCreateWithoutProductInput, BidUncheckedCreateWithoutProductInput> | BidCreateWithoutProductInput[] | BidUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: BidCreateOrConnectWithoutProductInput | BidCreateOrConnectWithoutProductInput[]
+    createMany?: BidCreateManyProductInputEnvelope
+    connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+  }
+
   export type OrderItemUncheckedCreateNestedManyWithoutProductInput = {
     create?: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput> | OrderItemCreateWithoutProductInput[] | OrderItemUncheckedCreateWithoutProductInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
@@ -28017,6 +30252,13 @@ export namespace Prisma {
     create?: XOR<ProductAnalyticsCreateWithoutProductInput, ProductAnalyticsUncheckedCreateWithoutProductInput>
     connectOrCreate?: ProductAnalyticsCreateOrConnectWithoutProductInput
     connect?: ProductAnalyticsWhereUniqueInput
+  }
+
+  export type BidUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<BidCreateWithoutProductInput, BidUncheckedCreateWithoutProductInput> | BidCreateWithoutProductInput[] | BidUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: BidCreateOrConnectWithoutProductInput | BidCreateOrConnectWithoutProductInput[]
+    createMany?: BidCreateManyProductInputEnvelope
+    connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
   }
 
   export type EnumProductCategoryFieldUpdateOperationsInput = {
@@ -28104,6 +30346,20 @@ export namespace Prisma {
     update?: XOR<XOR<ProductAnalyticsUpdateToOneWithWhereWithoutProductInput, ProductAnalyticsUpdateWithoutProductInput>, ProductAnalyticsUncheckedUpdateWithoutProductInput>
   }
 
+  export type BidUpdateManyWithoutProductNestedInput = {
+    create?: XOR<BidCreateWithoutProductInput, BidUncheckedCreateWithoutProductInput> | BidCreateWithoutProductInput[] | BidUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: BidCreateOrConnectWithoutProductInput | BidCreateOrConnectWithoutProductInput[]
+    upsert?: BidUpsertWithWhereUniqueWithoutProductInput | BidUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: BidCreateManyProductInputEnvelope
+    set?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    disconnect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    delete?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    update?: BidUpdateWithWhereUniqueWithoutProductInput | BidUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: BidUpdateManyWithWhereWithoutProductInput | BidUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: BidScalarWhereInput | BidScalarWhereInput[]
+  }
+
   export type OrderItemUncheckedUpdateManyWithoutProductNestedInput = {
     create?: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput> | OrderItemCreateWithoutProductInput[] | OrderItemUncheckedCreateWithoutProductInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
@@ -28152,6 +30408,20 @@ export namespace Prisma {
     update?: XOR<XOR<ProductAnalyticsUpdateToOneWithWhereWithoutProductInput, ProductAnalyticsUpdateWithoutProductInput>, ProductAnalyticsUncheckedUpdateWithoutProductInput>
   }
 
+  export type BidUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<BidCreateWithoutProductInput, BidUncheckedCreateWithoutProductInput> | BidCreateWithoutProductInput[] | BidUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: BidCreateOrConnectWithoutProductInput | BidCreateOrConnectWithoutProductInput[]
+    upsert?: BidUpsertWithWhereUniqueWithoutProductInput | BidUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: BidCreateManyProductInputEnvelope
+    set?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    disconnect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    delete?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+    update?: BidUpdateWithWhereUniqueWithoutProductInput | BidUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: BidUpdateManyWithWhereWithoutProductInput | BidUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: BidScalarWhereInput | BidScalarWhereInput[]
+  }
+
   export type ProductAnalyticsCreatepriceHistoryInput = {
     set: InputJsonValue[]
   }
@@ -28181,6 +30451,38 @@ export namespace Prisma {
     upsert?: ProductUpsertWithoutProductAnalyticsInput
     connect?: ProductWhereUniqueInput
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutProductAnalyticsInput, ProductUpdateWithoutProductAnalyticsInput>, ProductUncheckedUpdateWithoutProductAnalyticsInput>
+  }
+
+  export type ProductCreateNestedOneWithoutBidsInput = {
+    create?: XOR<ProductCreateWithoutBidsInput, ProductUncheckedCreateWithoutBidsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutBidsInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutBidsCreatedInput = {
+    create?: XOR<UserCreateWithoutBidsCreatedInput, UserUncheckedCreateWithoutBidsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBidsCreatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumBidStatusFieldUpdateOperationsInput = {
+    set?: $Enums.BidStatus
+  }
+
+  export type ProductUpdateOneRequiredWithoutBidsNestedInput = {
+    create?: XOR<ProductCreateWithoutBidsInput, ProductUncheckedCreateWithoutBidsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutBidsInput
+    upsert?: ProductUpsertWithoutBidsInput
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutBidsInput, ProductUpdateWithoutBidsInput>, ProductUncheckedUpdateWithoutBidsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutBidsCreatedNestedInput = {
+    create?: XOR<UserCreateWithoutBidsCreatedInput, UserUncheckedCreateWithoutBidsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBidsCreatedInput
+    upsert?: UserUpsertWithoutBidsCreatedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBidsCreatedInput, UserUpdateWithoutBidsCreatedInput>, UserUncheckedUpdateWithoutBidsCreatedInput>
   }
 
   export type ProductCreateNestedOneWithoutSupplyChainInput = {
@@ -28239,6 +30541,10 @@ export namespace Prisma {
     deleteMany?: SupplyChainLinkScalarWhereInput | SupplyChainLinkScalarWhereInput[]
   }
 
+  export type SupplyChainLinkCreatecertificationsInput = {
+    set: string[]
+  }
+
   export type SupplyChainCreateNestedOneWithoutLinksInput = {
     create?: XOR<SupplyChainCreateWithoutLinksInput, SupplyChainUncheckedCreateWithoutLinksInput>
     connectOrCreate?: SupplyChainCreateOrConnectWithoutLinksInput
@@ -28251,6 +30557,11 @@ export namespace Prisma {
     connect?: IntermediaryProfileWhereUniqueInput
   }
 
+  export type SupplyChainLinkUpdatecertificationsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
   export type SupplyChainUpdateOneRequiredWithoutLinksNestedInput = {
     create?: XOR<SupplyChainCreateWithoutLinksInput, SupplyChainUncheckedCreateWithoutLinksInput>
     connectOrCreate?: SupplyChainCreateOrConnectWithoutLinksInput
@@ -28259,10 +30570,12 @@ export namespace Prisma {
     update?: XOR<XOR<SupplyChainUpdateToOneWithWhereWithoutLinksInput, SupplyChainUpdateWithoutLinksInput>, SupplyChainUncheckedUpdateWithoutLinksInput>
   }
 
-  export type IntermediaryProfileUpdateOneRequiredWithoutSupplyChainLinksNestedInput = {
+  export type IntermediaryProfileUpdateOneWithoutSupplyChainLinksNestedInput = {
     create?: XOR<IntermediaryProfileCreateWithoutSupplyChainLinksInput, IntermediaryProfileUncheckedCreateWithoutSupplyChainLinksInput>
     connectOrCreate?: IntermediaryProfileCreateOrConnectWithoutSupplyChainLinksInput
     upsert?: IntermediaryProfileUpsertWithoutSupplyChainLinksInput
+    disconnect?: IntermediaryProfileWhereInput | boolean
+    delete?: IntermediaryProfileWhereInput | boolean
     connect?: IntermediaryProfileWhereUniqueInput
     update?: XOR<XOR<IntermediaryProfileUpdateToOneWithWhereWithoutSupplyChainLinksInput, IntermediaryProfileUpdateWithoutSupplyChainLinksInput>, IntermediaryProfileUncheckedUpdateWithoutSupplyChainLinksInput>
   }
@@ -28469,10 +30782,12 @@ export namespace Prisma {
     update?: XOR<XOR<OrderUpdateToOneWithWhereWithoutTransactionsInput, OrderUpdateWithoutTransactionsInput>, OrderUncheckedUpdateWithoutTransactionsInput>
   }
 
-  export type UserUpdateOneRequiredWithoutTransactionsNestedInput = {
+  export type UserUpdateOneWithoutTransactionsNestedInput = {
     create?: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutTransactionsInput
     upsert?: UserUpsertWithoutTransactionsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactionsInput, UserUpdateWithoutTransactionsInput>, UserUncheckedUpdateWithoutTransactionsInput>
   }
@@ -28920,6 +31235,23 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
+  export type NestedEnumBidStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.BidStatus | EnumBidStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BidStatus[] | ListEnumBidStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BidStatus[] | ListEnumBidStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBidStatusFilter<$PrismaModel> | $Enums.BidStatus
+  }
+
+  export type NestedEnumBidStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BidStatus | EnumBidStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.BidStatus[] | ListEnumBidStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BidStatus[] | ListEnumBidStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumBidStatusWithAggregatesFilter<$PrismaModel> | $Enums.BidStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBidStatusFilter<$PrismaModel>
+    _max?: NestedEnumBidStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumOrderStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
     in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
@@ -29117,6 +31449,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
+    bids?: BidCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutFarmerInput = {
@@ -29140,6 +31473,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
+    bids?: BidUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutFarmerInput = {
@@ -29252,13 +31586,21 @@ export namespace Prisma {
 
   export type TransactionCreateWithoutUserInput = {
     id?: string
-    transactionId: string
+    productId?: string | null
+    senderId: string
+    receiverId: string
     amount: number
+    quantity?: number | null
+    unit?: string | null
     type: $Enums.TransactionType
     status: $Enums.TransactionStatus
     paymentMethod?: string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     order?: OrderCreateNestedOneWithoutTransactionsInput
@@ -29266,14 +31608,22 @@ export namespace Prisma {
 
   export type TransactionUncheckedCreateWithoutUserInput = {
     id?: string
-    transactionId: string
-    orderId?: string | null
+    productId?: string | null
+    senderId: string
+    receiverId: string
     amount: number
+    quantity?: number | null
+    unit?: string | null
     type: $Enums.TransactionType
     status: $Enums.TransactionStatus
     paymentMethod?: string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    orderId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -29285,6 +31635,46 @@ export namespace Prisma {
 
   export type TransactionCreateManyUserInputEnvelope = {
     data: TransactionCreateManyUserInput | TransactionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BidCreateWithoutIntermediaryInput = {
+    id?: string
+    price: number
+    quantity: number
+    serviceType: string
+    description: string
+    validUntil: Date | string
+    terms?: string | null
+    status?: $Enums.BidStatus
+    responseReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutBidsInput
+  }
+
+  export type BidUncheckedCreateWithoutIntermediaryInput = {
+    id?: string
+    productId: string
+    price: number
+    quantity: number
+    serviceType: string
+    description: string
+    validUntil: Date | string
+    terms?: string | null
+    status?: $Enums.BidStatus
+    responseReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BidCreateOrConnectWithoutIntermediaryInput = {
+    where: BidWhereUniqueInput
+    create: XOR<BidCreateWithoutIntermediaryInput, BidUncheckedCreateWithoutIntermediaryInput>
+  }
+
+  export type BidCreateManyIntermediaryInputEnvelope = {
+    data: BidCreateManyIntermediaryInput | BidCreateManyIntermediaryInput[]
     skipDuplicates?: boolean
   }
 
@@ -29528,17 +31918,60 @@ export namespace Prisma {
     OR?: TransactionScalarWhereInput[]
     NOT?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
     id?: StringFilter<"Transaction"> | string
-    transactionId?: StringFilter<"Transaction"> | string
-    orderId?: StringNullableFilter<"Transaction"> | string | null
-    userId?: StringFilter<"Transaction"> | string
+    productId?: StringNullableFilter<"Transaction"> | string | null
+    senderId?: StringFilter<"Transaction"> | string
+    receiverId?: StringFilter<"Transaction"> | string
     amount?: FloatFilter<"Transaction"> | number
+    quantity?: FloatNullableFilter<"Transaction"> | number | null
+    unit?: StringNullableFilter<"Transaction"> | string | null
     type?: EnumTransactionTypeFilter<"Transaction"> | $Enums.TransactionType
     status?: EnumTransactionStatusFilter<"Transaction"> | $Enums.TransactionStatus
     paymentMethod?: StringNullableFilter<"Transaction"> | string | null
-    paymentDetails?: JsonNullableFilter<"Transaction">
-    profitSplit?: JsonNullableFilter<"Transaction">
+    paymentReference?: StringNullableFilter<"Transaction"> | string | null
+    paymentDate?: DateTimeNullableFilter<"Transaction"> | Date | string | null
+    deliveryDate?: DateTimeNullableFilter<"Transaction"> | Date | string | null
+    notes?: StringNullableFilter<"Transaction"> | string | null
+    metadata?: JsonNullableFilter<"Transaction">
+    transactionId?: StringNullableFilter<"Transaction"> | string | null
+    orderId?: StringNullableFilter<"Transaction"> | string | null
+    userId?: StringNullableFilter<"Transaction"> | string | null
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
+  }
+
+  export type BidUpsertWithWhereUniqueWithoutIntermediaryInput = {
+    where: BidWhereUniqueInput
+    update: XOR<BidUpdateWithoutIntermediaryInput, BidUncheckedUpdateWithoutIntermediaryInput>
+    create: XOR<BidCreateWithoutIntermediaryInput, BidUncheckedCreateWithoutIntermediaryInput>
+  }
+
+  export type BidUpdateWithWhereUniqueWithoutIntermediaryInput = {
+    where: BidWhereUniqueInput
+    data: XOR<BidUpdateWithoutIntermediaryInput, BidUncheckedUpdateWithoutIntermediaryInput>
+  }
+
+  export type BidUpdateManyWithWhereWithoutIntermediaryInput = {
+    where: BidScalarWhereInput
+    data: XOR<BidUpdateManyMutationInput, BidUncheckedUpdateManyWithoutIntermediaryInput>
+  }
+
+  export type BidScalarWhereInput = {
+    AND?: BidScalarWhereInput | BidScalarWhereInput[]
+    OR?: BidScalarWhereInput[]
+    NOT?: BidScalarWhereInput | BidScalarWhereInput[]
+    id?: StringFilter<"Bid"> | string
+    productId?: StringFilter<"Bid"> | string
+    intermediaryId?: StringFilter<"Bid"> | string
+    price?: FloatFilter<"Bid"> | number
+    quantity?: FloatFilter<"Bid"> | number
+    serviceType?: StringFilter<"Bid"> | string
+    description?: StringFilter<"Bid"> | string
+    validUntil?: DateTimeFilter<"Bid"> | Date | string
+    terms?: StringNullableFilter<"Bid"> | string | null
+    status?: EnumBidStatusFilter<"Bid"> | $Enums.BidStatus
+    responseReason?: StringNullableFilter<"Bid"> | string | null
+    createdAt?: DateTimeFilter<"Bid"> | Date | string
+    updatedAt?: DateTimeFilter<"Bid"> | Date | string
   }
 
   export type UserCreateWithoutFarmerProfileInput = {
@@ -29559,6 +31992,7 @@ export namespace Prisma {
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserUncheckedCreateWithoutFarmerProfileInput = {
@@ -29579,6 +32013,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserCreateOrConnectWithoutFarmerProfileInput = {
@@ -29615,6 +32050,7 @@ export namespace Prisma {
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFarmerProfileInput = {
@@ -29635,6 +32071,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserCreateWithoutIntermediaryProfileInput = {
@@ -29655,6 +32092,7 @@ export namespace Prisma {
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserUncheckedCreateWithoutIntermediaryProfileInput = {
@@ -29675,6 +32113,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserCreateOrConnectWithoutIntermediaryProfileInput = {
@@ -29684,13 +32123,14 @@ export namespace Prisma {
 
   export type SupplyChainLinkCreateWithoutServiceProviderInput = {
     id?: string
-    serviceType: string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: Date | string | null
-    endTime?: Date | string | null
-    cost: number
-    status: string
+    type: string
+    fromUserId: string
+    toUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
     supplyChain: SupplyChainCreateNestedOneWithoutLinksInput
@@ -29699,13 +32139,14 @@ export namespace Prisma {
   export type SupplyChainLinkUncheckedCreateWithoutServiceProviderInput = {
     id?: string
     supplyChainId: string
-    serviceType: string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: Date | string | null
-    endTime?: Date | string | null
-    cost: number
-    status: string
+    type: string
+    fromUserId: string
+    toUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -29749,6 +32190,7 @@ export namespace Prisma {
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserUncheckedUpdateWithoutIntermediaryProfileInput = {
@@ -29769,6 +32211,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type SupplyChainLinkUpsertWithWhereUniqueWithoutServiceProviderInput = {
@@ -29793,16 +32236,17 @@ export namespace Prisma {
     NOT?: SupplyChainLinkScalarWhereInput | SupplyChainLinkScalarWhereInput[]
     id?: StringFilter<"SupplyChainLink"> | string
     supplyChainId?: StringFilter<"SupplyChainLink"> | string
-    serviceProviderId?: StringFilter<"SupplyChainLink"> | string
-    serviceType?: StringFilter<"SupplyChainLink"> | string
-    fromLocation?: JsonNullableFilter<"SupplyChainLink">
-    toLocation?: JsonNullableFilter<"SupplyChainLink">
-    startTime?: DateTimeNullableFilter<"SupplyChainLink"> | Date | string | null
-    endTime?: DateTimeNullableFilter<"SupplyChainLink"> | Date | string | null
-    cost?: FloatFilter<"SupplyChainLink"> | number
-    status?: StringFilter<"SupplyChainLink"> | string
+    type?: StringFilter<"SupplyChainLink"> | string
+    fromUserId?: StringFilter<"SupplyChainLink"> | string
+    toUserId?: StringFilter<"SupplyChainLink"> | string
+    timestamp?: DateTimeFilter<"SupplyChainLink"> | Date | string
+    location?: JsonNullableFilter<"SupplyChainLink">
+    details?: JsonNullableFilter<"SupplyChainLink">
+    carbonFootprint?: FloatNullableFilter<"SupplyChainLink"> | number | null
+    certifications?: StringNullableListFilter<"SupplyChainLink">
     createdAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
     updatedAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
+    serviceProviderId?: StringNullableFilter<"SupplyChainLink"> | string | null
   }
 
   export type UserCreateWithoutConsumerProfileInput = {
@@ -29823,6 +32267,7 @@ export namespace Prisma {
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserUncheckedCreateWithoutConsumerProfileInput = {
@@ -29843,6 +32288,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserCreateOrConnectWithoutConsumerProfileInput = {
@@ -29879,6 +32325,7 @@ export namespace Prisma {
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserUncheckedUpdateWithoutConsumerProfileInput = {
@@ -29899,6 +32346,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserCreateWithoutProductsListedInput = {
@@ -29919,6 +32367,7 @@ export namespace Prisma {
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserUncheckedCreateWithoutProductsListedInput = {
@@ -29939,6 +32388,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserCreateOrConnectWithoutProductsListedInput = {
@@ -29978,7 +32428,12 @@ export namespace Prisma {
 
   export type SupplyChainCreateWithoutProductInput = {
     id?: string
-    status: string
+    startDate?: Date | string
+    endDate?: Date | string | null
+    isComplete?: boolean
+    name?: string | null
+    description?: string | null
+    createdById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     links?: SupplyChainLinkCreateNestedManyWithoutSupplyChainInput
@@ -29986,7 +32441,12 @@ export namespace Prisma {
 
   export type SupplyChainUncheckedCreateWithoutProductInput = {
     id?: string
-    status: string
+    startDate?: Date | string
+    endDate?: Date | string | null
+    isComplete?: boolean
+    name?: string | null
+    description?: string | null
+    createdById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     links?: SupplyChainLinkUncheckedCreateNestedManyWithoutSupplyChainInput
@@ -30062,6 +32522,46 @@ export namespace Prisma {
     create: XOR<ProductAnalyticsCreateWithoutProductInput, ProductAnalyticsUncheckedCreateWithoutProductInput>
   }
 
+  export type BidCreateWithoutProductInput = {
+    id?: string
+    price: number
+    quantity: number
+    serviceType: string
+    description: string
+    validUntil: Date | string
+    terms?: string | null
+    status?: $Enums.BidStatus
+    responseReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    intermediary: UserCreateNestedOneWithoutBidsCreatedInput
+  }
+
+  export type BidUncheckedCreateWithoutProductInput = {
+    id?: string
+    intermediaryId: string
+    price: number
+    quantity: number
+    serviceType: string
+    description: string
+    validUntil: Date | string
+    terms?: string | null
+    status?: $Enums.BidStatus
+    responseReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BidCreateOrConnectWithoutProductInput = {
+    where: BidWhereUniqueInput
+    create: XOR<BidCreateWithoutProductInput, BidUncheckedCreateWithoutProductInput>
+  }
+
+  export type BidCreateManyProductInputEnvelope = {
+    data: BidCreateManyProductInput | BidCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutProductsListedInput = {
     update: XOR<UserUpdateWithoutProductsListedInput, UserUncheckedUpdateWithoutProductsListedInput>
     create: XOR<UserCreateWithoutProductsListedInput, UserUncheckedCreateWithoutProductsListedInput>
@@ -30091,6 +32591,7 @@ export namespace Prisma {
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProductsListedInput = {
@@ -30111,6 +32612,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type OrderItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -30156,7 +32658,12 @@ export namespace Prisma {
 
   export type SupplyChainUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isComplete?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     links?: SupplyChainLinkUpdateManyWithoutSupplyChainNestedInput
@@ -30164,7 +32671,12 @@ export namespace Prisma {
 
   export type SupplyChainUncheckedUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isComplete?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     links?: SupplyChainLinkUncheckedUpdateManyWithoutSupplyChainNestedInput
@@ -30236,6 +32748,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BidUpsertWithWhereUniqueWithoutProductInput = {
+    where: BidWhereUniqueInput
+    update: XOR<BidUpdateWithoutProductInput, BidUncheckedUpdateWithoutProductInput>
+    create: XOR<BidCreateWithoutProductInput, BidUncheckedCreateWithoutProductInput>
+  }
+
+  export type BidUpdateWithWhereUniqueWithoutProductInput = {
+    where: BidWhereUniqueInput
+    data: XOR<BidUpdateWithoutProductInput, BidUncheckedUpdateWithoutProductInput>
+  }
+
+  export type BidUpdateManyWithWhereWithoutProductInput = {
+    where: BidScalarWhereInput
+    data: XOR<BidUpdateManyMutationInput, BidUncheckedUpdateManyWithoutProductInput>
+  }
+
   export type ProductCreateWithoutProductAnalyticsInput = {
     id?: string
     name: string
@@ -30257,6 +32785,7 @@ export namespace Prisma {
     orders?: OrderItemCreateNestedManyWithoutProductInput
     supplyChain?: SupplyChainCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
+    bids?: BidCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutProductAnalyticsInput = {
@@ -30280,6 +32809,7 @@ export namespace Prisma {
     orders?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     supplyChain?: SupplyChainUncheckedCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
+    bids?: BidUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutProductAnalyticsInput = {
@@ -30319,6 +32849,7 @@ export namespace Prisma {
     orders?: OrderItemUpdateManyWithoutProductNestedInput
     supplyChain?: SupplyChainUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
+    bids?: BidUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutProductAnalyticsInput = {
@@ -30342,6 +32873,219 @@ export namespace Prisma {
     orders?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     supplyChain?: SupplyChainUncheckedUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
+    bids?: BidUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductCreateWithoutBidsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    category: $Enums.ProductCategory
+    quantity: number
+    unit: string
+    basePrice: number
+    finalPrice?: number | null
+    images?: ProductCreateimagesInput | string[]
+    harvestDate?: Date | string | null
+    availableUntil?: Date | string | null
+    status?: $Enums.ProductStatus
+    location?: NullableJsonNullValueInput | InputJsonValue
+    organicCertified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmer: UserCreateNestedOneWithoutProductsListedInput
+    orders?: OrderItemCreateNestedManyWithoutProductInput
+    supplyChain?: SupplyChainCreateNestedOneWithoutProductInput
+    traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
+    productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutBidsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    farmerId: string
+    category: $Enums.ProductCategory
+    quantity: number
+    unit: string
+    basePrice: number
+    finalPrice?: number | null
+    images?: ProductCreateimagesInput | string[]
+    harvestDate?: Date | string | null
+    availableUntil?: Date | string | null
+    status?: $Enums.ProductStatus
+    location?: NullableJsonNullValueInput | InputJsonValue
+    organicCertified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    orders?: OrderItemUncheckedCreateNestedManyWithoutProductInput
+    supplyChain?: SupplyChainUncheckedCreateNestedOneWithoutProductInput
+    traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
+    productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutBidsInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutBidsInput, ProductUncheckedCreateWithoutBidsInput>
+  }
+
+  export type UserCreateWithoutBidsCreatedInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    phone?: string | null
+    address?: string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmerProfile?: FarmerProfileCreateNestedOneWithoutUserInput
+    intermediaryProfile?: IntermediaryProfileCreateNestedOneWithoutUserInput
+    consumerProfile?: ConsumerProfileCreateNestedOneWithoutUserInput
+    productsListed?: ProductCreateNestedManyWithoutFarmerInput
+    orders?: OrderCreateNestedManyWithoutBuyerInput
+    ratings?: RatingCreateNestedManyWithoutToUserInput
+    ratedBy?: RatingCreateNestedManyWithoutFromUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutBidsCreatedInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    phone?: string | null
+    address?: string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmerProfile?: FarmerProfileUncheckedCreateNestedOneWithoutUserInput
+    intermediaryProfile?: IntermediaryProfileUncheckedCreateNestedOneWithoutUserInput
+    consumerProfile?: ConsumerProfileUncheckedCreateNestedOneWithoutUserInput
+    productsListed?: ProductUncheckedCreateNestedManyWithoutFarmerInput
+    orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
+    ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
+    ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutBidsCreatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutBidsCreatedInput, UserUncheckedCreateWithoutBidsCreatedInput>
+  }
+
+  export type ProductUpsertWithoutBidsInput = {
+    update: XOR<ProductUpdateWithoutBidsInput, ProductUncheckedUpdateWithoutBidsInput>
+    create: XOR<ProductCreateWithoutBidsInput, ProductUncheckedCreateWithoutBidsInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutBidsInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutBidsInput, ProductUncheckedUpdateWithoutBidsInput>
+  }
+
+  export type ProductUpdateWithoutBidsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumProductCategoryFieldUpdateOperationsInput | $Enums.ProductCategory
+    quantity?: FloatFieldUpdateOperationsInput | number
+    unit?: StringFieldUpdateOperationsInput | string
+    basePrice?: FloatFieldUpdateOperationsInput | number
+    finalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    images?: ProductUpdateimagesInput | string[]
+    harvestDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
+    location?: NullableJsonNullValueInput | InputJsonValue
+    organicCertified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmer?: UserUpdateOneRequiredWithoutProductsListedNestedInput
+    orders?: OrderItemUpdateManyWithoutProductNestedInput
+    supplyChain?: SupplyChainUpdateOneWithoutProductNestedInput
+    traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
+    productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutBidsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    farmerId?: StringFieldUpdateOperationsInput | string
+    category?: EnumProductCategoryFieldUpdateOperationsInput | $Enums.ProductCategory
+    quantity?: FloatFieldUpdateOperationsInput | number
+    unit?: StringFieldUpdateOperationsInput | string
+    basePrice?: FloatFieldUpdateOperationsInput | number
+    finalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    images?: ProductUpdateimagesInput | string[]
+    harvestDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
+    location?: NullableJsonNullValueInput | InputJsonValue
+    organicCertified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orders?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
+    supplyChain?: SupplyChainUncheckedUpdateOneWithoutProductNestedInput
+    traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
+    productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
+  }
+
+  export type UserUpsertWithoutBidsCreatedInput = {
+    update: XOR<UserUpdateWithoutBidsCreatedInput, UserUncheckedUpdateWithoutBidsCreatedInput>
+    create: XOR<UserCreateWithoutBidsCreatedInput, UserUncheckedCreateWithoutBidsCreatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutBidsCreatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutBidsCreatedInput, UserUncheckedUpdateWithoutBidsCreatedInput>
+  }
+
+  export type UserUpdateWithoutBidsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmerProfile?: FarmerProfileUpdateOneWithoutUserNestedInput
+    intermediaryProfile?: IntermediaryProfileUpdateOneWithoutUserNestedInput
+    consumerProfile?: ConsumerProfileUpdateOneWithoutUserNestedInput
+    productsListed?: ProductUpdateManyWithoutFarmerNestedInput
+    orders?: OrderUpdateManyWithoutBuyerNestedInput
+    ratings?: RatingUpdateManyWithoutToUserNestedInput
+    ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutBidsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmerProfile?: FarmerProfileUncheckedUpdateOneWithoutUserNestedInput
+    intermediaryProfile?: IntermediaryProfileUncheckedUpdateOneWithoutUserNestedInput
+    consumerProfile?: ConsumerProfileUncheckedUpdateOneWithoutUserNestedInput
+    productsListed?: ProductUncheckedUpdateManyWithoutFarmerNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
+    ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
+    ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProductCreateWithoutSupplyChainInput = {
@@ -30365,6 +33109,7 @@ export namespace Prisma {
     orders?: OrderItemCreateNestedManyWithoutProductInput
     traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
+    bids?: BidCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutSupplyChainInput = {
@@ -30388,6 +33133,7 @@ export namespace Prisma {
     orders?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
+    bids?: BidUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutSupplyChainInput = {
@@ -30397,30 +33143,32 @@ export namespace Prisma {
 
   export type SupplyChainLinkCreateWithoutSupplyChainInput = {
     id?: string
-    serviceType: string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: Date | string | null
-    endTime?: Date | string | null
-    cost: number
-    status: string
+    type: string
+    fromUserId: string
+    toUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    serviceProvider: IntermediaryProfileCreateNestedOneWithoutSupplyChainLinksInput
+    serviceProvider?: IntermediaryProfileCreateNestedOneWithoutSupplyChainLinksInput
   }
 
   export type SupplyChainLinkUncheckedCreateWithoutSupplyChainInput = {
     id?: string
-    serviceProviderId: string
-    serviceType: string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: Date | string | null
-    endTime?: Date | string | null
-    cost: number
-    status: string
+    type: string
+    fromUserId: string
+    toUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    serviceProviderId?: string | null
   }
 
   export type SupplyChainLinkCreateOrConnectWithoutSupplyChainInput = {
@@ -30465,6 +33213,7 @@ export namespace Prisma {
     orders?: OrderItemUpdateManyWithoutProductNestedInput
     traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
+    bids?: BidUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutSupplyChainInput = {
@@ -30488,6 +33237,7 @@ export namespace Prisma {
     orders?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
+    bids?: BidUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type SupplyChainLinkUpsertWithWhereUniqueWithoutSupplyChainInput = {
@@ -30508,7 +33258,12 @@ export namespace Prisma {
 
   export type SupplyChainCreateWithoutLinksInput = {
     id?: string
-    status: string
+    startDate?: Date | string
+    endDate?: Date | string | null
+    isComplete?: boolean
+    name?: string | null
+    description?: string | null
+    createdById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     product: ProductCreateNestedOneWithoutSupplyChainInput
@@ -30517,7 +33272,12 @@ export namespace Prisma {
   export type SupplyChainUncheckedCreateWithoutLinksInput = {
     id?: string
     productId: string
-    status: string
+    startDate?: Date | string
+    endDate?: Date | string | null
+    isComplete?: boolean
+    name?: string | null
+    description?: string | null
+    createdById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -30569,7 +33329,12 @@ export namespace Prisma {
 
   export type SupplyChainUpdateWithoutLinksInput = {
     id?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isComplete?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutSupplyChainNestedInput
@@ -30578,7 +33343,12 @@ export namespace Prisma {
   export type SupplyChainUncheckedUpdateWithoutLinksInput = {
     id?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isComplete?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -30636,6 +33406,7 @@ export namespace Prisma {
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserUncheckedCreateWithoutOrdersInput = {
@@ -30656,6 +33427,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserCreateOrConnectWithoutOrdersInput = {
@@ -30695,28 +33467,44 @@ export namespace Prisma {
 
   export type TransactionCreateWithoutOrderInput = {
     id?: string
-    transactionId: string
+    productId?: string | null
+    senderId: string
+    receiverId: string
     amount: number
+    quantity?: number | null
+    unit?: string | null
     type: $Enums.TransactionType
     status: $Enums.TransactionStatus
     paymentMethod?: string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutTransactionsInput
+    user?: UserCreateNestedOneWithoutTransactionsInput
   }
 
   export type TransactionUncheckedCreateWithoutOrderInput = {
     id?: string
-    transactionId: string
-    userId: string
+    productId?: string | null
+    senderId: string
+    receiverId: string
     amount: number
+    quantity?: number | null
+    unit?: string | null
     type: $Enums.TransactionType
     status: $Enums.TransactionStatus
     paymentMethod?: string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    userId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -30800,6 +33588,7 @@ export namespace Prisma {
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -30820,6 +33609,7 @@ export namespace Prisma {
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type OrderItemUpsertWithWhereUniqueWithoutOrderInput = {
@@ -30924,6 +33714,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
+    bids?: BidCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutOrdersInput = {
@@ -30947,6 +33738,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
+    bids?: BidUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutOrdersInput = {
@@ -31025,6 +33817,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
+    bids?: BidUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutOrdersInput = {
@@ -31048,6 +33841,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
+    bids?: BidUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type OrderCreateWithoutTransactionsInput = {
@@ -31101,6 +33895,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserUncheckedCreateWithoutTransactionsInput = {
@@ -31121,6 +33916,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -31196,6 +33992,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransactionsInput = {
@@ -31216,6 +34013,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type ProductCreateWithoutTraceabilityInput = {
@@ -31239,6 +34037,7 @@ export namespace Prisma {
     orders?: OrderItemCreateNestedManyWithoutProductInput
     supplyChain?: SupplyChainCreateNestedOneWithoutProductInput
     productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
+    bids?: BidCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutTraceabilityInput = {
@@ -31262,6 +34061,7 @@ export namespace Prisma {
     orders?: OrderItemUncheckedCreateNestedManyWithoutProductInput
     supplyChain?: SupplyChainUncheckedCreateNestedOneWithoutProductInput
     productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
+    bids?: BidUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutTraceabilityInput = {
@@ -31334,6 +34134,7 @@ export namespace Prisma {
     orders?: OrderItemUpdateManyWithoutProductNestedInput
     supplyChain?: SupplyChainUpdateOneWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
+    bids?: BidUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutTraceabilityInput = {
@@ -31357,6 +34158,7 @@ export namespace Prisma {
     orders?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     supplyChain?: SupplyChainUncheckedUpdateOneWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
+    bids?: BidUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type OrderUpsertWithoutTraceabilityInput = {
@@ -31416,6 +34218,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratings?: RatingCreateNestedManyWithoutToUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserUncheckedCreateWithoutRatedByInput = {
@@ -31436,6 +34239,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserCreateOrConnectWithoutRatedByInput = {
@@ -31461,6 +34265,7 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserUncheckedCreateWithoutRatingsInput = {
@@ -31481,6 +34286,7 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
   }
 
   export type UserCreateOrConnectWithoutRatingsInput = {
@@ -31517,6 +34323,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRatedByInput = {
@@ -31537,6 +34344,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserUpsertWithoutRatingsInput = {
@@ -31568,6 +34376,7 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRatingsInput = {
@@ -31588,6 +34397,7 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
   }
 
   export type PredictionCreateWithoutModelInput = {
@@ -31779,14 +34589,37 @@ export namespace Prisma {
 
   export type TransactionCreateManyUserInput = {
     id?: string
-    transactionId: string
-    orderId?: string | null
+    productId?: string | null
+    senderId: string
+    receiverId: string
     amount: number
+    quantity?: number | null
+    unit?: string | null
     type: $Enums.TransactionType
     status: $Enums.TransactionStatus
     paymentMethod?: string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    orderId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BidCreateManyIntermediaryInput = {
+    id?: string
+    productId: string
+    price: number
+    quantity: number
+    serviceType: string
+    description: string
+    validUntil: Date | string
+    terms?: string | null
+    status?: $Enums.BidStatus
+    responseReason?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -31812,6 +34645,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
+    bids?: BidUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutFarmerInput = {
@@ -31835,6 +34669,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
+    bids?: BidUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateManyWithoutFarmerInput = {
@@ -31957,13 +34792,21 @@ export namespace Prisma {
 
   export type TransactionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    transactionId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
     paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     order?: OrderUpdateOneWithoutTransactionsNestedInput
@@ -31971,28 +34814,89 @@ export namespace Prisma {
 
   export type TransactionUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    transactionId?: StringFieldUpdateOperationsInput | string
-    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
     paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransactionUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    transactionId?: StringFieldUpdateOperationsInput | string
-    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
     paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BidUpdateWithoutIntermediaryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    serviceType?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    terms?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumBidStatusFieldUpdateOperationsInput | $Enums.BidStatus
+    responseReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutBidsNestedInput
+  }
+
+  export type BidUncheckedUpdateWithoutIntermediaryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    serviceType?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    terms?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumBidStatusFieldUpdateOperationsInput | $Enums.BidStatus
+    responseReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BidUncheckedUpdateManyWithoutIntermediaryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    serviceType?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    terms?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumBidStatusFieldUpdateOperationsInput | $Enums.BidStatus
+    responseReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -32000,26 +34904,28 @@ export namespace Prisma {
   export type SupplyChainLinkCreateManyServiceProviderInput = {
     id?: string
     supplyChainId: string
-    serviceType: string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: Date | string | null
-    endTime?: Date | string | null
-    cost: number
-    status: string
+    type: string
+    fromUserId: string
+    toUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type SupplyChainLinkUpdateWithoutServiceProviderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceType?: StringFieldUpdateOperationsInput | string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     supplyChain?: SupplyChainUpdateOneRequiredWithoutLinksNestedInput
@@ -32028,13 +34934,14 @@ export namespace Prisma {
   export type SupplyChainLinkUncheckedUpdateWithoutServiceProviderInput = {
     id?: StringFieldUpdateOperationsInput | string
     supplyChainId?: StringFieldUpdateOperationsInput | string
-    serviceType?: StringFieldUpdateOperationsInput | string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -32042,13 +34949,14 @@ export namespace Prisma {
   export type SupplyChainLinkUncheckedUpdateManyWithoutServiceProviderInput = {
     id?: StringFieldUpdateOperationsInput | string
     supplyChainId?: StringFieldUpdateOperationsInput | string
-    serviceType?: StringFieldUpdateOperationsInput | string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -32076,6 +34984,21 @@ export namespace Prisma {
     previousHash?: string | null
     currentHash?: string | null
     createdAt?: Date | string
+  }
+
+  export type BidCreateManyProductInput = {
+    id?: string
+    intermediaryId: string
+    price: number
+    quantity: number
+    serviceType: string
+    description: string
+    validUntil: Date | string
+    terms?: string | null
+    status?: $Enums.BidStatus
+    responseReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type OrderItemUpdateWithoutProductInput = {
@@ -32153,60 +35076,109 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BidUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    serviceType?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    terms?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumBidStatusFieldUpdateOperationsInput | $Enums.BidStatus
+    responseReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    intermediary?: UserUpdateOneRequiredWithoutBidsCreatedNestedInput
+  }
+
+  export type BidUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    intermediaryId?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    serviceType?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    terms?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumBidStatusFieldUpdateOperationsInput | $Enums.BidStatus
+    responseReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BidUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    intermediaryId?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    serviceType?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    terms?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumBidStatusFieldUpdateOperationsInput | $Enums.BidStatus
+    responseReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SupplyChainLinkCreateManySupplyChainInput = {
     id?: string
-    serviceProviderId: string
-    serviceType: string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: Date | string | null
-    endTime?: Date | string | null
-    cost: number
-    status: string
+    type: string
+    fromUserId: string
+    toUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    serviceProviderId?: string | null
   }
 
   export type SupplyChainLinkUpdateWithoutSupplyChainInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceType?: StringFieldUpdateOperationsInput | string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    serviceProvider?: IntermediaryProfileUpdateOneRequiredWithoutSupplyChainLinksNestedInput
+    serviceProvider?: IntermediaryProfileUpdateOneWithoutSupplyChainLinksNestedInput
   }
 
   export type SupplyChainLinkUncheckedUpdateWithoutSupplyChainInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceProviderId?: StringFieldUpdateOperationsInput | string
-    serviceType?: StringFieldUpdateOperationsInput | string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceProviderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SupplyChainLinkUncheckedUpdateManyWithoutSupplyChainInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceProviderId?: StringFieldUpdateOperationsInput | string
-    serviceType?: StringFieldUpdateOperationsInput | string
-    fromLocation?: NullableJsonNullValueInput | InputJsonValue
-    toLocation?: NullableJsonNullValueInput | InputJsonValue
-    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceProviderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderItemCreateManyOrderInput = {
@@ -32221,14 +35193,22 @@ export namespace Prisma {
 
   export type TransactionCreateManyOrderInput = {
     id?: string
-    transactionId: string
-    userId: string
+    productId?: string | null
+    senderId: string
+    receiverId: string
     amount: number
+    quantity?: number | null
+    unit?: string | null
     type: $Enums.TransactionType
     status: $Enums.TransactionStatus
     paymentMethod?: string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    userId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -32280,42 +35260,66 @@ export namespace Prisma {
 
   export type TransactionUpdateWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    transactionId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
     paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    user?: UserUpdateOneWithoutTransactionsNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    transactionId?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
     paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransactionUncheckedUpdateManyWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    transactionId?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
     status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
     paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
-    paymentDetails?: NullableJsonNullValueInput | InputJsonValue
-    profitSplit?: NullableJsonNullValueInput | InputJsonValue
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

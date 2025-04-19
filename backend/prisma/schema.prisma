@@ -58,6 +58,7 @@ model User {
   ratings          Rating[]
   ratedBy          Rating[]    @relation("RatedBy")
   transactions     Transaction[]
+  bidsCreated      Bid[]       @relation("BidCreator")
 }
 
 model FarmerProfile {
@@ -118,6 +119,7 @@ enum ProductStatus {
   DRAFT
   LISTED
   SOLD
+  PROCESSING
   EXPIRED
   CANCELLED
 }
@@ -147,6 +149,7 @@ model Product {
   supplyChain   SupplyChain?
   traceability  TraceabilityRecord[]
   productAnalytics ProductAnalytics?
+  bids          Bid[]     // Bids from intermediaries
 }
 
 model ProductAnalytics {
@@ -161,12 +164,44 @@ model ProductAnalytics {
   updatedAt     DateTime  @updatedAt
 }
 
+// Bidding system for intermediaries
+enum BidStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  EXPIRED
+}
+
+model Bid {
+  id              String    @id @default(uuid())
+  productId       String
+  product         Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  intermediaryId  String
+  intermediary    User      @relation("BidCreator", fields: [intermediaryId], references: [id])
+  price           Float     // Price per unit offered by the intermediary
+  quantity        Float     // Quantity requested
+  serviceType     String    // Type of service offered (LOGISTICS, STORAGE, etc.)
+  description     String    // Description of the service offered
+  validUntil      DateTime  // Validity period of the bid
+  terms           String?   // Additional terms and conditions
+  status          BidStatus @default(PENDING)
+  responseReason  String?   // Reason for acceptance or rejection (provided by farmer)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
 // Supply chain management
 model SupplyChain {
   id            String    @id @default(uuid())
   productId     String    @unique
   product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
-  status        String
+  startDate     DateTime  @default(now())
+  endDate       DateTime?
+  isComplete    Boolean   @default(false)
+  name          String?
+  description   String?
+  createdById   String?   // User who created this supply chain
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -178,17 +213,20 @@ model SupplyChainLink {
   id            String    @id @default(uuid())
   supplyChainId String
   supplyChain   SupplyChain @relation(fields: [supplyChainId], references: [id], onDelete: Cascade)
-  serviceProviderId String
-  serviceProvider IntermediaryProfile @relation("ServiceProvider", fields: [serviceProviderId], references: [id])
-  serviceType   String    // e.g., "transportation", "storage"
-  fromLocation  Json?
-  toLocation    Json?
-  startTime     DateTime?
-  endTime       DateTime?
-  cost          Float
-  status        String
+  type          String    // PRODUCTION, PROCESSING, TRANSPORTATION, etc.
+  fromUserId    String
+  toUserId      String
+  timestamp     DateTime  @default(now())
+  location      Json?
+  details       Json?
+  carbonFootprint Float?
+  certifications String[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  // Relations
+  serviceProviderId String?
+  serviceProvider IntermediaryProfile? @relation("ServiceProvider", fields: [serviceProviderId], references: [id])
 }
 
 // Order and transaction management
@@ -237,10 +275,15 @@ enum TransactionType {
   COMMISSION
   ESCROW_DEPOSIT
   ESCROW_RELEASE
+  PURCHASE
+  SALE
+  TRANSFER
 }
 
 enum TransactionStatus {
   PENDING
+  PAID
+  DELIVERED
   COMPLETED
   FAILED
   CANCELLED
@@ -248,17 +291,25 @@ enum TransactionStatus {
 
 model Transaction {
   id            String    @id @default(uuid())
-  transactionId String    @unique // Human-readable transaction ID
-  orderId       String?
-  order         Order?    @relation(fields: [orderId], references: [id])
-  userId        String
-  user          User      @relation(fields: [userId], references: [id])
+  productId     String?
+  senderId      String
+  receiverId    String
   amount        Float
+  quantity      Float?
+  unit          String?
   type          TransactionType
   status        TransactionStatus
   paymentMethod String?
-  paymentDetails Json?
-  profitSplit   Json?     // How the payment was split among stakeholders
+  paymentReference String?
+  paymentDate   DateTime?
+  deliveryDate  DateTime?
+  notes         String?
+  metadata      Json?
+  transactionId String?   // Human-readable transaction ID
+  orderId       String?
+  order         Order?    @relation(fields: [orderId], references: [id])
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id])
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }

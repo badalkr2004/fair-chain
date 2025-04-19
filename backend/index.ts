@@ -9,6 +9,10 @@ import productRoutes from "./src/routes/product";
 import orderRoutes from "./src/routes/order";
 import forecastRoutes from "./src/routes/forecast";
 import traceabilityRoutes from "./src/routes/traceability";
+import transactionsRoutes from "./src/routes/transactions";
+import bidRoutes from "./src/routes/bid";
+import supplyChainRoutes from "./src/routes/supplyChain";
+import produceRoutes from "./src/routes/produce";
 
 const PORT = process.env.PORT || 8080;
 const app = express();
@@ -25,7 +29,11 @@ app.get("/", (req, res) => {
     endpoints: {
       auth: "/auth/*",
       products: "/products/*",
+      produce: "/produce/*",
       orders: "/orders/*",
+      bids: "/bids/*",
+      transactions: "/transactions/*",
+      supplyChain: "/supply-chain/*",
       forecast: "/forecast/*",
       traceability: "/trace/*"
     }
@@ -35,9 +43,13 @@ app.get("/", (req, res) => {
 // Register routes
 app.use("/auth", authRoutes);
 app.use("/products", productRoutes);
+app.use("/produce", produceRoutes);
 app.use("/orders", orderRoutes);
 app.use("/forecast", forecastRoutes);
 app.use("/trace", traceabilityRoutes);
+app.use("/transactions", transactionsRoutes);
+app.use("/bids", bidRoutes);
+app.use("/supply-chain", supplyChainRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

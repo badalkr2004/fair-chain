@@ -198,10 +198,31 @@ exports.Prisma.ProductAnalyticsScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BidScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  intermediaryId: 'intermediaryId',
+  price: 'price',
+  quantity: 'quantity',
+  serviceType: 'serviceType',
+  description: 'description',
+  validUntil: 'validUntil',
+  terms: 'terms',
+  status: 'status',
+  responseReason: 'responseReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SupplyChainScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
-  status: 'status',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  isComplete: 'isComplete',
+  name: 'name',
+  description: 'description',
+  createdById: 'createdById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -209,16 +230,17 @@ exports.Prisma.SupplyChainScalarFieldEnum = {
 exports.Prisma.SupplyChainLinkScalarFieldEnum = {
   id: 'id',
   supplyChainId: 'supplyChainId',
-  serviceProviderId: 'serviceProviderId',
-  serviceType: 'serviceType',
-  fromLocation: 'fromLocation',
-  toLocation: 'toLocation',
-  startTime: 'startTime',
-  endTime: 'endTime',
-  cost: 'cost',
-  status: 'status',
+  type: 'type',
+  fromUserId: 'fromUserId',
+  toUserId: 'toUserId',
+  timestamp: 'timestamp',
+  location: 'location',
+  details: 'details',
+  carbonFootprint: 'carbonFootprint',
+  certifications: 'certifications',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  serviceProviderId: 'serviceProviderId'
 };
 
 exports.Prisma.OrderScalarFieldEnum = {
@@ -246,15 +268,23 @@ exports.Prisma.OrderItemScalarFieldEnum = {
 
 exports.Prisma.TransactionScalarFieldEnum = {
   id: 'id',
-  transactionId: 'transactionId',
-  orderId: 'orderId',
-  userId: 'userId',
+  productId: 'productId',
+  senderId: 'senderId',
+  receiverId: 'receiverId',
   amount: 'amount',
+  quantity: 'quantity',
+  unit: 'unit',
   type: 'type',
   status: 'status',
   paymentMethod: 'paymentMethod',
-  paymentDetails: 'paymentDetails',
-  profitSplit: 'profitSplit',
+  paymentReference: 'paymentReference',
+  paymentDate: 'paymentDate',
+  deliveryDate: 'deliveryDate',
+  notes: 'notes',
+  metadata: 'metadata',
+  transactionId: 'transactionId',
+  orderId: 'orderId',
+  userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -401,8 +431,17 @@ exports.ProductStatus = exports.$Enums.ProductStatus = {
   DRAFT: 'DRAFT',
   LISTED: 'LISTED',
   SOLD: 'SOLD',
+  PROCESSING: 'PROCESSING',
   EXPIRED: 'EXPIRED',
   CANCELLED: 'CANCELLED'
+};
+
+exports.BidStatus = exports.$Enums.BidStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED'
 };
 
 exports.OrderStatus = exports.$Enums.OrderStatus = {
@@ -418,11 +457,16 @@ exports.TransactionType = exports.$Enums.TransactionType = {
   REFUND: 'REFUND',
   COMMISSION: 'COMMISSION',
   ESCROW_DEPOSIT: 'ESCROW_DEPOSIT',
-  ESCROW_RELEASE: 'ESCROW_RELEASE'
+  ESCROW_RELEASE: 'ESCROW_RELEASE',
+  PURCHASE: 'PURCHASE',
+  SALE: 'SALE',
+  TRANSFER: 'TRANSFER'
 };
 
 exports.TransactionStatus = exports.$Enums.TransactionStatus = {
   PENDING: 'PENDING',
+  PAID: 'PAID',
+  DELIVERED: 'DELIVERED',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
   CANCELLED: 'CANCELLED'
@@ -435,6 +479,7 @@ exports.Prisma.ModelName = {
   ConsumerProfile: 'ConsumerProfile',
   Product: 'Product',
   ProductAnalytics: 'ProductAnalytics',
+  Bid: 'Bid',
   SupplyChain: 'SupplyChain',
   SupplyChainLink: 'SupplyChainLink',
   Order: 'Order',
