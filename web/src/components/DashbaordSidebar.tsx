@@ -25,52 +25,52 @@ const navItems = [
   {
     title: "My Profile",
     icon: User,
-    path: "/profile",
+    path: "/farmer/profile",
   },
   {
     title: "My Produce",
     icon: ShoppingBasket,
-    path: "/produce",
+    path: "/farmer/produce",
   },
   {
     title: "Market Trends",
     icon: TrendingUp,
-    path: "/market",
+    path: "/farmer/market",
   },
   {
     title: "AI Suggestions",
     icon: Lightbulb,
-    path: "/suggestions",
+    path: "/farmer/suggestions",
   },
   {
     title: "Traceability",
     icon: QrCode,
-    path: "/traceability",
+    path: "/farmer/traceability",
   },
   {
     title: "Logistics",
     icon: Truck,
-    path: "/logistics",
+    path: "/farmer/logistics",
   },
   {
     title: "Payments",
     icon: DollarSign,
-    path: "/payments",
+    path: "/farmer/payments",
   },
   {
     title: "Ratings",
     icon: Star,
-    path: "/ratings",
+    path: "/farmer/ratings",
   },
   {
     title: "Notifications",
     icon: Bell,
-    path: "/notifications",
+    path: "/farmer/notifications",
   },
   {
     title: "Support",
     icon: HelpCircle,
-    path: "/support",
+    path: "/farmer/support",
   },
 ];
 
@@ -86,7 +86,7 @@ export default function DashboardSidebar() {
             <div className="rounded-full bg-farm-green p-1">
               <ShoppingBasket className="h-6 w-6 text-white" />
             </div>
-            <span className="font-bold text-lg">FarmFlow</span>
+            <span className="font-bold text-lg">Fair Chain</span>
           </div>
         </div>
       </SidebarHeader>

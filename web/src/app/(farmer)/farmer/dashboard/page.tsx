@@ -1,4 +1,3 @@
-import DashboardLayout from "@/components/DashboardLayout";
 import StatCard from "@/components/StatCard";
 import ProduceCard from "@/components/ProduceCard";
 import ChartComponent from "@/components/ChartComponent";
@@ -51,7 +50,7 @@ const produceList = [
     date: "Jan 10, 2025"
   },
   {
-    image: "https://images.unsplash.com/photo-1574323347407-f5e1c0cf4b1e?q=80&auto=format",
+    image: "/sabji.jpg",
     name: "Premium Wheat",
     quantity: "500 kg",
     price: "₹30/kg",
@@ -62,7 +61,7 @@ const produceList = [
 
 const Index = () => {
   return (
-    <DashboardLayout>
+    <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Farm Dashboard</h1>
         <Button className="bg-farm-green hover:bg-farm-green-dark">
@@ -158,7 +157,7 @@ const Index = () => {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 
