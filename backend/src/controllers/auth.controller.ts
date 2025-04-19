@@ -19,7 +19,7 @@ export const signup = async (req: Request, res: Response) => {
       profileData 
     } = req.body;
 
-    if (!email || !password || !name || !role || !phone || !address || !location || !profileData) {
+    if (!email || !password || !name || !role || !phone || !address  || !profileData) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
     // Check if user already exists
@@ -229,6 +229,7 @@ export const refreshToken = async (req: Request, res: Response) => {
 export const getUserProfile = async (req: Request, res: Response) => {
   try {
     const userId = req.user.id;
+  
     
     const user = await prisma.user.findUnique({
       where: { id: userId },

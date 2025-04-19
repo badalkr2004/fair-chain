@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { Button } from "@/components/ui/button";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 
 export default function WelcomeScreen() {
   return (
@@ -22,14 +22,14 @@ export default function WelcomeScreen() {
       </Text>
 
       {/* Login Button */}
-      <Link href="/" asChild>
+      <Link href="/(auth)/login" asChild>
         <Button className="w-full bg-green-500 mb-3" size="lg">
           <Text className="text-white font-semibold">Login</Text>
         </Button>
       </Link>
 
       {/* Create Account Button */}
-      <Link href="/" asChild>
+      <Link href="/(auth)/signup" asChild>
         <Button
           className="w-full border border-green-500"
           size="lg"
@@ -40,7 +40,9 @@ export default function WelcomeScreen() {
       </Link>
 
       {/* Browse as Guest */}
-      <Text className="text-gray-500 mt-4 mb-6">Browse as Guest</Text>
+      <Pressable onPress={() => router.push("/(tabs)")}>
+        <Text className="text-gray-500 mt-4 mb-6">Browse as Guest</Text>
+      </Pressable>
 
       {/* Feature Icons */}
       <View className="flex-row justify-around w-full px-4">
