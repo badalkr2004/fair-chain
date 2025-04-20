@@ -131,6 +131,7 @@ export default function FarmerProfileScreen() {
   }
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       <StatusBar style="dark" />
       
@@ -369,6 +370,7 @@ export default function FarmerProfileScreen() {
         </TouchableOpacity>
       </View>
     </View>
+    </ScrollView>
   );
 }
 

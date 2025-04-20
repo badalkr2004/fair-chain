@@ -45,13 +45,13 @@ export default function FarmerDashboard() {
 
       // Load produce data
       const produceData = await produceService.getMyProduce();
-      setCrops(produceData.map((item: any) => ({
+      setCrops(produceData.data.produce.map((item: any) => ({
         id: item.id,
         name: item.name,
-        variety: item.category,
+        variety: item.category, 
         quantity: `${item.quantity} ${item.unit}`,
         status: item.status === 'AVAILABLE' ? 'Ready for sale' : 'Processing',
-        predictedPrice: `₹${item.price}/kg`,
+        predictedPrice: `₹${item.finalPrice}/kg`,
         image: item.images && item.images.length > 0 
           ? item.images[0] 
           : 'https://images.unsplash.com/photo-1626426336803-0fb815b51502?w=800&auto=format&fit=crop'
@@ -99,6 +99,9 @@ export default function FarmerDashboard() {
     }
   };
 
+  const profileRoute=()=>{
+    router.push("/farmer/profile")
+  }
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F8FAF5]">
@@ -290,9 +293,9 @@ export default function FarmerDashboard() {
           <Text className="text-gray-400 text-xs mt-1">Insights</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity className="items-center">
-          <Ionicons name="wallet" size={24} color="#9ca3af" />
-          <Text className="text-gray-400 text-xs mt-1">Finances</Text>
+        <TouchableOpacity className="items-center" onPress={profileRoute}>
+          <Ionicons name="person" size={24} color="#9ca3af" />
+          <Text className="text-gray-400 text-xs mt-1">Profile</Text>
         </TouchableOpacity>
       </View>
     </View>
