@@ -15,6 +15,7 @@ FairChain is a transparent platform that connects farmers, intermediaries, and c
 ## Tech Stack
 
 - **Backend**: Node.js with Express.js & TypeScript
+- **Package Manager**: Bun (faster alternative to npm/yarn)
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: JWT-based auth system
 - **AI/ML**: Demand forecasting using time series models
@@ -56,6 +57,56 @@ bun run prisma:migrate
 ```bash
 bun run dev
 ```
+
+## Docker Setup
+
+The backend is dockerized using Node.js as the runtime environment with Bun as the package manager.
+
+### Prerequisites
+- Docker and Docker Compose installed on your system
+
+### Running with Docker Compose
+1. Build and start the services:
+   ```bash
+   docker-compose up -d
+   ```
+
+2. The backend API will be available at http://localhost:8080
+   
+3. The PostgreSQL database will be available at:
+   - Host: localhost
+   - Port: 5432
+   - User: fairchain
+   - Password: fairchain
+   - Database: fairchain
+
+4. To stop the services:
+   ```bash
+   docker-compose down
+   ```
+
+5. To rebuild the services after making changes:
+   ```bash
+   docker-compose up -d --build
+   ```
+
+6. To view logs:
+   ```bash
+   docker-compose logs -f
+   ```
+
+### Environment Variables
+The following environment variables can be configured in the docker-compose.yml file:
+
+- `DATABASE_URL`: PostgreSQL connection string
+- `PORT`: Backend server port
+- `NODE_ENV`: Environment mode (development, production)
+- `JWT_SECRET`: Secret key for JWT token generation
+- `RUN_MIGRATIONS`: Set to "true" to run database migrations on startup
+- `SEED_DATABASE`: Set to "true" to seed the database with sample data on startup
+
+### Development with Docker
+For development, the source code directories are mounted as volumes, allowing you to make changes without rebuilding the container. The server will automatically restart when changes are detected.
 
 ## API Documentation
 

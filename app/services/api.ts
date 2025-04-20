@@ -12,7 +12,7 @@ const DEFAULT_API_URL = isAndroid ? 'http://10.0.2.2:8080' : 'http://localhost:8
 
 // Hard-code the API URL to ensure it always uses port 8080
 // Overriding any potential environment variables that might be pointing to port 3000
-const API_URL = 'http://localhost:8080';
+const API_URL = 'https://api.fc.bitbrains.fun';
 console.log('📡 API connecting to:', API_URL);
 
 // Debug flag - set to true to log API requests/responses

@@ -13,8 +13,8 @@
   },
   "scripts": {
     "dev": "bun --hot run index.ts",
-    "build": "bun build ./index.ts --outdir ./dist",
-    "start": "bun run ./dist/index.js",
+    "build": "bun build ./index.ts --outdir ./dist --target node",
+    "start": "bun run index.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "bun prisma/seed.ts",

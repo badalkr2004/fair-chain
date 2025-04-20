@@ -1,139 +1,239 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Product } from '../types/product';
-import { authService } from './auth';
+import axios from 'axios';
+import { API_URL } from '../config';
+import * as tokenStorage from '../utils/token-storage';
+import * as productsService from './products';
 
-interface CartItem {
+// Types
+export interface CartItem {
+  id: string;
   productId: string;
+  product: {
+    id: string;
+    name: string;
+    description?: string;
+    category: string;
+    quantity: number;
+    unit: string;
+    basePrice: number;
+    finalPrice?: number;
+    images: string[];
+    organicCertified: boolean;
+    farmer: {
+      id: string;
+      name: string;
+    };
+  };
   quantity: number;
-  product?: Product;
+  price: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
-interface AddToCartRequest {
+export interface CartSummary {
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  total: number;
+  itemCount: number;
+  items: CartItem[];
+}
+
+export interface AddToCartRequest {
   productId: string;
   quantity: number;
 }
 
-// Storage key for cart
-const CART_STORAGE_KEY = 'fairchain_cart';
-
-/**
- * Get the current cart items from storage
- */
-export const getCart = async (): Promise<CartItem[]> => {
+// Get cart items
+export const getCartItems = async (): Promise<CartItem[]> => {
   try {
-    const cartData = await AsyncStorage.getItem(CART_STORAGE_KEY);
-    return cartData ? JSON.parse(cartData) : [];
+    const token = await tokenStorage.getToken();
+    
+    const response = await axios.get(`${API_URL}/cart/items`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    return response.data.items || [];
   } catch (error) {
-    console.error('Error getting cart:', error);
-    return [];
+    console.error('Error fetching cart items:', error);
+    throw error;
   }
 };
 
-/**
- * Add an item to the cart
- */
-export const addToCart = async (item: AddToCartRequest): Promise<CartItem[]> => {
+// Get cart summary
+export const getCartSummary = async (): Promise<CartSummary> => {
   try {
-    const currentCart = await getCart();
+    const token = await tokenStorage.getToken();
     
-    // Check if the product is already in the cart
-    const existingItemIndex = currentCart.findIndex(
-      cartItem => cartItem.productId === item.productId
+    const response = await axios.get(`${API_URL}/cart/summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching cart summary:', error);
+    throw error;
+  }
+};
+
+// Add item to cart
+export const addToCart = async (data: AddToCartRequest): Promise<CartItem> => {
+  try {
+    const token = await tokenStorage.getToken();
+    
+    const response = await axios.post(`${API_URL}/cart/items`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    return response.data.item;
+  } catch (error) {
+    console.error('Error adding item to cart:', error);
+    throw error;
+  }
+};
+
+// Update cart item quantity
+export const updateCartItemQuantity = async (itemId: string, quantity: number): Promise<CartItem> => {
+  try {
+    const token = await tokenStorage.getToken();
+    
+    const response = await axios.patch(
+      `${API_URL}/cart/items/${itemId}`,
+      { quantity },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
     );
     
-    if (existingItemIndex > -1) {
-      // Update the quantity if product already exists
-      currentCart[existingItemIndex].quantity += item.quantity;
-    } else {
-      // Add new item if product doesn't exist in cart
-      currentCart.push({
-        productId: item.productId,
-        quantity: item.quantity
-      });
-    }
-    
-    // Save updated cart to storage
-    await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(currentCart));
-    return currentCart;
-  } catch (error) {
-    console.error('Error adding to cart:', error);
-    throw new Error('Failed to add item to cart');
-  }
-};
-
-/**
- * Update the quantity of a cart item
- */
-export const updateCartItemQuantity = async (
-  productId: string,
-  quantity: number
-): Promise<CartItem[]> => {
-  try {
-    if (quantity <= 0) {
-      return removeFromCart(productId);
-    }
-    
-    const currentCart = await getCart();
-    const itemIndex = currentCart.findIndex(item => item.productId === productId);
-    
-    if (itemIndex === -1) {
-      throw new Error('Item not found in cart');
-    }
-    
-    currentCart[itemIndex].quantity = quantity;
-    await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(currentCart));
-    return currentCart;
+    return response.data.item;
   } catch (error) {
     console.error('Error updating cart item:', error);
-    throw new Error('Failed to update cart item');
+    throw error;
   }
 };
 
-/**
- * Remove an item from the cart
- */
-export const removeFromCart = async (productId: string): Promise<CartItem[]> => {
+// Remove item from cart
+export const removeFromCart = async (itemId: string): Promise<void> => {
   try {
-    let currentCart = await getCart();
-    currentCart = currentCart.filter(item => item.productId !== productId);
-    await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(currentCart));
-    return currentCart;
+    const token = await tokenStorage.getToken();
+    
+    await axios.delete(`${API_URL}/cart/items/${itemId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
   } catch (error) {
-    console.error('Error removing from cart:', error);
-    throw new Error('Failed to remove item from cart');
+    console.error('Error removing item from cart:', error);
+    throw error;
   }
 };
 
-/**
- * Clear the entire cart
- */
+// Clear cart
 export const clearCart = async (): Promise<void> => {
   try {
-    await AsyncStorage.removeItem(CART_STORAGE_KEY);
+    const token = await tokenStorage.getToken();
+    
+    await axios.delete(`${API_URL}/cart`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
   } catch (error) {
     console.error('Error clearing cart:', error);
-    throw new Error('Failed to clear cart');
+    throw error;
+  }
+};
+
+// Get cart item count
+export const getCartItemCount = async (): Promise<number> => {
+  try {
+    const token = await tokenStorage.getToken();
+    
+    const response = await axios.get(`${API_URL}/cart/count`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    return response.data.count || 0;
+  } catch (error) {
+    console.error('Error fetching cart count:', error);
+    return 0; // Return 0 on error instead of throwing
   }
 };
 
 /**
- * Get the number of items in the cart
+ * Populate the cart with product details
  */
-export const getCartItemCount = async (): Promise<number> => {
+export const getPopulatedCart = async (): Promise<(CartItem & { product: productsService.Product })[]> => {
   try {
-    const cart = await getCart();
-    return cart.reduce((total, item) => total + item.quantity, 0);
+    const cart = await getCartItems();
+    
+    const populatedCart = await Promise.all(
+      cart.map(async (item) => {
+        try {
+          interface ProductResponse {
+            product: productsService.Product;
+          }
+          const productData = await productsService.getProductById(item.productId) as ProductResponse;
+          return {
+            ...item,
+            product: productData.product
+          };
+        } catch (error) {
+          console.error(`Error fetching product ${item.productId}:`, error);
+          // Return item without product details if fetch fails
+          return item as any;
+        }
+      })
+    );
+    
+    return populatedCart as (CartItem & { product: productsService.Product })[];
   } catch (error) {
-    console.error('Error getting cart count:', error);
-    return 0;
+    console.error('Error populating cart:', error);
+    throw new Error('Failed to load cart details');
   }
 };
 
 /**
  * Calculate the total price of all items in the cart
  */
-export const getCartTotal = async (populatedCart: (CartItem & { product: Product })[]): Promise<number> => {
-  return populatedCart.reduce((total, item) => {
-    return total + (item.product.finalPrice * item.quantity);
-  }, 0);
+export const getCartTotal = async (): Promise<number> => {
+  try {
+    const populatedCart = await getPopulatedCart();
+    
+    return populatedCart.reduce((total, item) => {
+      if (!item.product) return total;
+      
+      const price = item.product.finalPrice || item.product.basePrice;
+      return total + (price * item.quantity);
+    }, 0);
+  } catch (error) {
+    console.error('Error calculating cart total:', error);
+    return 0;
+  }
+};
+
+/**
+ * Convert cart items to order items for checkout
+ */
+export const createOrderFromCart = async (): Promise<CartItem[]> => {
+  try {
+    const cart = await getCartItems();
+    if (cart.length === 0) {
+      throw new Error('Cart is empty');
+    }
+    
+    return cart;
+  } catch (error) {
+    console.error('Error preparing order from cart:', error);
+    throw error;
+  }
 }; 

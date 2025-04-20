@@ -465,33 +465,32 @@ export default function ConsumerDashboard() {
       <View className="absolute bottom-0 left-0 right-0 bg-white px-6 pt-3 pb-8 flex-row justify-between border-t border-gray-200">
         <TouchableOpacity 
           className="items-center"
-          onPress={() => router.push('/consumer/dashboard' as any)}
         >
-          <Ionicons name="home" size={24} color="#3b82f6" />
+          <Ionicons name="home" size={24} color="#2563eb" />
           <Text className="text-blue-600 text-xs mt-1">Home</Text>
         </TouchableOpacity>
         
         <TouchableOpacity 
           className="items-center"
-          onPress={navigateToMarketplace}
+          onPress={() => router.push('./browse-products')}
         >
-          <Ionicons name="basket" size={24} color="#9ca3af" />
+          <Ionicons name="basket-outline" size={24} color="#9ca3af" />
           <Text className="text-gray-500 text-xs mt-1">Shop</Text>
         </TouchableOpacity>
         
         <TouchableOpacity 
           className="items-center"
-          onPress={() => router.push('/consumer/orders' as any)}
+          onPress={() => router.push('./cart')}
         >
-          <Ionicons name="list" size={24} color="#9ca3af" />
-          <Text className="text-gray-500 text-xs mt-1">Orders</Text>
+          <Ionicons name="cart-outline" size={24} color="#9ca3af" />
+          <Text className="text-gray-500 text-xs mt-1">Cart</Text>
         </TouchableOpacity>
         
         <TouchableOpacity 
           className="items-center"
-          onPress={navigateToProfile}
+          onPress={() => router.push('./profile')}
         >
-          <Ionicons name="person" size={24} color="#9ca3af" />
+          <Ionicons name="person-outline" size={24} color="#9ca3af" />
           <Text className="text-gray-500 text-xs mt-1">Profile</Text>
         </TouchableOpacity>
       </View>

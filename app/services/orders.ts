@@ -1,15 +1,29 @@
 import api from './api';
 
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  IN_TRANSIT = 'IN_TRANSIT',
+  DELIVERED = 'DELIVERED',
+  CANCELLED = 'CANCELLED'
+}
+
 export interface OrderItem {
-  id: string;
-  orderId: string;
   productId: string;
   quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-  createdAt: string;
-  updatedAt: string;
-  product?: any;
+  unitPrice?: number;
+}
+
+export interface CreateOrderDTO {
+  items: OrderItem[];
+  deliveryAddress?: {
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  notes?: string;
 }
 
 export interface Order {
@@ -17,28 +31,22 @@ export interface Order {
   orderId: string;
   buyerId: string;
   totalAmount: number;
-  status: 'PENDING' | 'CONFIRMED' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
+  status: OrderStatus;
   deliveryAddress?: any;
   notes?: string;
   createdAt: string;
   updatedAt: string;
-  items: OrderItem[];
-  buyer?: any;
-}
-
-export interface CreateOrderDTO {
   items: {
+    id: string;
     productId: string;
     quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+    product?: any;
   }[];
-  deliveryAddress?: any;
-  notes?: string;
 }
 
-export interface UpdateOrderStatusDTO {
-  status: 'PENDING' | 'CONFIRMED' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
-}
-
+// Create a new order
 export const createOrder = async (orderData: CreateOrderDTO) => {
   try {
     return await api.post('/orders', orderData);
@@ -48,24 +56,17 @@ export const createOrder = async (orderData: CreateOrderDTO) => {
   }
 };
 
+// Get order details by ID
 export const getOrderById = async (id: string) => {
   try {
     return await api.get(`/orders/${id}`);
   } catch (error) {
-    console.error(`Error fetching order with id ${id}:`, error);
+    console.error(`Error fetching order ${id}:`, error);
     throw error;
   }
 };
 
-export const updateOrderStatus = async (id: string, statusData: UpdateOrderStatusDTO) => {
-  try {
-    return await api.put(`/orders/${id}/status`, statusData);
-  } catch (error) {
-    console.error(`Error updating order status for order ${id}:`, error);
-    throw error;
-  }
-};
-
+// Get all orders for the current user (consumer)
 export const getMyOrders = async () => {
   try {
     return await api.get('/orders/my/orders');
@@ -75,6 +76,7 @@ export const getMyOrders = async () => {
   }
 };
 
+// Get all orders for the current farmer
 export const getFarmerOrders = async () => {
   try {
     return await api.get('/orders/farmer/orders');
@@ -84,11 +86,25 @@ export const getFarmerOrders = async () => {
   }
 };
 
-export const getAllOrders = async () => {
+// Update order status
+export const updateOrderStatus = async (id: string, status: OrderStatus) => {
   try {
-    return await api.get('/orders');
+    return await api.put(`/orders/${id}/status`, { status });
   } catch (error) {
-    console.error('Error fetching all orders:', error);
+    console.error(`Error updating order ${id} status:`, error);
+    throw error;
+  }
+};
+
+// Cancel an order
+export const cancelOrder = async (id: string, reason?: string) => {
+  try {
+    return await api.put(`/orders/${id}/status`, { 
+      status: OrderStatus.CANCELLED,
+      reason
+    });
+  } catch (error) {
+    console.error(`Error cancelling order ${id}:`, error);
     throw error;
   }
 }; 
