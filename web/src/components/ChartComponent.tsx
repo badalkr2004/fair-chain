@@ -11,37 +11,97 @@ import {
   ResponsiveContainer,
   Legend
 } from "recharts";
-import { useState } from "react";
-
-// Sample data for the chart
-const monthlyData = [
-  { name: "Jan", Tomato: 150, Potato: 180, Wheat: 120 },
-  { name: "Feb", Tomato: 170, Potato: 190, Wheat: 110 },
-  { name: "Mar", Tomato: 200, Potato: 170, Wheat: 125 },
-  { name: "Apr", Tomato: 220, Potato: 160, Wheat: 140 },
-  { name: "May", Tomato: 190, Potato: 150, Wheat: 130 },
-  { name: "Jun", Tomato: 210, Potato: 180, Wheat: 150 },
-];
-
-const weeklyData = [
-  { name: "Mon", Tomato: 180, Potato: 150, Wheat: 120 },
-  { name: "Tue", Tomato: 200, Potato: 160, Wheat: 125 },
-  { name: "Wed", Tomato: 210, Potato: 170, Wheat: 130 },
-  { name: "Thu", Tomato: 190, Potato: 165, Wheat: 128 },
-  { name: "Fri", Tomato: 220, Potato: 180, Wheat: 135 },
-  { name: "Sat", Tomato: 215, Potato: 175, Wheat: 137 },
-  { name: "Sun", Tomato: 230, Potato: 185, Wheat: 140 },
-];
+import { useState, useEffect } from "react";
+import { Product } from "@/lib/api/types";
 
 interface ChartComponentProps {
   title: string;
   className?: string;
+  products: Product[];
 }
 
-export default function ChartComponent({ title, className }: ChartComponentProps) {
+export default function ChartComponent({ title, className, products }: ChartComponentProps) {
   const [period, setPeriod] = useState<"weekly" | "monthly">("monthly");
+  const [chartData, setChartData] = useState<any[]>([]);
   
-  const data = period === "monthly" ? monthlyData : weeklyData;
+  useEffect(() => {
+    // Get unique categories
+    const categories = Array.from(new Set(products.map(p => p.category)));
+    
+    // Generate more data points for smoother waves
+    const generateWaveData = (baseValue: number, date: Date, index: number) => {
+      const waveFactor = Math.sin(index * 0.5) * 0.2; // Creates wave effect
+      const trendFactor = Math.sin(index * 0.1) * 0.1; // Creates overall trend
+      return baseValue * (1 + waveFactor + trendFactor);
+    };
+
+    // Group products by date and category
+    const groupedProducts = products.reduce((acc: { [key: string]: { [key: string]: { total: number; count: number } } }, product) => {
+      const date = new Date(product.harvestDate || new Date());
+      const baseDate = date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric' 
+      });
+      
+      if (!acc[baseDate]) {
+        acc[baseDate] = {};
+        categories.forEach(cat => {
+          acc[baseDate][cat] = { total: 0, count: 0 };
+        });
+      }
+      
+      acc[baseDate][product.category].total += product.basePrice || 0;
+      acc[baseDate][product.category].count += 1;
+      return acc;
+    }, {});
+
+    // Create chart data with wave effect
+    const data = Object.entries(groupedProducts)
+      .map(([date, categoryData], index) => {
+        const entry: any = { name: date };
+        categories.forEach(category => {
+          const stats = categoryData[category];
+          const basePrice = stats.count > 0 ? stats.total / stats.count : 0;
+          entry[category] = generateWaveData(basePrice, new Date(date), index);
+        });
+        return entry;
+      })
+      .sort((a, b) => new Date(a.name).getTime() - new Date(b.name).getTime());
+
+    // Add more data points for smoother waves
+    const smoothedData = [];
+    for (let i = 0; i < data.length - 1; i++) {
+      smoothedData.push(data[i]);
+      // Add intermediate points
+      const currentDate = new Date(data[i].name);
+      const nextDate = new Date(data[i + 1].name);
+      const timeDiff = nextDate.getTime() - currentDate.getTime();
+      
+      // Add 2 intermediate points
+      for (let j = 1; j <= 2; j++) {
+        const intermediateDate = new Date(currentDate.getTime() + (timeDiff * j) / 3);
+        const intermediateEntry: any = {
+          name: intermediateDate.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric' 
+          })
+        };
+        categories.forEach(category => {
+          const currentValue = data[i][category];
+          const nextValue = data[i + 1][category];
+          const progress = j / 3;
+          intermediateEntry[category] = currentValue + (nextValue - currentValue) * progress;
+        });
+        smoothedData.push(intermediateEntry);
+      }
+    }
+    smoothedData.push(data[data.length - 1]);
+
+    setChartData(smoothedData);
+  }, [products]);
+  
+  // Get unique categories for the chart
+  const categories = Array.from(new Set(products.map(p => p.category)));
   
   return (
     <Card className={className}>
@@ -54,52 +114,48 @@ export default function ChartComponent({ title, className }: ChartComponentProps
           </TabsList>
         </Tabs>
       </CardHeader>
-      <CardContent className="pt-2">
+      <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart
-            data={data}
+            data={chartData}
             margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
           >
             <defs>
-              <linearGradient id="colorTomato" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#52B788" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#52B788" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="colorPotato" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#F9CB54" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#F9CB54" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="colorWheat" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0} />
-              </linearGradient>
+              {categories.map((category, index) => {
+                const colors = ['#52B788', '#F9CB54', '#0EA5E9', '#EF4444', '#8B5CF6'];
+                return (
+                  <linearGradient key={category} id={`color${category}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={colors[index % colors.length]} stopOpacity={0.8} />
+                    <stop offset="95%" stopColor={colors[index % colors.length]} stopOpacity={0} />
+                  </linearGradient>
+                );
+              })}
             </defs>
             <XAxis dataKey="name" />
-            <YAxis />
+            <YAxis tickFormatter={(value) => `₹${value}`} />
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <Tooltip />
+            <Tooltip 
+              formatter={(value: number) => [`₹${value.toFixed(2)}`, 'Price']}
+              labelFormatter={(label) => `Date: ${label}`}
+            />
             <Legend />
-            <Area 
-              type="monotone" 
-              dataKey="Tomato" 
-              stroke="#52B788" 
-              fillOpacity={1}
-              fill="url(#colorTomato)" 
-            />
-            <Area 
-              type="monotone" 
-              dataKey="Potato" 
-              stroke="#F9CB54" 
-              fillOpacity={1}
-              fill="url(#colorPotato)" 
-            />
-            <Area 
-              type="monotone" 
-              dataKey="Wheat" 
-              stroke="#0EA5E9" 
-              fillOpacity={1}
-              fill="url(#colorWheat)" 
-            />
+            {categories.map((category, index) => {
+              const colors = ['#52B788', '#F9CB54', '#0EA5E9', '#EF4444', '#8B5CF6'];
+              return (
+                <Area 
+                  key={category}
+                  type="monotone" 
+                  dataKey={category} 
+                  stroke={colors[index % colors.length]}
+                  fillOpacity={1}
+                  fill={`url(#color${category})`}
+                  name={category}
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 4 }}
+                />
+              );
+            })}
           </AreaChart>
         </ResponsiveContainer>
       </CardContent>

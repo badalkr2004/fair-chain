@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useState } from "react";
 import StatCard from "@/components/StatCard";
 import ProduceCard from "@/components/ProduceCard";
 import ChartComponent from "@/components/ChartComponent";
@@ -6,97 +8,139 @@ import WeatherWidget from "@/components/WeatherWidget";
 import PaymentHistoryCard from "@/components/PaymentHistoryCard";
 import { Button } from "@/components/ui/button";
 import { Plus, ShoppingBasket, TrendingUp, Truck, DollarSign, Star } from "lucide-react";
-
-// Mock data for the dashboard
-const recentPayments = [
-  {
-    id: "1",
-    date: "Today, 2:30 PM",
-    amount: "₹5,200",
-    status: "completed" as const,
-    buyer: "Fresh Mart"
-  },
-  {
-    id: "2",
-    date: "Yesterday, 1:15 PM",
-    amount: "₹3,800",
-    status: "completed" as const,
-    buyer: "Green Grocers"
-  },
-  {
-    id: "3",
-    date: "Jan 18, 2025",
-    amount: "₹7,500",
-    status: "pending" as const,
-    buyer: "Farm2Table Co"
-  }
-];
-
-const produceList = [
-  {
-    image: "https://images.unsplash.com/photo-1594057687713-5fd14eed1c17?q=80&auto=format",
-    name: "Organic Tomatoes",
-    quantity: "200 kg",
-    price: "₹40/kg",
-    status: "Available" as const,
-    date: "Jan 15, 2025"
-  },
-  {
-    image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?q=80&auto=format",
-    name: "Fresh Potatoes",
-    quantity: "350 kg",
-    price: "₹25/kg",
-    status: "In Transit" as const,
-    date: "Jan 10, 2025"
-  },
-  {
-    image: "/sabji.jpg",
-    name: "Premium Wheat",
-    quantity: "500 kg",
-    price: "₹30/kg",
-    status: "Sold" as const,
-    date: "Jan 5, 2025"
-  }
-];
+import { apiClient } from "@/lib/api/client";
+import { Product, ProductsResponse } from "@/lib/api/types";
+import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [produce, setProduce] = useState<Product[]>([]);
+  const [stats, setStats] = useState({
+    totalProduce: 0,
+    marketPrice: 0,
+    deliveries: 0,
+    monthlyRevenue: 0
+  });
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Check if we have a token
+        const token = localStorage.getItem('token');
+        console.log('Current token:', token);
+        
+        if (!token) {
+          throw new Error('No authentication token found. Please log in again.');
+        }
+
+        console.log('Fetching produce...');
+        // Fetch farmer's produce
+        const produceResponse = await apiClient.getProduce();
+        console.log('Raw produce response:', produceResponse);
+
+        if (produceResponse.success) {
+          // Handle the API response structure
+          const responseData = produceResponse.data as unknown as { data: { produce: Product[] } };
+          console.log('Response data structure:', responseData);
+          
+          // Extract products from the nested structure
+          const products = responseData?.data?.produce || [];
+          console.log('Extracted products:', products);
+          
+          setProduce(products);
+          
+          // Calculate stats from produce
+          const totalProduce = products.reduce((sum: number, item: Product) => sum + (item.quantity || 0), 0);
+          const marketPrice = products.length > 0 
+            ? products.reduce((sum: number, item: Product) => sum + (item.basePrice || 0), 0) / products.length 
+            : 0;
+
+          console.log('Calculated stats:', { totalProduce, marketPrice });
+
+          setStats({
+            totalProduce,
+            marketPrice,
+            deliveries: 0, // TODO: Fetch from orders API
+            monthlyRevenue: 0 // TODO: Fetch from transactions API
+          });
+        } else {
+          console.error('API response was not successful:', produceResponse);
+          throw new Error(produceResponse.message || 'Failed to fetch produce');
+        }
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load dashboard data';
+        setError(errorMessage);
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [toast]);
+
+  // Debug render
+  console.log('Current state:', { isLoading, error, produce, stats });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-farm-green"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Farm Dashboard</h1>
-        <Button className="bg-farm-green hover:bg-farm-green-dark">
-          <Plus className="mr-1 h-4 w-4" /> Add New Produce
-        </Button>
-      </div>
-      
       {/* Stats Overview */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <StatCard 
           title="Total Produce" 
-          value="1,050 kg" 
+          value={`${stats.totalProduce} kg`} 
           icon={<ShoppingBasket className="h-full w-full" />} 
-          description="Across 3 active listings"
+          description={`Across ${produce.length} active listings`}
           trend={{ value: 12, positive: true }}
         />
         <StatCard 
           title="Market Price" 
-          value="₹32/kg" 
+          value={`₹${stats.marketPrice.toFixed(2)}/kg`} 
           icon={<TrendingUp className="h-full w-full" />} 
           description="Avg. for your crops"
           trend={{ value: 5, positive: true }}
         />
         <StatCard 
           title="Deliveries" 
-          value="8" 
+          value={stats.deliveries.toString()} 
           icon={<Truck className="h-full w-full" />} 
-          description="2 pending, 6 completed"
+          description="0 pending, 0 completed"
         />
         <StatCard 
           title="Monthly Revenue" 
-          value="₹42,500" 
+          value={`₹${stats.monthlyRevenue.toLocaleString()}`} 
           icon={<DollarSign className="h-full w-full" />} 
-          description="Last month: ₹38,200"
-          trend={{ value: 11, positive: true }}
+          description="Last month: ₹0"
+          trend={{ value: 0, positive: true }}
         />
       </div>
       
@@ -104,7 +148,7 @@ const Index = () => {
       <div className="grid gap-6 md:grid-cols-6">
         {/* Left column - Market trends & produce listings */}
         <div className="md:col-span-4 space-y-6">
-          <ChartComponent title="Market Price Trends" />
+          <ChartComponent title="Market Price Trends" products={produce} />
           
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Your Produce Listings</h2>
@@ -113,11 +157,29 @@ const Index = () => {
             </Button>
           </div>
           
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {produceList.map((produce, index) => (
-              <ProduceCard key={index} {...produce} />
-            ))}
-          </div>
+          {produce.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No produce listings found</p>
+              <Button className="mt-4" variant="outline">
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Listing
+              </Button>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {produce.map((item) => (
+                <ProduceCard 
+                  key={item.id}
+                  image={item.images?.[0] || "/sabji.jpg"}
+                  name={item.name}
+                  quantity={`${item.quantity || 0} ${item.unit || 'kg'}`}
+                  price={`₹${item.basePrice || 0}/${item.unit || 'kg'}`}
+                  status={item.status === "LISTED" ? "Available" : item.status === "SOLD" ? "Sold" : "In Transit"}
+                  date={item.harvestDate || "N/A"}
+                />
+              ))}
+            </div>
+          )}
         </div>
         
         {/* Right column - Weather, AI suggestions, payments */}
@@ -143,7 +205,7 @@ const Index = () => {
             />
           </div>
           
-          <PaymentHistoryCard payments={recentPayments} />
+          <PaymentHistoryCard payments={[]} />
           
           <div className="p-4 border rounded-lg bg-accent/20">
             <div className="flex items-center gap-2 mb-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, ShoppingBasket, TrendingUp, Lightbulb, QrCode, Truck, DollarSign, Star, Bell, HelpCircle, User } from "lucide-react";
+import { Home, ShoppingCart, Package, Clock, Truck, CreditCard, Star, Bell, HelpCircle, User } from "lucide-react";
 
 import { 
   Sidebar, 
@@ -20,61 +20,56 @@ const navItems = [
   {
     title: "Dashboard",
     icon: Home,
-    path: "/farmer/dashboard",
+    path: "/consumer/dashboard",
   },
   {
     title: "My Profile",
     icon: User,
-    path: "/farmer/profile",
+    path: "/consumer/profile",
   },
   {
-    title: "My Produce",
-    icon: ShoppingBasket,
-    path: "/farmer/produce",
+    title: "Shop",
+    icon: ShoppingCart,
+    path: "/consumer/shop",
   },
   {
-    title: "Market Trends",
-    icon: TrendingUp,
-    path: "/farmer/market",
+    title: "My Orders",
+    icon: Package,
+    path: "/consumer/orders",
   },
   {
-    title: "AI Suggestions",
-    icon: Lightbulb,
-    path: "/farmer/suggestions",
+    title: "Order History",
+    icon: Clock,
+    path: "/consumer/history",
   },
   {
-    title: "Traceability",
-    icon: QrCode,
-    path: "/farmer/traceability",
-  },
-  {
-    title: "Logistics",
+    title: "Track Orders",
     icon: Truck,
-    path: "/farmer/logistics",
+    path: "/consumer/track",
   },
   {
     title: "Payments",
-    icon: DollarSign,
-    path: "/farmer/payments",
+    icon: CreditCard,
+    path: "/consumer/payments",
   },
   {
-    title: "Ratings",
+    title: "Reviews",
     icon: Star,
-    path: "/farmer/ratings",
+    path: "/consumer/reviews",
   },
   {
     title: "Notifications",
     icon: Bell,
-    path: "/farmer/notifications",
+    path: "/consumer/notifications",
   },
   {
     title: "Support",
     icon: HelpCircle,
-    path: "/farmer/support",
+    path: "/consumer/support",
   },
 ];
 
-export default function DashboardSidebar() {
+export default function ConsumerSidebar() {
   const location = usePathname();
   const currentPath = location;
 
@@ -83,8 +78,8 @@ export default function DashboardSidebar() {
       <SidebarHeader className="py-4">
         <div className="flex items-center px-2">
           <div className="flex items-center space-x-2">
-            <div className="rounded-full bg-farm-green p-1">
-              <ShoppingBasket className="h-6 w-6 text-white" />
+            <div className="rounded-full bg-blue-600 p-1">
+              <ShoppingCart className="h-6 w-6 text-white" />
             </div>
             <span className="font-bold text-lg">Fair Chain</span>
           </div>
@@ -115,9 +110,9 @@ export default function DashboardSidebar() {
       </SidebarContent>
       <SidebarFooter className="py-4">
         <div className="px-3 text-xs text-muted-foreground">
-          <p>© 2025 FarmFlow. All rights reserved.</p>
+          <p>© 2025 FairChain. All rights reserved.</p>
         </div>
       </SidebarFooter>
     </Sidebar>
   );
-}
+} 

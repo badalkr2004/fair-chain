@@ -1,10 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ListingCard } from "@/components/produce/ListingCard";
 import { mockListings, Listing } from "@/data/mockListings";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AddListingDialog } from "@/components/produce";
+import { AddListingDialog, ListingCard } from "@/components/produce";
 // import { useState } from "react";
 
 export default function ProduceListings() {
