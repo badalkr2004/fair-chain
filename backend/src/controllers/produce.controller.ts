@@ -384,4 +384,60 @@ export class ProduceController {
       });
     }
   }
+
+  /**
+   * Get produce for the current logged-in farmer
+   */
+  async getMyProduce(req: Request, res: Response) {
+    try {
+      
+      // Get the farmer ID from authenticated user
+      const farmerId = req.user.id;
+      const { status, limit = 10, page = 1 } = req.query;
+      
+      // Build filter object
+      const filter: any = { farmerId };
+      
+      if (status) {
+        filter.status = status as ProductStatus;
+      }
+      
+      // Calculate pagination
+      const skip = (Number(page) - 1) * Number(limit);
+      
+      // Get produce with count
+      const [produce, total] = await Promise.all([
+        prisma.product.findMany({
+          where: filter,
+          orderBy: { createdAt: 'desc' },
+          skip,
+          take: Number(limit),
+          include: {
+            productAnalytics: true
+          }
+        }),
+        prisma.product.count({ where: filter })
+      ]);
+      
+      return res.status(200).json({
+        status: 'success',
+        data: {
+          produce,
+          pagination: {
+            total,
+            page: Number(page),
+            limit: Number(limit),
+            pages: Math.ceil(total / Number(limit))
+          }
+        }
+      });
+    } catch (error: any) {
+      console.error('Error getting your produce:', error);
+      return res.status(500).json({ 
+        status: 'error', 
+        message: 'Failed to get your produce', 
+        error: error.message 
+      });
+    }
+  }
 } 

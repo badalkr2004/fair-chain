@@ -202,6 +202,11 @@ export const addTraceabilityRecord = async (req: Request, res: Response) => {
       metadata
     } = req.body;
     
+    // Validate productId
+    if (!productId) {
+      return res.status(400).json({ message: 'Product ID is required' });
+    }
+    
     // Check if product exists
     const product = await prisma.product.findUnique({
       where: { id: productId }
@@ -226,7 +231,11 @@ export const addTraceabilityRecord = async (req: Request, res: Response) => {
       take: 1
     });
     
-    const previousHash = previousRecords.length > 0 ? previousRecords[0].currentHash : '';
+    // Get the current hash from the previous record, if available
+    let previousHash = '';
+    if (previousRecords.length > 0 && previousRecords[0]) {
+      previousHash = previousRecords[0].currentHash || '';
+    }
     
     // Create event data
     const eventData = {
@@ -300,4 +309,60 @@ async function verifyHash(record: any, previousRecord: any | null): Promise<bool
   
   // Check if the previous hash matches the previous record's current hash
   return record.previousHash === (previousRecord?.currentHash || '');
-} 
+}
+
+// Get all traceable products for the current user
+export const getMyTraceableProducts = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user.id;
+    console.log(userId)
+    
+    // Get all traceability records for products created by this user
+    const traceabilityRecords = await prisma.traceabilityRecord.findMany({
+      where: {
+        product: {
+          farmerId: userId
+        }
+      },
+      include: {
+        product: true
+      },
+      distinct: ['productId'], // Get unique products only
+      orderBy: {
+        timestamp: 'desc'
+      }
+    });
+    
+    // Format the response to match frontend expectations
+    const products = traceabilityRecords
+      .filter(record => record.product) // Filter out records with no product
+      .map(record => {
+        const { product } = record;
+        return {
+          id: product.id,
+          name: product.name,
+          batchNumber: record.trackingId || `BATCH-${product.id.substring(0, 6)}`,
+          quantity: product.quantity,
+          unit: product.unit,
+          currentStage: record.eventType,
+          origin: product.location || {
+            latitude: 0,
+            longitude: 0,
+            name: 'Unknown'
+          },
+          productionDate: record.timestamp.toISOString(),
+          expiryDate: product.availableUntil,
+          qrCode: record.qrCode,
+          trackingId: record.trackingId
+        };
+      });
+    
+    res.status(200).json({ products });
+  } catch (error) {
+    console.error('Error fetching user traceable products:', error);
+    res.status(500).json({ 
+      message: 'Error fetching traceable products',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+}; 

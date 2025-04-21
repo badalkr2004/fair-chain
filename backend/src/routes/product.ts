@@ -22,6 +22,6 @@ router.get("/farmer/:farmerId", getProductsByFarmer);
 router.post("/", authenticate, isFarmer, createProduct);
 router.put("/:id", authenticate, isFarmer, updateProduct);
 router.delete("/:id", authenticate, isFarmer, deleteProduct);
-router.get("/my/products", authenticate, isFarmer, getMyProducts);
+router.get("/my-products", authenticate, isFarmer, getMyProducts);
 
 export default router; 

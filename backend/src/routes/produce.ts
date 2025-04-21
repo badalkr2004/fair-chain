@@ -10,6 +10,12 @@ const produceController = new ProduceController();
 // Get all produce
 router.get('/', produceController.getAllProduce);
 
+// Get produce for logged-in farmer (requires authentication)
+router.get('/my-produce', authenticate, produceController.getMyProduce);
+
+// Get produce by farmer ID
+router.get('/farmer/:farmerId', produceController.getProduceByFarmerId);
+
 // Get produce by ID
 router.get('/:id', produceController.getProduceById);
 
@@ -21,8 +27,5 @@ router.put('/:id', authenticate, validateRequest(updateProduceSchema), produceCo
 
 // Delete produce (requires authentication)
 router.delete('/:id', authenticate, produceController.deleteProduce);
-
-// Get produce by farmer ID
-router.get('/farmer/:farmerId', produceController.getProduceByFarmerId);
 
 export default router;
