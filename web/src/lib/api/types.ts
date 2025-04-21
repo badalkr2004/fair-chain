@@ -1,16 +1,39 @@
+import { 
+  UserFormData, 
+  FarmerFormData, 
+  ConsumerFormData, 
+  UserRole 
+} from "@/types/auth";
+
 // Auth Types
 export interface LoginCredentials {
   email: string;
   password: string;
+  role: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  farmerProfile?: {
+    farmSize: number;
+    location: string;
+    cropTypes: string[];
+    certifications: string[];
+  };
+  buyerProfile?: {
+    businessName: string;
+    businessType: string;
+    location: string;
+  };
 }
 
 export interface AuthResponse {
+  user: User;
   token: string;
-  user: {
-    id: string;
-    email: string;
-    role: string;
-  };
+  refreshToken: string;
 }
 
 // Product Types
@@ -42,17 +65,6 @@ export interface Order {
   quantity: number;
   price: number;
   status: "PENDING" | "CONFIRMED" | "DELIVERED" | "CANCELLED";
-  createdAt: string;
-  updatedAt: string;
-}
-
-// Bid Types
-export interface Bid {
-  id: string;
-  productId: string;
-  intermediaryId: string;
-  price: number;
-  status: "PENDING" | "ACCEPTED" | "REJECTED";
   createdAt: string;
   updatedAt: string;
 }
@@ -111,4 +123,10 @@ export interface ProductsResponse {
   total: number;
   page: number;
   limit: number;
+}
+
+export interface RegistrationFormData {
+  user: UserFormData;
+  profile: FarmerFormData | ConsumerFormData;
+  role: UserRole;
 } 

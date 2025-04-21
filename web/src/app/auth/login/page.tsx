@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { apiClient } from "@/lib/api/client";
+import { useAuthStore } from "@/lib/store";
+import { UserRole } from "@/types/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,6 +18,7 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    role: UserRole.FARMER
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,35 +37,38 @@ export default function LoginPage() {
       const response = await apiClient.login({
         email: formData.email,
         password: formData.password,
+        role: formData.role
       });
 
-      if (response.success) {
-        // Store the token
-        localStorage.setItem('token', response.data.token);
+      if (response.success && response.data) {
+        const { user, token, refreshToken } = response.data;
         
-        // Get user role from token
-        const tokenData = JSON.parse(atob(response.data.token.split('.')[1]));
-        const userRole = tokenData.role;
+        // Update auth store
+        useAuthStore.getState().setAuth(user, token, refreshToken);
 
-        // Redirect based on role
-        switch (userRole) {
-          case 'FARMER':
-            router.push('/farmer/dashboard');
-            break;
-          case 'CONSUMER':
-            router.push('/consumer/dashboard');
-            break;
-          case 'INTERMEDIARY':
-            router.push('/intermediary/dashboard');
-            break;
-          default:
-            throw new Error('Invalid user role');
-        }
-
+        // Show success message
         toast({
           title: "Success",
           description: "Logged in successfully",
         });
+
+        // Redirect based on role
+        switch (user.role) {
+          case UserRole.FARMER:
+            router.push('/farmer/dashboard');
+            break;
+          case UserRole.CONSUMER:
+            router.push('/consumer/dashboard');
+            break;
+          case UserRole.BUYER:
+            router.push('/buyer/dashboard');
+            break;
+          case UserRole.ADMIN:
+            router.push('/admin/dashboard');
+            break;
+          default:
+            throw new Error('Invalid user role');
+        }
       } else {
         throw new Error(response.message || 'Login failed');
       }

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { getCropImage } from "@/utils/cropImages";
 
 interface ProduceCardProps {
   image: string;
@@ -30,7 +31,7 @@ export default function ProduceCard({ image, name, quantity, price, status, date
     <Card className={cn("overflow-hidden transition-all hover:shadow-md", className)}>
       <div className="relative h-40 w-full">
         <img 
-          src={image} 
+          src={image || getCropImage(name)} 
           alt={name}
           className="h-full w-full object-cover"
         />

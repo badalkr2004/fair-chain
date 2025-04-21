@@ -1,43 +1,69 @@
 export interface Listing {
-  id: number;
-  name: string;
-  quantity: string;
+  id: string;
+  crop: string;
+  quantity: number;
+  unit: string;
   price: number;
-  harvestDate: string;
   status: "Available" | "In Transit" | "Sold";
-  image: string;
+  location: string;
+  date: string;
   interestedBuyers: number;
 }
 
 export const mockListings: Listing[] = [
   {
-    id: 1,
-    name: "Organic Tomatoes",
-    quantity: "500 kg",
-    price: 40,
-    harvestDate: "2024-04-15",
+    id: "1",
+    crop: "Wheat",
+    quantity: 1000,
+    unit: "kg",
+    price: 25,
     status: "Available",
-    image: "https://source.unsplash.com/300x300/?tomatoes",
+    location: "Punjab",
+    date: "2024-03-15",
     interestedBuyers: 3,
   },
   {
-    id: 2,
-    name: "Premium Rice",
-    quantity: "1000 kg",
-    price: 60,
-    harvestDate: "2024-04-10",
+    id: "2",
+    crop: "Rice",
+    quantity: 500,
+    unit: "kg",
+    price: 30,
     status: "In Transit",
-    image: "https://source.unsplash.com/300x300/?rice",
-    interestedBuyers: 5,
+    location: "Haryana",
+    date: "2024-03-10",
+    interestedBuyers: 2,
   },
   {
-    id: 3,
-    name: "Fresh Potatoes",
-    quantity: "300 kg",
-    price: 25,
-    harvestDate: "2024-04-05",
+    id: "3",
+    crop: "Maize",
+    quantity: 800,
+    unit: "kg",
+    price: 20,
     status: "Sold",
-    image: "https://source.unsplash.com/300x300/?potatoes",
+    location: "Uttar Pradesh",
+    date: "2024-03-05",
+    interestedBuyers: 1,
+  },
+  {
+    id: "4",
+    crop: "Soybean",
+    quantity: 600,
+    unit: "kg",
+    price: 35,
+    status: "Available",
+    location: "Madhya Pradesh",
+    date: "2024-03-12",
+    interestedBuyers: 4,
+  },
+  {
+    id: "5",
+    crop: "Cotton",
+    quantity: 300,
+    unit: "kg",
+    price: 40,
+    status: "Available",
+    location: "Gujarat",
+    date: "2024-03-08",
     interestedBuyers: 2,
   },
 ]; 

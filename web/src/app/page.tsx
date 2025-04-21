@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, useAnimation, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Leaf, ShoppingCart, Truck, Sparkles, TrendingUp, Users, Package, Heart, Shield } from "lucide-react";
+import { ArrowRight, Leaf, ShoppingCart, Truck, Sparkles, TrendingUp, Users, Package, Heart, Shield, BarChart } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const MotionDiv = dynamic(() => import("framer-motion").then(mod => mod.motion.div), {
@@ -160,6 +160,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[var(--color-farm-green-light)]">
+      {/* Market Trend Button */}
+      <div className="absolute top-4 right-4 z-50">
+        <Button
+          variant="outline"
+          className="bg-white/80 backdrop-blur-sm hover:bg-white cursor-pointer"
+          onClick={() => router.push('/forecasting')}
+        >
+          <BarChart className="mr-2 h-4 w-4" />
+          Market Trends
+        </Button>
+      </div>
+
       {/* Hero Section */}
       <MotionDiv 
         className="relative h-screen flex items-center justify-center overflow-hidden"

@@ -1,0 +1,153 @@
+{
+  "v": 6,
+  "name": "Forecasting",
+  "folders": [],
+  "requests": [
+    {
+      "v": "11",
+      "name": "forecast-crop",
+      "method": "POST",
+      "endpoint": "http://localhost:8000/forecast/crop",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"crop_name\": \"Urad\",\n  \"metric\": \"Production\",\n  \"top_n\": 5,\n  \"periods\": 5\n}"
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "11",
+      "name": "Optimal Crops",
+      "method": "POST",
+      "endpoint": "http://localhost:8000/recommend/optimal-crops",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"region\":\"Saran\",\n  \"top_n\":5\n}"
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "11",
+      "name": "Crop Calendar",
+      "method": "POST",
+      "endpoint": "http://localhost:8000/crop-calendar",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"crop_name\":\"Urad\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "11",
+      "name": "List all crops",
+      "method": "GET",
+      "endpoint": "http://localhost:8000/crops",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"crop_name\":\"Rice\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "11",
+      "name": "regions",
+      "method": "GET",
+      "endpoint": "http://localhost:8000/regions",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"crop_name\":\"Rice\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "11",
+      "name": "market prices",
+      "method": "GET",
+      "endpoint": "http://localhost:8000/market-prices/wheat",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "11",
+      "name": "Regional Demand",
+      "method": "POST",
+      "endpoint": "http://localhost:8000/api/forecast/regional_demand",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"region\": \"Buxar\",\n  \"top_n\": 5,\n  \"periods\": 5\n}"
+      },
+      "requestVariables": [],
+      "responses": {}
+    }
+  ],
+  "auth": {
+    "authActive": true,
+    "authType": "none"
+  },
+  "headers": [],
+  "_ref_id": "coll_m9qccn7e_2c97dd78-6239-4fc7-ad8f-11a3e773fe92"
+}

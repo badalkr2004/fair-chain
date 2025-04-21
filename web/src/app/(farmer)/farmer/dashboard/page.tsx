@@ -7,10 +7,13 @@ import AISuggestionCard from "@/components/AISuggestionCard";
 import WeatherWidget from "@/components/WeatherWidget";
 import PaymentHistoryCard from "@/components/PaymentHistoryCard";
 import { Button } from "@/components/ui/button";
-import { Plus, ShoppingBasket, TrendingUp, Truck, DollarSign, Star } from "lucide-react";
+import { Plus, ShoppingBasket, TrendingUp, Truck, DollarSign, Star, User, MapPin, Leaf } from "lucide-react";
 import { apiClient } from "@/lib/api/client";
-import { Product, ProductsResponse } from "@/lib/api/types";
+import { Product } from "@/lib/api/types";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuthStore } from "@/lib/store";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const Index = () => {
   const { toast } = useToast();
@@ -23,6 +26,10 @@ const Index = () => {
     deliveries: 0,
     monthlyRevenue: 0
   });
+  const [farmerProfile, setFarmerProfile] = useState<any>(null);
+
+  const user = useAuthStore((state) => state.user);
+  const initialFarmerProfile = user?.farmerProfile;
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -30,46 +37,70 @@ const Index = () => {
         setIsLoading(true);
         setError(null);
 
-        // Check if we have a token
-        const token = localStorage.getItem('token');
-        console.log('Current token:', token);
-        
-        if (!token) {
-          throw new Error('No authentication token found. Please log in again.');
+        // Fetch farmer's profile
+        const profileResponse = await apiClient.getFarmerProfile();
+        if (profileResponse.success) {
+          setFarmerProfile(profileResponse.data);
         }
 
-        console.log('Fetching produce...');
         // Fetch farmer's produce
-        const produceResponse = await apiClient.getProduce();
-        console.log('Raw produce response:', produceResponse);
+        const produceResponse = await apiClient.getMyProduce();
+        console.log('Raw API Response:', produceResponse);
 
         if (produceResponse.success) {
-          // Handle the API response structure
-          const responseData = produceResponse.data as unknown as { data: { produce: Product[] } };
-          console.log('Response data structure:', responseData);
+          // Handle different possible response structures
+          let products: Product[] = [];
           
-          // Extract products from the nested structure
-          const products = responseData?.data?.produce || [];
-          console.log('Extracted products:', products);
+          if (Array.isArray(produceResponse.data)) {
+            products = produceResponse.data;
+          } else if (produceResponse.data && typeof produceResponse.data === 'object') {
+            const responseData = produceResponse.data as Record<string, any>;
+            // Handle nested data structure
+            if (Array.isArray(responseData.data)) {
+              products = responseData.data;
+            } else if (Array.isArray(responseData.produce)) {
+              products = responseData.produce;
+            }
+          }
+
+          console.log('Processed Products:', products);
           
           setProduce(products);
           
           // Calculate stats from produce
-          const totalProduce = products.reduce((sum: number, item: Product) => sum + (item.quantity || 0), 0);
+          const totalProduce = products.reduce((sum, item) => {
+            const quantity = Number(item?.quantity) || 0;
+            return sum + quantity;
+          }, 0);
+
           const marketPrice = products.length > 0 
-            ? products.reduce((sum: number, item: Product) => sum + (item.basePrice || 0), 0) / products.length 
+            ? products.reduce((sum, item) => {
+                const price = Number(item?.basePrice) || 0;
+                return sum + price;
+              }, 0) / products.length 
             : 0;
 
-          console.log('Calculated stats:', { totalProduce, marketPrice });
+          // Calculate deliveries (products in transit or sold)
+          const deliveries = products.filter(p => 
+            p?.status === "PROCESSING" || p?.status === "SOLD"
+          ).length;
+
+          // Calculate monthly revenue (from sold products)
+          const monthlyRevenue = products
+            .filter(p => p?.status === "SOLD")
+            .reduce((sum, item) => {
+              const price = Number(item?.finalPrice || item?.basePrice) || 0;
+              const quantity = Number(item?.quantity) || 0;
+              return sum + (price * quantity);
+            }, 0);
 
           setStats({
             totalProduce,
             marketPrice,
-            deliveries: 0, // TODO: Fetch from orders API
-            monthlyRevenue: 0 // TODO: Fetch from transactions API
+            deliveries,
+            monthlyRevenue
           });
         } else {
-          console.error('API response was not successful:', produceResponse);
           throw new Error(produceResponse.message || 'Failed to fetch produce');
         }
       } catch (err) {
@@ -88,9 +119,6 @@ const Index = () => {
 
     fetchDashboardData();
   }, [toast]);
-
-  // Debug render
-  console.log('Current state:', { isLoading, error, produce, stats });
 
   if (isLoading) {
     return (
@@ -112,7 +140,47 @@ const Index = () => {
   }
 
   return (
-    <div>
+    <div className="space-y-6">
+      {/* Welcome Section with Profile */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Welcome back, {user?.name}!</h1>
+          <p className="text-gray-600">Here's your farming dashboard overview</p>
+        </div>
+        <Card className="w-64">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                <User className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <CardTitle className="text-sm font-medium">{user?.name}</CardTitle>
+                <CardDescription className="text-xs">Farmer</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <MapPin className="h-4 w-4" />
+              <span>{farmerProfile?.farmLocation || initialFarmerProfile?.farmLocation || "Location not set"}</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Leaf className="h-4 w-4" />
+              <span>{farmerProfile?.farmSize || initialFarmerProfile?.farmSize || 0} acres</span>
+            </div>
+            {(farmerProfile?.certifications || initialFarmerProfile?.certifications) && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {(farmerProfile?.certifications || initialFarmerProfile?.certifications || []).map((cert: string) => (
+                  <Badge key={cert} variant="secondary" className="text-xs">
+                    {cert}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Stats Overview */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <StatCard 
@@ -133,13 +201,13 @@ const Index = () => {
           title="Deliveries" 
           value={stats.deliveries.toString()} 
           icon={<Truck className="h-full w-full" />} 
-          description="0 pending, 0 completed"
+          description={`${produce.filter(p => p?.status === "PROCESSING").length} pending, ${produce.filter(p => p?.status === "SOLD").length} completed`}
         />
         <StatCard 
           title="Monthly Revenue" 
           value={`₹${stats.monthlyRevenue.toLocaleString()}`} 
           icon={<DollarSign className="h-full w-full" />} 
-          description="Last month: ₹0"
+          description="From sold produce"
           trend={{ value: 0, positive: true }}
         />
       </div>

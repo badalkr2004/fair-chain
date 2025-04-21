@@ -4,6 +4,10 @@ export const API_ENDPOINTS = {
   auth: {
     login: '/auth/login',
     register: '/auth/register',
+    profile: '/auth/profile',
+  },
+  farmer: {
+    profile: '/farmer/profile',
   },
   products: {
     list: '/products',
@@ -13,6 +17,7 @@ export const API_ENDPOINTS = {
   },
   produce: {
     list: '/produce',
+    myProduce: '/produce/my-produce',
     create: '/produce',
     update: (id: string) => `/produce/${id}`,
     delete: (id: string) => `/produce/${id}`,

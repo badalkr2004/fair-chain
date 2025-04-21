@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/api/client";
 import { Loader2 } from "lucide-react";
+import { UserRole } from "@/types/auth";
 
 export default function FarmerLogin() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function FarmerLogin() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    role: UserRole.FARMER
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,6 +37,7 @@ export default function FarmerLogin() {
       const response = await apiClient.login({
         email: formData.email,
         password: formData.password,
+        role: formData.role
       });
 
       if (response.success) {

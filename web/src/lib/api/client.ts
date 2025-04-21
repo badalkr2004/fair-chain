@@ -1,5 +1,17 @@
 import { API_BASE_URL, API_ENDPOINTS } from './config';
-import type { LoginCredentials, AuthResponse, Product, Order, Bid, Transaction, SupplyChain, Forecast, Traceability } from './types';
+import type { 
+  LoginCredentials, 
+  AuthResponse, 
+  Product, 
+  Order, 
+  Transaction, 
+  SupplyChain, 
+  Forecast, 
+  Traceability,
+  RegistrationFormData,
+  User 
+} from './types';
+import { useAuthStore } from '../store';
 
 interface ApiResponse<T> {
   data: T;
@@ -15,11 +27,9 @@ interface RequestOptions {
 
 class ApiClient {
   private baseUrl: string;
-  private token: string | null;
 
   constructor() {
     this.baseUrl = API_BASE_URL;
-    this.token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
   }
 
   private async request<T>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
@@ -28,8 +38,9 @@ class ApiClient {
       ...options.headers,
     });
 
-    if (this.token) {
-      headers.append('Authorization', `Bearer ${this.token}`);
+    const token = useAuthStore.getState().token;
+    if (token) {
+      headers.append('Authorization', `Bearer ${token}`);
     }
 
     try {
@@ -43,12 +54,16 @@ class ApiClient {
       const data = await response.json();
 
       if (!response.ok) {
+        if (response.status === 401) {
+          // Token expired or invalid
+          useAuthStore.getState().clearAuth();
+          throw new Error('Session expired. Please login again.');
+        }
         throw new Error(data.message || 'An error occurred');
       }
 
-      // Handle the API response format
       return {
-        data: data.products || data, // Handle both array and single object responses
+        data: data.data || data,
         message: data.message || 'Success',
         success: true
       };
@@ -62,25 +77,79 @@ class ApiClient {
   async login(credentials: LoginCredentials): Promise<ApiResponse<AuthResponse>> {
     const response = await this.request<AuthResponse>(API_ENDPOINTS.auth.login, {
       method: 'POST',
-      body: credentials,
+      body: credentials
     });
-    if (typeof window !== 'undefined') {
-      this.token = response.data.token;
-      localStorage.setItem('token', response.data.token);
-    }
+    
+    const { user: apiUser, token, refreshToken } = response.data;
+    
+    // Transform API user to match store User type
+    const storeUser: User = {
+      id: apiUser.id,
+      name: apiUser.name,
+      email: apiUser.email,
+      role: apiUser.role,
+      farmerProfile: apiUser.farmerProfile ? {
+        farmSize: apiUser.farmerProfile.farmSize,
+        location: apiUser.farmerProfile.location,
+        cropTypes: apiUser.farmerProfile.cropTypes,
+        certifications: apiUser.farmerProfile.certifications
+      } : undefined,
+      buyerProfile: apiUser.buyerProfile ? {
+        businessName: apiUser.buyerProfile.businessName,
+        businessType: apiUser.buyerProfile.businessType,
+        location: apiUser.buyerProfile.location
+      } : undefined
+    };
+    
+    useAuthStore.getState().setAuth(storeUser, token, refreshToken);
+    
+    // Set the token in a cookie
+    document.cookie = `auth-token=${token}; path=/; max-age=2592000; SameSite=Lax`; // 30 days expiry
+    
+    // Set the user role in a cookie
+    document.cookie = `user-role=${storeUser.role}; path=/; max-age=2592000; SameSite=Lax`; // 30 days expiry
+    
     return response;
   }
 
-  async register(data: any): Promise<ApiResponse<AuthResponse>> {
+  async register(data: RegistrationFormData): Promise<ApiResponse<AuthResponse>> {
     const response = await this.request<AuthResponse>(API_ENDPOINTS.auth.register, {
       method: 'POST',
-      body: data,
+      body: {
+        ...data.user,
+        role: data.role.toString(),
+        profile: data.profile
+      },
     });
-    if (typeof window !== 'undefined') {
-      this.token = response.data.token;
-      localStorage.setItem('token', response.data.token);
-    }
+    
+    const { user: apiUser, token, refreshToken } = response.data;
+    
+    // Transform API user to match store User type
+    const storeUser: User = {
+      id: apiUser.id,
+      name: apiUser.name,
+      email: apiUser.email,
+      role: apiUser.role,
+      farmerProfile: apiUser.farmerProfile ? {
+        farmSize: apiUser.farmerProfile.farmSize,
+        location: apiUser.farmerProfile.location,
+        cropTypes: apiUser.farmerProfile.cropTypes,
+        certifications: apiUser.farmerProfile.certifications
+      } : undefined,
+      buyerProfile: apiUser.buyerProfile ? {
+        businessName: apiUser.buyerProfile.businessName,
+        businessType: apiUser.buyerProfile.businessType,
+        location: apiUser.buyerProfile.location
+      } : undefined
+    };
+    
+    useAuthStore.getState().setAuth(storeUser, token, refreshToken);
+    
     return response;
+  }
+
+  async getFarmerProfile(): Promise<ApiResponse<any>> {
+    return this.request<any>(API_ENDPOINTS.auth.profile);
   }
 
   // Product methods
@@ -113,10 +182,15 @@ class ApiClient {
     return this.request<Product[]>(API_ENDPOINTS.produce.list);
   }
 
+  async getMyProduce(): Promise<ApiResponse<Product[]>> {
+    return this.request<Product[]>(API_ENDPOINTS.produce.myProduce);
+  }
+
   async createProduce(data: FormData): Promise<ApiResponse<Product>> {
     const headers = new Headers();
-    if (this.token) {
-      headers.append('Authorization', `Bearer ${this.token}`);
+    const token = useAuthStore.getState().token;
+    if (token) {
+      headers.append('Authorization', `Bearer ${token}`);
     }
     // Don't set Content-Type for FormData, let the browser set it with boundary
 
@@ -178,25 +252,6 @@ class ApiClient {
     return this.request<Order>(API_ENDPOINTS.orders.update(id), {
       method: 'PUT',
       body: order,
-    });
-  }
-
-  // Bid methods
-  async getBids(): Promise<ApiResponse<Bid[]>> {
-    return this.request<Bid[]>(API_ENDPOINTS.bids.list);
-  }
-
-  async createBid(bid: Omit<Bid, 'id'>): Promise<ApiResponse<Bid>> {
-    return this.request<Bid>(API_ENDPOINTS.bids.create, {
-      method: 'POST',
-      body: bid,
-    });
-  }
-
-  async updateBid(id: string, bid: Partial<Bid>): Promise<ApiResponse<Bid>> {
-    return this.request<Bid>(API_ENDPOINTS.bids.update(id), {
-      method: 'PUT',
-      body: bid,
     });
   }
 

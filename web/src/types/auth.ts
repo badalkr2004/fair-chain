@@ -1,15 +1,8 @@
 export enum UserRole {
   FARMER = "FARMER",
-  INTERMEDIARY = "INTERMEDIARY",
   CONSUMER = "CONSUMER",
+  BUYER = "BUYER",
   ADMIN = "ADMIN"
-}
-
-export enum IntermediaryType {
-  LOGISTICS = "LOGISTICS",
-  AGGREGATOR = "AGGREGATOR",
-  STORAGE = "STORAGE",
-  PROCESSOR = "PROCESSOR"
 }
 
 export enum ConsumerType {
@@ -33,17 +26,6 @@ export interface FarmerFormData {
   certifications: string[];
 }
 
-export interface IntermediaryFormData {
-  type: IntermediaryType;
-  serviceAreas: string[];
-  capacity?: {
-    storage?: number;
-    transportation?: number;
-  };
-  services: string[];
-  licenseNumber?: string;
-}
-
 export interface ConsumerFormData {
   type: ConsumerType;
   businessName?: string;
@@ -53,6 +35,6 @@ export interface ConsumerFormData {
 
 export interface RegistrationFormData {
   user: UserFormData;
-  profile: FarmerFormData | IntermediaryFormData | ConsumerFormData;
+  profile: FarmerFormData | ConsumerFormData;
   role: UserRole;
 } 
