@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import produceService from '../../services/produce';
 import authService from '../../services/auth';
 import traceabilityService from '../../services/traceability';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function FarmerDashboard() {
   const [isLoading, setIsLoading] = useState(true);
@@ -57,14 +58,26 @@ export default function FarmerDashboard() {
           : 'https://images.unsplash.com/photo-1626426336803-0fb815b51502?w=800&auto=format&fit=crop'
       })));
 
-      // Load supply chain data
-      const traceableProducts = await traceabilityService.getMyTraceableProducts();
-      setSupplyChainActivities(traceableProducts.slice(0, 2).map((item: any) => ({
-        id: item.id,
-        name: `${item.name} #${item.batchNumber || item.id.substr(0, 8)}`,
-        status: item.currentStage || 'Processing',
-        progress: getProgressValue(item.currentStage)
-      })));
+      // Load supply chain data with immediate fallback to mock data if authentication issues are detected
+      try {
+        console.log('Loading traceability data...');
+        
+        // Check if we have a valid auth token before proceeding
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          console.warn('No authentication token found, using mock data');
+          const mockData = await traceabilityService.getMockTraceableProducts();
+          handleTraceabilityData(mockData);
+          return;
+        }
+        
+        const traceableProducts = await traceabilityService.getMyTraceableProducts();
+        handleTraceabilityData(traceableProducts);
+      } catch (supplyChainError) {
+        console.error('Error handling supply chain data:', supplyChainError);
+        // Set empty array to prevent undefined errors in the UI
+        setSupplyChainActivities([]);
+      }
     } catch (error) {
       Alert.alert('Error', 'Failed to load dashboard data');
       console.error(error);
@@ -74,11 +87,39 @@ export default function FarmerDashboard() {
     }
   };
 
-  const getProgressValue = (stage?: string) => {
+  // Add a helper function to process traceability data
+  const handleTraceabilityData = (traceableProducts: any[]) => {
+    // Ensure traceableProducts is always an array, even if API returns null/undefined
+    if (Array.isArray(traceableProducts) && traceableProducts.length > 0) {
+      console.log(`Successfully loaded ${traceableProducts.length} traceable products`);
+      
+      // Map products to supply chain activities with safe property access
+      setSupplyChainActivities(traceableProducts.slice(0, 3).map((item: any) => ({
+        id: item?.id || `mock-${Math.random().toString(36).substring(7)}`,
+        name: `${item?.name || 'Product'} ${item?.batchNumber ? `#${item?.batchNumber}` : ''}`,
+        status: item?.currentStage || 'Registered',
+        progress: getProgressValue(item?.currentStage),
+        productId: item?.productId || item?.id || ''
+      })));
+    } else {
+      console.log('No traceable products found or returned empty array');
+      setSupplyChainActivities([]);
+    }
+  };
+
+  const getProgressValue = (stage?: string): number => {
+    // If no stage provided, return 1 (first stage)
     if (!stage) return 1;
-    const stages = ['HARVESTED', 'PROCESSED', 'PACKAGED', 'SHIPPED', 'RECEIVED'];
-    const index = stages.findIndex(s => s === stage);
-    return Math.max(index + 1, 1);
+    
+    // Define all possible stages in order
+    const stages = ['HARVESTED', 'PROCESSED', 'PACKAGED', 'SHIPPED', 'RECEIVED', 'QUALITY_CHECK', 'STORED'];
+    
+    // Find the index of the current stage
+    const index = stages.findIndex(s => s.toUpperCase() === stage.toUpperCase());
+    
+    // If stage is not found in our defined stages, return 1
+    // Otherwise return the stage index + 1 (to avoid zero)
+    return index === -1 ? 1 : Math.min(index + 1, 5);
   };
 
   const onRefresh = () => {
@@ -241,36 +282,80 @@ export default function FarmerDashboard() {
               <View className="bg-white rounded-xl p-6 items-center justify-center mb-4">
                 <Ionicons name="git-network-outline" size={40} color="#d1d5db" />
                 <Text className="text-gray-400 mt-2 text-center">No supply chain activity yet</Text>
-                <TouchableOpacity 
-                  className="mt-4 bg-green-50 px-4 py-2 rounded-lg"
-                  onPress={() => router.push('/farmer/register-product')}
-                >
-                  <Text className="text-green-600">Register a product</Text>
-                </TouchableOpacity>
+                <Text className="text-gray-400 text-sm text-center mb-4">
+                  Register your products for traceability to start tracking
+                </Text>
+                <View className="flex-row justify-center flex-wrap">
+                  <TouchableOpacity 
+                    className="mt-2 bg-green-50 px-4 py-2 rounded-lg mr-2"
+                    onPress={() => router.push('/farmer/register-product')}
+                  >
+                    <Text className="text-green-600">Register New Product</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    className="mt-2 bg-green-600 px-4 py-2 rounded-lg"
+                    onPress={() => router.push('/farmer/register-existing-product')}
+                  >
+                    <Text className="text-white">Use Existing Product</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             ) : (
-              supplyChainActivities.map((activity) => (
-                <View key={activity.id} className="bg-white rounded-xl p-4 mb-3 shadow-sm">
-                  <View className="flex-row justify-between items-center mb-3">
-                    <Text className="font-medium text-gray-800">{activity.name}</Text>
-                    <View className="bg-blue-100 px-2 py-1 rounded-full">
-                      <Text className="text-blue-700 text-xs">{activity.status}</Text>
-                    </View>
-                  </View>
-                  <View className="flex-row items-center">
-                    <View className={`h-1 w-8 ${activity.progress >= 1 ? 'bg-green-600' : 'bg-gray-300'} rounded-l-full`} />
-                    <View className={`h-1 w-8 ${activity.progress >= 2 ? 'bg-green-600' : 'bg-gray-300'}`} />
-                    <View className={`h-1 w-8 ${activity.progress >= 3 ? 'bg-green-600' : 'bg-gray-300'}`} />
-                    <View className={`h-1 w-8 ${activity.progress >= 4 ? 'bg-green-600' : 'bg-gray-300'} rounded-r-full`} />
-                  </View>
-                  <View className="flex-row justify-between mt-2">
-                    <Text className="text-xs text-gray-500">Farm</Text>
-                    <Text className="text-xs text-gray-500">Processing</Text>
-                    <Text className="text-xs text-gray-500">Distribution</Text>
-                    <Text className="text-xs text-gray-500">Retailer</Text>
-                  </View>
+              <>
+                <View className="flex-row justify-between items-center mb-4">
+                  <Text className="text-gray-700">Supply Chain Activity</Text>
+                  <TouchableOpacity
+                    onPress={() => router.push('/farmer/register-existing-product')}
+                    className="flex-row items-center"
+                  >
+                    <Text className="text-green-600 mr-1">Register More</Text>
+                    <Ionicons name="add-circle-outline" size={18} color="#16a34a" />
+                  </TouchableOpacity>
                 </View>
-              ))
+                
+                {supplyChainActivities.map((activity) => (
+                  <TouchableOpacity 
+                    key={activity.id} 
+                    className="bg-white rounded-xl p-4 mb-3 shadow-sm"
+                    onPress={() => router.push({
+                      pathname: "/traceability/[id]",
+                      params: { id: activity.productId || activity.id }
+                    })}
+                  >
+                    <View className="flex-row justify-between items-center mb-3">
+                      <Text className="font-medium text-gray-800">{activity.name}</Text>
+                      <View className="bg-blue-100 px-2 py-1 rounded-full">
+                        <Text className="text-blue-700 text-xs">{activity.status}</Text>
+                      </View>
+                    </View>
+                    
+                    <View>
+                      <View className="flex-row items-center mb-1">
+                        <View className={`h-1 w-8 ${activity.progress >= 1 ? 'bg-green-600' : 'bg-gray-300'} rounded-l-full`} />
+                        <View className={`h-1 w-8 ${activity.progress >= 2 ? 'bg-green-600' : 'bg-gray-300'}`} />
+                        <View className={`h-1 w-8 ${activity.progress >= 3 ? 'bg-green-600' : 'bg-gray-300'}`} />
+                        <View className={`h-1 w-8 ${activity.progress >= 4 ? 'bg-green-600' : 'bg-gray-300'}`} />
+                        <View className={`h-1 w-8 ${activity.progress >= 5 ? 'bg-green-600' : 'bg-gray-300'} rounded-r-full`} />
+                      </View>
+                      
+                      <View className="flex-row justify-between">
+                        <Text className="text-xs text-gray-500">Farm</Text>
+                        <Text className="text-xs text-gray-500">Processing</Text>
+                        <Text className="text-xs text-gray-500">Packaging</Text>
+                        <Text className="text-xs text-gray-500">Shipping</Text>
+                        <Text className="text-xs text-gray-500">Delivery</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+                
+                <TouchableOpacity 
+                  className="bg-green-50 p-3 rounded-lg items-center mt-2"
+                  onPress={() => router.push('/farmer')}
+                >
+                  <Text className="text-green-600">Refresh Supply Chain Data</Text>
+                </TouchableOpacity>
+              </>
             )}
           </Animated.View>
         </View>

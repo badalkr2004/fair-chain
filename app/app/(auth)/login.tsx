@@ -194,7 +194,7 @@ export default function LoginScreen() {
               <TouchableOpacity 
                 className="items-center" 
                 onPress={() => {
-                  setEmail('farmer@example.com');
+                  setEmail('farmer2@example.com');
                   setPassword('password123');
                 }}
               >

@@ -170,6 +170,16 @@ export default function Index() {
               <Text className="text-gray-600 text-sm">Smart contract-style rules for payments</Text>
             </View>
           </Animated.View>
+
+          <View className="mt-8 mx-4">
+            <TouchableOpacity
+              onPress={() => router.push('/traceability/scan')}
+              className="flex-row items-center justify-center bg-green-100 p-4 rounded-xl"
+            >
+              <Ionicons name="qr-code" size={24} color="#16a34a" />
+              <Text className="ml-2 text-green-800 font-semibold">Scan QR Code to Verify Products</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </View>

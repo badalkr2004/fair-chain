@@ -200,6 +200,7 @@ export default function RegisterProductPage() {
       // Register the product for traceability
       await traceabilityService.registerTraceableProduct(registrationData);
       
+      // Show success message and navigate back
       Alert.alert(
         'Success',
         'Your product has been registered for traceability',
@@ -435,7 +436,7 @@ export default function RegisterProductPage() {
                   <TouchableOpacity
                     onPress={getLocation}
                     className="bg-green-100 rounded-lg px-3 items-center justify-center"
-                    disabled={isLocationLoading || (formData.fromExistingProduce && selectedProduceId)}
+                    disabled={isLocationLoading || Boolean(formData.fromExistingProduce && selectedProduceId)}
                   >
                     {isLocationLoading ? (
                       <ActivityIndicator size="small" color="#16a34a" />

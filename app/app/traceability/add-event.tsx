@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -13,6 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import traceabilityService from '../../services/traceability';
+import * as Location from 'expo-location';
 
 const eventTypeOptions = [
   { value: 'HARVESTED', label: 'Harvested 🌱', description: 'Marking when the crop was harvested' },
@@ -27,14 +28,15 @@ const eventTypeOptions = [
 export default function AddTraceabilityEventScreen() {
   const { productId } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(false);
+  const [isLocationLoading, setIsLocationLoading] = useState(false);
   const [showEventTypeDropdown, setShowEventTypeDropdown] = useState(false);
   
   const [form, setForm] = useState({
     eventType: '',
     location: {
       name: '',
-      latitude: 17.385,
-      longitude: 78.4867
+      latitude: 0,
+      longitude: 0
     },
     details: {},
     attachments: []
@@ -43,6 +45,11 @@ export default function AddTraceabilityEventScreen() {
   const [details, setDetails] = useState([
     { key: '', value: '' }
   ]);
+  
+  // Get current location when component mounts
+  useEffect(() => {
+    getLocation();
+  }, []);
 
   const handleInputChange = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -97,8 +104,48 @@ export default function AddTraceabilityEventScreen() {
     });
     setForm(prev => ({ ...prev, details: detailsObj }));
   };
+  
+  // Get current location
+  const getLocation = async () => {
+    setIsLocationLoading(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission denied', 'Please allow location access to continue');
+        setIsLocationLoading(false);
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      
+      // Get location name from coordinates (this would typically use a geocoding service)
+      // For demo purposes, we'll use a placeholder
+      const locationName = form.location.name || 'Current Location';
+      
+      setForm(prev => ({
+        ...prev,
+        location: {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          name: locationName
+        }
+      }));
+      
+      console.log('Location updated:', location.coords);
+    } catch (error) {
+      console.error('Error getting location:', error);
+      Alert.alert('Error', 'Failed to get your location. Please try again.');
+    } finally {
+      setIsLocationLoading(false);
+    }
+  };
 
   const validateForm = () => {
+    if (!productId) {
+      Alert.alert('Error', 'Product ID is missing. Please try again');
+      return false;
+    }
+    
     if (!form.eventType) {
       Alert.alert('Missing Event Type', 'Please select an event type');
       return false;
@@ -106,6 +153,11 @@ export default function AddTraceabilityEventScreen() {
     
     if (!form.location.name) {
       Alert.alert('Missing Location', 'Please provide a location name');
+      return false;
+    }
+    
+    if (form.location.latitude === 0 && form.location.longitude === 0) {
+      Alert.alert('Missing Coordinates', 'Please get your current location or provide valid coordinates');
       return false;
     }
     
@@ -117,12 +169,24 @@ export default function AddTraceabilityEventScreen() {
     
     setIsLoading(true);
     try {
-      await traceabilityService.recordSupplyChainEvent({
+      // Prepare the data in the format expected by the backend
+      const eventData = {
         productId: productId as string,
         eventType: form.eventType as any,
-        location: form.location,
-        details: form.details
-      });
+        location: {
+          name: form.location.name,
+          latitude: form.location.latitude,
+          longitude: form.location.longitude
+        },
+        details: form.details  // This will be mapped to metadata in the traceability service
+      };
+      
+      console.log('Submitting event data:', eventData);
+      
+      // Send to traceability service
+      const response = await traceabilityService.recordSupplyChainEvent(eventData);
+      
+      console.log('Event recorded successfully:', response);
       
       Alert.alert(
         'Success', 
@@ -130,6 +194,7 @@ export default function AddTraceabilityEventScreen() {
         [{ text: 'OK', onPress: () => router.back() }]
       );
     } catch (error) {
+      console.error('Error recording event:', error);
       Alert.alert('Error', error instanceof Error ? error.message : 'Failed to record event');
     } finally {
       setIsLoading(false);
@@ -156,6 +221,12 @@ export default function AddTraceabilityEventScreen() {
 
           {/* Form */}
           <View className="mb-6">
+            {/* Product ID Display */}
+            <View className="bg-gray-50 p-3 rounded-lg mb-4 border border-gray-200">
+              <Text className="text-gray-500 text-sm">Product ID</Text>
+              <Text className="text-gray-800 font-medium">{productId}</Text>
+            </View>
+          
             {/* Event Type Dropdown */}
             <Text className="text-gray-700 mb-2 font-medium">Event Type*</Text>
             <TouchableOpacity 
@@ -189,7 +260,7 @@ export default function AddTraceabilityEventScreen() {
 
             {!showEventTypeDropdown && <View className="mb-4" />}
 
-            {/* Location */}
+            {/* Location Name */}
             <Text className="text-gray-700 mb-2 font-medium">Location Name*</Text>
             <TextInput
               className="border border-gray-300 rounded-lg p-3 mb-4"
@@ -198,20 +269,54 @@ export default function AddTraceabilityEventScreen() {
               onChangeText={(value) => handleLocationInputChange('name', value)}
             />
 
+            {/* Location Coordinates */}
+            <Text className="text-gray-700 mb-2 font-medium">Location Coordinates*</Text>
+            <View className="flex-row mb-4">
+              <View className="flex-1 mr-2">
+                <TextInput
+                  className="border border-gray-300 rounded-lg p-3"
+                  placeholder="Latitude"
+                  value={form.location.latitude ? form.location.latitude.toString() : ''}
+                  keyboardType="numeric"
+                  editable={false}
+                />
+              </View>
+              <View className="flex-1 mr-2">
+                <TextInput
+                  className="border border-gray-300 rounded-lg p-3"
+                  placeholder="Longitude"
+                  value={form.location.longitude ? form.location.longitude.toString() : ''}
+                  keyboardType="numeric"
+                  editable={false}
+                />
+              </View>
+              <TouchableOpacity
+                className="bg-green-50 rounded-lg px-3 items-center justify-center"
+                onPress={getLocation}
+                disabled={isLocationLoading}
+              >
+                {isLocationLoading ? (
+                  <ActivityIndicator size="small" color="#16a34a" />
+                ) : (
+                  <Ionicons name="locate" size={24} color="#16a34a" />
+                )}
+              </TouchableOpacity>
+            </View>
+
             {/* Additional Details */}
-            <Text className="text-gray-700 mb-2 font-medium">Additional Details</Text>
+            <Text className="text-gray-700 mb-2 font-medium">Additional Details (Metadata)</Text>
             
             {details.map((detail, index) => (
               <View key={index} className="flex-row mb-2">
                 <TextInput
                   className="border border-gray-300 rounded-lg p-3 flex-1 mr-2"
-                  placeholder="Label"
+                  placeholder="Key (e.g., temperature)"
                   value={detail.key}
                   onChangeText={(value) => handleDetailKeyChange(index, value)}
                 />
                 <TextInput
                   className="border border-gray-300 rounded-lg p-3 flex-1 mr-2"
-                  placeholder="Value"
+                  placeholder="Value (e.g., 25°C)"
                   value={detail.value}
                   onChangeText={(value) => handleDetailValueChange(index, value)}
                 />

@@ -6,6 +6,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as productsService from '../../services/products';
 import * as cartService from '../../services/cart';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import VerificationButton from '../../components/VerificationButton';
 
 interface Farmer {
   id: string;
@@ -286,6 +287,9 @@ export default function ProductDetails() {
               {product.quantity} {product.unit} available
             </Text>
           </View>
+          
+          {/* Verification button */}
+          <VerificationButton productId={product.id} />
           
           {/* Product description */}
           <View className="mt-6">

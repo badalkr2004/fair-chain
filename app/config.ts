@@ -1,5 +1,5 @@
 // Configuration variables for the application
-export const API_URL = 'http://localhost:8080'
+export const API_URL = 'https://api.fc.bitbrains.fun'
 
 // Environment
 export const IS_DEV = process.env.NODE_ENV === 'development';

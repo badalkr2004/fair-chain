@@ -49,6 +49,12 @@ class ApiService {
       console.error(`Network request failed for ${method} ${endpoint}`, error);
       throw new Error(`Cannot connect to server at ${API_URL}. Please check your connection or server status.`);
     }
+    
+    if (error.message && error.message.includes('Unexpected token')) {
+      console.error(`Invalid JSON response from ${method} ${endpoint}`, error);
+      throw new Error(`Server returned invalid data. Please try again later.`);
+    }
+    
     throw error;
   }
 
@@ -57,12 +63,47 @@ class ApiService {
       const headers = await this.getHeaders();
       this.logRequest('GET', endpoint);
       
-      const response = await fetch(`${API_URL}${endpoint}`, {
+      // Add timestamp to prevent caching issues
+      const cacheBuster = `${endpoint.includes('?') ? '&' : '?'}_t=${new Date().getTime()}`;
+      const url = `${API_URL}${endpoint}${cacheBuster}`;
+      
+      const response = await fetch(url, {
         method: 'GET',
         headers
       });
       
-      const data = await response.json();
+      // Check content type to avoid JSON parsing errors for HTML responses
+      const contentType = response.headers.get('content-type');
+      
+      // Better handling for HTML responses
+      if (contentType && contentType.includes('text/html')) {
+        console.error(`Received HTML instead of JSON from ${endpoint}`);
+        
+        // Special case for traceability endpoints
+        if (endpoint.includes('/trace/')) {
+          throw new Error(`The traceability service returned HTML instead of JSON. This likely indicates the endpoint is misconfigured or the service is unavailable.`);
+        }
+        
+        throw new Error('Received HTML response instead of JSON. API endpoint may be unavailable.');
+      }
+      
+      // Check if response is empty
+      const text = await response.text();
+      
+      if (!text || text.trim() === '') {
+        console.error(`Empty response from ${endpoint}`);
+        return {} as T;
+      }
+      
+      // Parse JSON data
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseError) {
+        console.error(`Error parsing JSON from ${endpoint}:`, parseError);
+        console.error(`Response text:`, text.substring(0, 200) + '...');
+        throw new Error('Invalid response format. Could not parse server response.');
+      }
       
       if (!response.ok) {
         this.logRequest('GET', endpoint, null, data);
@@ -72,7 +113,7 @@ class ApiService {
       return data;
     } catch (error) {
       this.logRequest('GET', endpoint, null, error);
-      this.handleNetworkError(error, 'GET', endpoint);
+      return this.handleNetworkError(error, 'GET', endpoint);
     }
   }
 
@@ -87,7 +128,30 @@ class ApiService {
         body: JSON.stringify(data)
       });
       
-      const responseData = await response.json();
+      // Check content type to avoid JSON parsing errors for HTML responses
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('text/html')) {
+        console.error(`Received HTML instead of JSON from ${endpoint}`);
+        throw new Error('Received HTML response instead of JSON. API endpoint may be unavailable.');
+      }
+      
+      // Check if response is empty
+      const text = await response.text();
+      
+      if (!text || text.trim() === '') {
+        console.error(`Empty response from ${endpoint}`);
+        return {} as T;
+      }
+      
+      // Parse JSON data
+      let responseData;
+      try {
+        responseData = JSON.parse(text);
+      } catch (parseError) {
+        console.error(`Error parsing JSON from ${endpoint}:`, parseError);
+        console.error(`Response text:`, text.substring(0, 200) + '...');
+        throw new Error('Invalid response format. Could not parse server response.');
+      }
       
       if (!response.ok) {
         this.logRequest('POST', endpoint, data, responseData);
@@ -97,7 +161,7 @@ class ApiService {
       return responseData;
     } catch (error) {
       this.logRequest('POST', endpoint, data, error);
-      this.handleNetworkError(error, 'POST', endpoint);
+      return this.handleNetworkError(error, 'POST', endpoint);
     }
   }
 
@@ -112,7 +176,30 @@ class ApiService {
         body: JSON.stringify(data)
       });
       
-      const responseData = await response.json();
+      // Check content type to avoid JSON parsing errors for HTML responses
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('text/html')) {
+        console.error(`Received HTML instead of JSON from ${endpoint}`);
+        throw new Error('Received HTML response instead of JSON. API endpoint may be unavailable.');
+      }
+      
+      // Check if response is empty
+      const text = await response.text();
+      
+      if (!text || text.trim() === '') {
+        console.error(`Empty response from ${endpoint}`);
+        return {} as T;
+      }
+      
+      // Parse JSON data
+      let responseData;
+      try {
+        responseData = JSON.parse(text);
+      } catch (parseError) {
+        console.error(`Error parsing JSON from ${endpoint}:`, parseError);
+        console.error(`Response text:`, text.substring(0, 200) + '...');
+        throw new Error('Invalid response format. Could not parse server response.');
+      }
       
       if (!response.ok) {
         this.logRequest('PUT', endpoint, data, responseData);
@@ -122,7 +209,7 @@ class ApiService {
       return responseData;
     } catch (error) {
       this.logRequest('PUT', endpoint, data, error);
-      this.handleNetworkError(error, 'PUT', endpoint);
+      return this.handleNetworkError(error, 'PUT', endpoint);
     }
   }
 
@@ -136,7 +223,30 @@ class ApiService {
         headers
       });
       
-      const data = await response.json();
+      // Check content type to avoid JSON parsing errors for HTML responses
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('text/html')) {
+        console.error(`Received HTML instead of JSON from ${endpoint}`);
+        throw new Error('Received HTML response instead of JSON. API endpoint may be unavailable.');
+      }
+      
+      // Check if response is empty
+      const text = await response.text();
+      
+      if (!text || text.trim() === '') {
+        console.error(`Empty response from ${endpoint}`);
+        return {} as T;
+      }
+      
+      // Parse JSON data
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseError) {
+        console.error(`Error parsing JSON from ${endpoint}:`, parseError);
+        console.error(`Response text:`, text.substring(0, 200) + '...');
+        throw new Error('Invalid response format. Could not parse server response.');
+      }
       
       if (!response.ok) {
         this.logRequest('DELETE', endpoint, null, data);
@@ -146,7 +256,7 @@ class ApiService {
       return data;
     } catch (error) {
       this.logRequest('DELETE', endpoint, null, error);
-      this.handleNetworkError(error, 'DELETE', endpoint);
+      return this.handleNetworkError(error, 'DELETE', endpoint);
     }
   }
   
