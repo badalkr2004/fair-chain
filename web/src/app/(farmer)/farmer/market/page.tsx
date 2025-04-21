@@ -1,73 +1,104 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MarketPriceChart } from "@/components/marketTrend/MarketPriceChart";
-import { CropRecommendations } from "@/components/market/CropRecommendations";
+import CropRecommendations from "@/components/market/CropRecommendations";
 import { MarketInsights } from "@/components/market/MarketInsights";
-import { PriceComparison } from "@/components/marketTrend/PriceComparison";
-import { RecommendedPrice } from "@/components/marketTrend/RecomendedPrice";
+import PriceComparison from "@/components/marketTrend/PriceComparison";
+import RecommendedPrice from "@/components/marketTrend/RecomendedPrice";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { fairChainClient } from "@/lib/api/fairchain";
+import { PriceData, MandiPrice, ForecastData } from "@/types/market";
+import { useToast } from "@/components/ui/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// Mock data - In a real app, this would come from an API
-const mockTrendData = [
-  { date: "2024-03-15", tomatoes: 40, potatoes: 25, onions: 30 },
-  { date: "2024-03-22", tomatoes: 45, potatoes: 22, onions: 35 },
-  { date: "2024-03-29", tomatoes: 42, potatoes: 28, onions: 32 },
-  { date: "2024-04-05", tomatoes: 48, potatoes: 30, onions: 28 },
-  { date: "2024-04-12", tomatoes: 50, potatoes: 27, onions: 33 },
-  { date: "2024-04-19", tomatoes: 47, potatoes: 29, onions: 36 },
-];
+interface OptimalCrop {
+  crop: string;
+  current_yield: number;
+  yield_trend: string;
+  growth_potential: number;
+  confidence_score: number;
+  forecasted_yield: number;
+  profit_potential: string;
+}
 
-const nearbyMandis = [
-  { name: "Central Mandi", tomatoes: 45, potatoes: 28, onions: 34 },
-  { name: "East Mandi", tomatoes: 43, potatoes: 26, onions: 35 },
-  { name: "West Mandi", tomatoes: 46, potatoes: 29, onions: 33 },
-];
-
-const mockCropRecommendations = [
-  {
-    crop: "Tomatoes",
-    recommendation: "Consider planting tomatoes in the next season",
-    confidence: "85%",
-    trend: "upward" as const,
-  },
-  {
-    crop: "Potatoes",
-    recommendation: "Current market conditions are favorable for potatoes",
-    confidence: "75%",
-    trend: "stable" as const,
-  },
-  {
-    crop: "Onions",
-    recommendation: "Market demand for onions is expected to increase",
-    confidence: "92%",
-    trend: "upward" as const,
-  },
-];
-
-const mockMarketInsights = [
-  {
-    title: "Weather Impact on Crop Yields",
-    description: "Recent weather patterns suggest a potential increase in tomato yields by 15% in the next quarter.",
-    impact: "high" as const,
-    source: "Agricultural Weather Service",
-  },
-  {
-    title: "Market Demand Shift",
-    description: "Consumer preference for organic produce is increasing, creating new market opportunities.",
-    impact: "medium" as const,
-    source: "Market Research Report",
-  },
-  {
-    title: "Supply Chain Optimization",
-    description: "New logistics routes have reduced transportation costs by 8% for perishable goods.",
-    impact: "low" as const,
-    source: "Logistics Update",
-  },
-];
+interface CropRecommendation {
+  crop: string;
+  score: number;
+  reason: string;
+}
 
 export default function MarketPriceTrends() {
-  const [selectedCrop, setSelectedCrop] = useState("tomatoes");
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+  const [priceTrends, setPriceTrends] = useState<PriceData[]>([]);
+  const [mandiPrices, setMandiPrices] = useState<MandiPrice[]>([]);
+  const [forecastData, setForecastData] = useState<ForecastData | null>(null);
+  const [recommendations, setRecommendations] = useState<CropRecommendation[]>([]);
+  const [marketInsights, setMarketInsights] = useState<any[]>([]);
+  const [selectedCrop, setSelectedCrop] = useState("wheat");
+  const [selectedRegion, setSelectedRegion] = useState("patna");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+
+        // Fetch price trends for selected crop
+        const trendsResponse = await fairChainClient.getPriceTrends(selectedCrop);
+        if (trendsResponse.success) {
+          setPriceTrends(trendsResponse.data || []);
+        }
+
+        // Fetch mandi prices for selected crop
+        const mandiResponse = await fairChainClient.getMandiPrices(selectedCrop);
+        if (mandiResponse.success) {
+          setMandiPrices(mandiResponse.data || []);
+        }
+
+        // Fetch price forecast for selected crop
+        const forecastResponse = await fairChainClient.getPriceForecast(selectedCrop, selectedRegion);
+        if (forecastResponse.success) {
+          setForecastData(forecastResponse.data || null);
+        }
+
+        // Fetch optimal crops for selected region
+        const recommendationsResponse = await fairChainClient.getOptimalCrops(selectedRegion);
+        if (recommendationsResponse.success && recommendationsResponse.data) {
+          setRecommendations(recommendationsResponse.data.optimal_crops.map(crop => ({
+            crop: crop.crop,
+            score: crop.confidence_score,
+            reason: `Yield trend: ${crop.yield_trend}, Profit potential: ${crop.profit_potential}`
+          })));
+        }
+
+        // Fetch market insights for selected region
+        const insightsResponse = await fairChainClient.getRegionalDemand(selectedRegion);
+        if (insightsResponse.success) {
+          setMarketInsights(insightsResponse.data || []);
+        }
+      } catch (error) {
+        console.error('Error fetching market data:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch market data. Please try again later.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [toast, selectedCrop, selectedRegion]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-farm-green"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -78,13 +109,39 @@ export default function MarketPriceTrends() {
         </p>
       </div>
 
+      <div className="flex gap-4 mb-6">
+        <Select value={selectedCrop} onValueChange={setSelectedCrop}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select crop" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="wheat">Wheat</SelectItem>
+            <SelectItem value="rice">Rice</SelectItem>
+            <SelectItem value="potatoes">Potatoes</SelectItem>
+            <SelectItem value="apples">Apples</SelectItem>
+            <SelectItem value="bananas">Bananas</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select region" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="patna">Patna</SelectItem>
+            <SelectItem value="delhi">Delhi</SelectItem>
+            <SelectItem value="mumbai">Mumbai</SelectItem>
+            <SelectItem value="kolkata">Kolkata</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+        <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Price Trends (Last 6 Weeks)</CardTitle>
+            <CardTitle>Price Trends & Forecast</CardTitle>
           </CardHeader>
           <CardContent>
-            <MarketPriceChart data={mockTrendData} />
+            <MarketPriceChart priceData={priceTrends} forecastData={forecastData} />
           </CardContent>
         </Card>
 
@@ -93,26 +150,26 @@ export default function MarketPriceTrends() {
             <CardTitle>Nearby Mandi Prices</CardTitle>
           </CardHeader>
           <CardContent>
-            <PriceComparison data={nearbyMandis} />
+            <PriceComparison data={mandiPrices} />
           </CardContent>
         </Card>
 
-        <Card className="md:col-span-2">
+        <Card>
           <CardHeader>
             <CardTitle>Recommended Prices</CardTitle>
           </CardHeader>
           <CardContent>
-            <RecommendedPrice />
+            <RecommendedPrice forecastData={forecastData} />
           </CardContent>
         </Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="col-span-2">
-          <CropRecommendations recommendations={mockCropRecommendations} />
+          <CropRecommendations recommendations={recommendations} />
         </div>
         <div className="space-y-4">
-          <MarketInsights insights={mockMarketInsights} />
+          <MarketInsights insights={marketInsights} />
         </div>
       </div>
     </div>

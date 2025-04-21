@@ -1,8 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChartContainer } from "@/components/ui/chart";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Area,
   AreaChart,
@@ -11,150 +10,244 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-  Legend
+  Legend,
+  ReferenceLine
 } from "recharts";
 import { useState } from "react";
-
-interface PriceData {
-  date: string;
-  tomatoes: number;
-  potatoes: number;
-  onions: number;
-}
+import { TrendingUp, TrendingDown } from "lucide-react";
+import { PriceData, ForecastData } from "@/types/market";
 
 interface MarketPriceChartProps {
-  data: PriceData[];
+  priceData: PriceData[] | null;
+  forecastData: ForecastData | null;
 }
 
-export function MarketPriceChart({ data }: MarketPriceChartProps) {
-  const [period, setPeriod] = useState<"weekly" | "monthly">("monthly");
+export function MarketPriceChart({ priceData, forecastData }: MarketPriceChartProps) {
+  const [view, setView] = useState<"weekly" | "monthly">("weekly");
+  const [showForecast, setShowForecast] = useState(false);
   
-  // Transform data based on period
-  const formattedData = data.map((item) => ({
-    ...item,
-    date: new Date(item.date).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
-    })
-  }));
+  // Format data for the chart
+  const formattedData = priceData?.map((item) => ({
+    date: item.date,
+    potatoes: item.potatoes,
+    apples: item.apples,
+    bananas: item.bananas,
+    wheat: item.wheat,
+    rice: item.rice,
+  })) || [];
 
-  const config = {
-    tomatoes: {
-      theme: {
-        light: "#EF4444", // red-500
-        dark: "#EF4444",
-      },
-    },
-    potatoes: {
-      theme: {
-        light: "#3B82F6", // blue-500
-        dark: "#3B82F6",
-      },
-    },
-    onions: {
-      theme: {
-        light: "#10B981", // emerald-500
-        dark: "#10B981",
-      },
-    },
+  // Format forecast data if available
+  const formattedForecastData = forecastData
+    ? [
+        {
+          date: "Current",
+          price: forecastData.current_price,
+        },
+        ...forecastData.price_forecast.map((forecast) => ({
+          date: forecast.date,
+          price: forecast.price,
+        })),
+      ]
+    : [];
+
+  // Format price for display
+  const formatPrice = (price: number) => {
+    return price.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
   };
 
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 rounded-lg shadow-md border border-gray-200">
+          <p className="text-sm font-medium text-gray-600">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} className="text-lg font-bold" style={{ color: entry.color }}>
+              {entry.name}: ₹{formatPrice(entry.value)}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  if (!priceData || priceData.length === 0) {
+    return (
+      <Card className="col-span-2">
+        <CardHeader>
+          <CardTitle>Market Price Trends</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[400px] flex items-center justify-center">
+            <p className="text-gray-500">No price data available</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="border-gray-200">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-lg font-semibold text-gray-900">Market Price Trends</CardTitle>
-        <Tabs defaultValue="monthly" className="w-[200px]" onValueChange={(v) => setPeriod(v as "weekly" | "monthly")}>
-          <TabsList className="grid w-full grid-cols-2">
+    <Card className="col-span-2">
+      <CardHeader>
+        <CardTitle>Market Price Trends</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue="weekly" onValueChange={(value) => setView(value as "weekly" | "monthly")}>
+          <TabsList>
             <TabsTrigger value="weekly">Weekly</TabsTrigger>
             <TabsTrigger value="monthly">Monthly</TabsTrigger>
           </TabsList>
+          <TabsContent value="weekly">
+            <div className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={formattedData}
+                  margin={{
+                    top: 10,
+                    right: 30,
+                    left: 0,
+                    bottom: 0,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="potatoes"
+                    name="Potatoes"
+                    stackId="1"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="apples"
+                    name="Apples"
+                    stackId="1"
+                    stroke="#82ca9d"
+                    fill="#82ca9d"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="bananas"
+                    name="Bananas"
+                    stackId="1"
+                    stroke="#ffc658"
+                    fill="#ffc658"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="wheat"
+                    name="Wheat"
+                    stackId="1"
+                    stroke="#ff7300"
+                    fill="#ff7300"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="rice"
+                    name="Rice"
+                    stackId="1"
+                    stroke="#0088fe"
+                    fill="#0088fe"
+                  />
+                  {showForecast && forecastData && (
+                    <ReferenceLine
+                      x="Current"
+                      stroke="#ff0000"
+                      label={{
+                        value: "Forecast Start",
+                        position: "top",
+                        fill: "#ff0000",
+                      }}
+                    />
+                  )}
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
+          <TabsContent value="monthly">
+            <div className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={formattedData}
+                  margin={{
+                    top: 10,
+                    right: 30,
+                    left: 0,
+                    bottom: 0,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="potatoes"
+                    name="Potatoes"
+                    stackId="1"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="apples"
+                    name="Apples"
+                    stackId="1"
+                    stroke="#82ca9d"
+                    fill="#82ca9d"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="bananas"
+                    name="Bananas"
+                    stackId="1"
+                    stroke="#ffc658"
+                    fill="#ffc658"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="wheat"
+                    name="Wheat"
+                    stackId="1"
+                    stroke="#ff7300"
+                    fill="#ff7300"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="rice"
+                    name="Rice"
+                    stackId="1"
+                    stroke="#0088fe"
+                    fill="#0088fe"
+                  />
+                  {showForecast && forecastData && (
+                    <ReferenceLine
+                      x="Current"
+                      stroke="#ff0000"
+                      label={{
+                        value: "Forecast Start",
+                        position: "top",
+                        fill: "#ff0000",
+                      }}
+                    />
+                  )}
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
         </Tabs>
-      </CardHeader>
-      <CardContent className="p-4">
-        <div className="h-[300px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={formattedData}
-              margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id="colorTomatoes" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#EF4444" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="colorPotatoes" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="colorOnions" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis 
-                dataKey="date" 
-                stroke="#6B7280" 
-                fontSize={12} 
-                tickLine={false} 
-                axisLine={false}
-                tick={{ fill: "#6B7280" }}
-                padding={{ left: 10, right: 10 }}
-              />
-              <YAxis 
-                stroke="#6B7280" 
-                fontSize={12} 
-                tickLine={false} 
-                axisLine={false} 
-                tickFormatter={(value) => `₹${value}`}
-                tick={{ fill: "#6B7280" }}
-                width={60}
-              />
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: 'white',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '0.5rem',
-                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-                }}
-                labelStyle={{ color: '#374151', fontWeight: 500 }}
-                itemStyle={{ color: '#374151' }}
-              />
-              <Legend 
-                verticalAlign="top" 
-                height={36}
-                wrapperStyle={{
-                  paddingTop: '10px'
-                }}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="tomatoes" 
-                name="Tomatoes" 
-                stroke="#EF4444" 
-                fillOpacity={1}
-                fill="url(#colorTomatoes)" 
-              />
-              <Area 
-                type="monotone" 
-                dataKey="potatoes" 
-                name="Potatoes" 
-                stroke="#3B82F6" 
-                fillOpacity={1}
-                fill="url(#colorPotatoes)" 
-              />
-              <Area 
-                type="monotone" 
-                dataKey="onions" 
-                name="Onions" 
-                stroke="#10B981" 
-                fillOpacity={1}
-                fill="url(#colorOnions)" 
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
       </CardContent>
     </Card>
   );
 }
+

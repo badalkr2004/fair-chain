@@ -1,53 +1,56 @@
-import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ForecastData } from '@/types/market';
 
-const recommendedPrices = [
-  {
-    crop: "Tomatoes",
-    price: 48,
-    trend: "up",
-    reason: "High seasonal demand",
-  },
-  {
-    crop: "Potatoes",
-    price: 28,
-    trend: "down",
-    reason: "Increased supply in nearby mandis",
-  },
-  {
-    crop: "Onions",
-    price: 35,
-    trend: "up",
-    reason: "Limited availability",
-  },
-];
-
-export function RecommendedPrice() {
-  return (
-    <div className="grid gap-4 md:grid-cols-3">
-      {recommendedPrices.map((item) => (
-        <div
-          key={item.crop}
-          className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold">{item.crop}</h3>
-            {item.trend === "up" ? (
-              <Badge className="bg-green-500">
-                <TrendingUp className="mr-1 h-4 w-4" />
-                Rising
-              </Badge>
-            ) : (
-              <Badge variant="secondary">
-                <TrendingDown className="mr-1 h-4 w-4" />
-                Falling
-              </Badge>
-            )}
-          </div>
-          <p className="text-2xl font-bold mb-2">₹{item.price}/kg</p>
-          <p className="text-sm text-gray-500">{item.reason}</p>
-        </div>
-      ))}
-    </div>
-  );
+interface RecommendedPriceProps {
+  forecastData: ForecastData | null;
 }
+
+const RecommendedPrice: React.FC<RecommendedPriceProps> = ({ forecastData }) => {
+  if (!forecastData) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Price Forecast</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>No forecast data available</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const { current_price, price_forecast, last_updated } = forecastData;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Price Forecast</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Current Price</h3>
+            <p className="text-2xl font-bold">₹{current_price}/quintal</p>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Price Forecast</h3>
+            <div className="space-y-2">
+              {price_forecast.map((forecast, index) => (
+                <div key={index} className="flex justify-between">
+                  <span>{forecast.date}</span>
+                  <span>₹{forecast.price}/quintal</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="text-sm text-gray-500">
+            Last updated: {new Date(last_updated).toLocaleDateString()}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default RecommendedPrice;

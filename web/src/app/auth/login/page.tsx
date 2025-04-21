@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { apiClient } from "@/lib/api/client";
 import { useAuthStore } from "@/lib/store";
+import { apiClient } from "@/lib/api/client";
 import { UserRole } from "@/types/auth";
 
 export default function LoginPage() {
