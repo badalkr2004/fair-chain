@@ -99,12 +99,29 @@ export const updateOrderStatus = async (id: string, status: OrderStatus) => {
 // Cancel an order
 export const cancelOrder = async (id: string, reason?: string) => {
   try {
-    return await api.put(`/orders/${id}/status`, { 
-      status: OrderStatus.CANCELLED,
-      reason
-    });
+    return await api.post(`/orders/${id}/cancel`, { reason });
   } catch (error) {
     console.error(`Error cancelling order ${id}:`, error);
     throw error;
   }
-}; 
+};
+
+// Get order tracking information
+export const getOrderTracking = async (id: string) => {
+  try {
+    return await api.get(`/orders/${id}/tracking`);
+  } catch (error) {
+    console.error(`Error fetching tracking for order ${id}:`, error);
+    throw error;
+  }
+};
+
+// Get products purchased by the current user
+export const getPurchasedProducts = async () => {
+  try {
+    return await api.get('/orders/purchased-products');
+  } catch (error) {
+    console.error('Error fetching purchased products:', error);
+    throw error;
+  }
+};

@@ -13,6 +13,10 @@ export interface SupplyChain {
   updatedAt: string;
   links: SupplyChainLink[];
   product?: any;
+  status?: string;
+  estimatedEndDate?: string;
+  farmer?: any;
+  intermediary?: any;
 }
 
 export interface SupplyChainLink {
@@ -30,6 +34,8 @@ export interface SupplyChainLink {
   updatedAt: string;
   serviceProviderId?: string;
   serviceProvider?: any;
+  fromUser?: any;
+  toUser?: any;
 }
 
 export interface CreateSupplyChainDTO {
@@ -47,6 +53,11 @@ export interface SupplyChainLinkDTO {
   carbonFootprint?: number;
   certifications?: string[];
   serviceProviderId?: string;
+}
+
+export interface UpdateSupplyChainStatusDTO {
+  status: string;
+  notes?: string;
 }
 
 export const getAllSupplyChains = async () => {
@@ -110,4 +121,81 @@ export const addSupplyChainLink = async (supplyChainId: string, data: SupplyChai
     console.error(`Error adding link to supply chain ${supplyChainId}:`, error);
     throw error;
   }
-}; 
+};
+
+/**
+ * Get all supply chains for the current intermediary
+ */
+export const getMySupplyChains = async () => {
+  try {
+    return await api.get('/supply-chains/my');
+  } catch (error) {
+    console.error('Error fetching my supply chains:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get supply chain links
+ */
+export const getSupplyChainLinks = async (supplyChainId: string) => {
+  try {
+    return await api.get(`/supply-chains/${supplyChainId}/links`);
+  } catch (error) {
+    console.error('Error fetching supply chain links:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update supply chain status
+ */
+export const updateSupplyChainStatus = async (supplyChainId: string, status: string, notes?: string) => {
+  try {
+    const data: UpdateSupplyChainStatusDTO = { status };
+    if (notes) data.notes = notes;
+    
+    return await api.post(`/supply-chains/${supplyChainId}/status`, data);
+  } catch (error) {
+    console.error('Error updating supply chain status:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get active supply chains for a specific product
+ */
+export const getActiveSupplyChainsByProduct = async (productId: string) => {
+  try {
+    return await api.get(`/supply-chains/product/${productId}/active`);
+  } catch (error) {
+    console.error('Error fetching active supply chains for product:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get supply chain statistics for the current intermediary
+ */
+export const getMySupplyChainStats = async () => {
+  try {
+    return await api.get('/supply-chains/my/stats');
+  } catch (error) {
+    console.error('Error fetching supply chain statistics:', error);
+    throw error;
+  }
+};
+
+export default {
+  getSupplyChainById,
+  getSupplyChainByProductId,
+  createSupplyChain,
+  updateSupplyChain,
+  deleteSupplyChain,
+  addSupplyChainLink,
+  getMySupplyChains,
+  getSupplyChainLinks,
+  updateSupplyChainStatus,
+  getActiveSupplyChainsByProduct,
+  getMySupplyChainStats
+};

@@ -7,14 +7,22 @@ import { Ionicons } from '@expo/vector-icons';
 import produceService from '../../services/produce';
 import authService from '../../services/auth';
 import traceabilityService from '../../services/traceability';
+import forecastingService from '../../services/forecasting';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function FarmerDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [marketSummaryLoading, setMarketSummaryLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [crops, setCrops] = useState<any[]>([]);
   const [supplyChainActivities, setSupplyChainActivities] = useState<any[]>([]);
+  const [marketSummary, setMarketSummary] = useState({
+    topCrop: { name: 'Loading...', trend: 'stable' },
+    avgPriceChange: 0,
+    demandTrend: 'stable',
+    lastUpdated: ''
+  });
   const [marketInsights, setMarketInsights] = useState([
     {
       id: '1',
@@ -46,7 +54,7 @@ export default function FarmerDashboard() {
 
       // Load produce data
       const produceData = await produceService.getMyProduce();
-      setCrops(produceData.data.produce.map((item: any) => ({
+      const cropsList = produceData.data.produce.map((item: any) => ({
         id: item.id,
         name: item.name,
         variety: item.category, 
@@ -56,9 +64,9 @@ export default function FarmerDashboard() {
         image: item.images && item.images.length > 0 
           ? item.images[0] 
           : 'https://images.unsplash.com/photo-1626426336803-0fb815b51502?w=800&auto=format&fit=crop'
-      })));
+      }));
 
-      // Load supply chain data with immediate fallback to mock data if authentication issues are detected
+      // Load traceability data with immediate fallback to mock data if authentication issues are detected
       try {
         console.log('Loading traceability data...');
         
@@ -78,12 +86,74 @@ export default function FarmerDashboard() {
         // Set empty array to prevent undefined errors in the UI
         setSupplyChainActivities([]);
       }
+
+      // Set crops after loading
+      setCrops(cropsList);
+      
+      // Complete main UI loading
+      setIsLoading(false);
+      
+      // Load market summary data separately
+      loadMarketSummary(cropsList);
     } catch (error) {
       Alert.alert('Error', 'Failed to load dashboard data');
       console.error(error);
     } finally {
       setIsLoading(false);
       setRefreshing(false);
+    }
+  };
+
+  // Load market summary data
+  const loadMarketSummary = async (cropsList: any[]) => {
+    setMarketSummaryLoading(true);
+    try {
+      // Get all available crops for market data
+      const availableCrops = await forecastingService.getAllCrops();
+      
+      // Get market prices for common crops
+      const cropNames = cropsList.length > 0 
+        ? cropsList.map(crop => crop.name) 
+        : ['Wheat', 'Rice', 'Maize'].filter(c => availableCrops.includes(c));
+      
+      // Get price data for the first crop or default to wheat
+      const cropToCheck = cropNames[0] || 'Wheat';
+      const priceData = await forecastingService.getMarketPrices(cropToCheck);
+      
+      // Get optimal crops for a default region
+      const optimalCropsData = await forecastingService.getOptimalCrops({ region: 'Patna', top_n: 3 });
+      
+      // Find the crop with highest growth potential
+      let topCrop = { name: cropToCheck, trend: priceData.price_trend };
+      if (optimalCropsData && optimalCropsData.optimal_crops && optimalCropsData.optimal_crops.length > 0) {
+        const bestCrop = optimalCropsData.optimal_crops.reduce(
+          (best, current) => current.growth_potential > best.growth_potential ? current : best,
+          optimalCropsData.optimal_crops[0]
+        );
+        topCrop = { name: bestCrop.crop, trend: bestCrop.yield_trend };
+      }
+      
+      // Calculate average price change from forecast
+      let avgPriceChange = 0;
+      if (priceData && priceData.price_forecast && priceData.price_forecast.length > 0) {
+        const lastPrice = priceData.price_forecast[priceData.price_forecast.length - 1].price;
+        const priceChange = ((lastPrice - priceData.current_price) / priceData.current_price) * 100;
+        avgPriceChange = Math.round(priceChange * 10) / 10; // Round to 1 decimal place
+      }
+      
+      // Set market summary
+      setMarketSummary({
+        topCrop,
+        avgPriceChange,
+        demandTrend: priceData.price_trend,
+        lastUpdated: priceData.last_updated
+      });
+      
+    } catch (error) {
+      console.error('Error loading market summary:', error);
+      // Keep default values if there's an error
+    } finally {
+      setMarketSummaryLoading(false);
     }
   };
 
@@ -180,23 +250,121 @@ export default function FarmerDashboard() {
             className="bg-green-600 rounded-xl p-5 mb-8"
             entering={FadeInDown.delay(200).duration(500)}
           >
-            <View className="flex-row items-center mb-3">
-              <Ionicons name="analytics-outline" size={24} color="white" />
-              <Text className="text-white text-lg font-semibold ml-2">Market Summary</Text>
+            <View className="flex-row justify-between items-center mb-3">
+              <View className="flex-row items-center">
+                <Ionicons name="analytics-outline" size={24} color="white" />
+                <Text className="text-white text-lg font-semibold ml-2">Market Summary</Text>
+              </View>
+              {!marketSummaryLoading && (
+                <Text className="text-white/70 text-xs">
+                  {marketSummary.lastUpdated ? `Updated: ${marketSummary.lastUpdated}` : ''}
+                </Text>
+              )}
             </View>
-            <View className="flex-row justify-between">
-              <View className="bg-white/20 rounded-lg p-3 flex-1 mr-2">
-                <Text className="text-white text-xs mb-1">Current Season</Text>
-                <Text className="text-white font-semibold">Active</Text>
+            
+            {marketSummaryLoading ? (
+              <View className="items-center justify-center py-6">
+                <ActivityIndicator size="small" color="white" />
+                <Text className="text-white/80 text-xs mt-2">Loading market data...</Text>
               </View>
-              <View className="bg-white/20 rounded-lg p-3 flex-1 mr-2">
-                <Text className="text-white text-xs mb-1">Active Crops</Text>
-                <Text className="text-white font-semibold">{crops.length}</Text>
-              </View>
-              <View className="bg-white/20 rounded-lg p-3 flex-1">
-                <Text className="text-white text-xs mb-1">Products</Text>
-                <Text className="text-white font-semibold">{supplyChainActivities.length}</Text>
-              </View>
+            ) : (
+              <>
+                <View className="flex-row justify-between mb-3">
+                  <View className="bg-white/20 rounded-lg p-3 flex-1 mr-2">
+                    <Text className="text-white text-xs mb-1">Top Performing Crop</Text>
+                    <View className="flex-row items-center">
+                      <Text className="text-white font-semibold mr-1">{marketSummary.topCrop.name}</Text>
+                      <Ionicons 
+                        name={marketSummary.topCrop.trend === 'increasing' ? 'arrow-up-outline' : 
+                              marketSummary.topCrop.trend === 'decreasing' ? 'arrow-down-outline' : 'remove-outline'} 
+                        size={14} 
+                        color="white" 
+                      />
+                    </View>
+                  </View>
+                  <View className="bg-white/20 rounded-lg p-3 flex-1">
+                    <Text className="text-white text-xs mb-1">Price Forecast</Text>
+                    <View className="flex-row items-center">
+                      <Text className="text-white font-semibold mr-1">
+                        {marketSummary.avgPriceChange > 0 ? '+' : ''}{marketSummary.avgPriceChange}%
+                      </Text>
+                      <Ionicons 
+                        name={marketSummary.avgPriceChange > 0 ? 'arrow-up-outline' : 
+                              marketSummary.avgPriceChange < 0 ? 'arrow-down-outline' : 'remove-outline'} 
+                        size={14} 
+                        color="white" 
+                      />
+                    </View>
+                  </View>
+                </View>
+                <View className="flex-row justify-between">
+                  <View className="bg-white/20 rounded-lg p-3 flex-1 mr-2">
+                    <Text className="text-white text-xs mb-1">Market Demand</Text>
+                    <View className="flex-row items-center">
+                      <Text className="text-white font-semibold mr-1">
+                        {marketSummary.demandTrend.charAt(0).toUpperCase() + marketSummary.demandTrend.slice(1)}
+                      </Text>
+                      <Ionicons 
+                        name={marketSummary.demandTrend === 'increasing' ? 'arrow-up-outline' : 
+                              marketSummary.demandTrend === 'decreasing' ? 'arrow-down-outline' : 'remove-outline'} 
+                        size={14} 
+                        color="white" 
+                      />
+                    </View>
+                  </View>
+                  <View className="bg-white/20 rounded-lg p-3 flex-1">
+                    <Text className="text-white text-xs mb-1">Your Crops</Text>
+                    <Text className="text-white font-semibold">{crops.length}</Text>
+                  </View>
+                </View>
+              </>
+            )}
+          </Animated.View>
+
+          <Animated.View entering={FadeInDown.delay(300).duration(500)} className="mb-8">
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-xl font-semibold text-gray-800">Quick Actions</Text>
+            </View>
+            <View className="flex-row flex-wrap">
+              <TouchableOpacity 
+                className="bg-white rounded-xl p-4 shadow-sm mr-3 mb-3 w-[48%] items-center"
+                onPress={() => router.push('/farmer/forecasting')}
+              >
+                <View className="w-12 h-12 rounded-full bg-blue-100 items-center justify-center mb-2">
+                  <Ionicons name="analytics-outline" size={24} color="#3b82f6" />
+                </View>
+                <Text className="text-gray-800 font-medium">AI Forecasting</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                className="bg-white rounded-xl p-4 shadow-sm mb-3 w-[48%] items-center"
+                onPress={() => router.push('/farmer/market-prices')}
+              >
+                <View className="w-12 h-12 rounded-full bg-green-100 items-center justify-center mb-2">
+                  <Ionicons name="trending-up-outline" size={24} color="#16a34a" />
+                </View>
+                <Text className="text-gray-800 font-medium">Market Prices</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                className="bg-white rounded-xl p-4 shadow-sm mr-3 w-[48%] items-center"
+                onPress={() => router.push('/traceability/scan')}
+              >
+                <View className="w-12 h-12 rounded-full bg-purple-100 items-center justify-center mb-2">
+                  <Ionicons name="qr-code-outline" size={24} color="#8b5cf6" />
+                </View>
+                <Text className="text-gray-800 font-medium">Scan QR Code</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                className="bg-white rounded-xl p-4 shadow-sm w-[48%] items-center"
+                onPress={handleAddCrop}
+              >
+                <View className="w-12 h-12 rounded-full bg-amber-100 items-center justify-center mb-2">
+                  <Ionicons name="add-outline" size={24} color="#f59e0b" />
+                </View>
+                <Text className="text-gray-800 font-medium">Add New Crop</Text>
+              </TouchableOpacity>
             </View>
           </Animated.View>
 
@@ -373,7 +541,7 @@ export default function FarmerDashboard() {
           <Text className="text-gray-400 text-xs mt-1">Crops</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity className="items-center">
+        <TouchableOpacity className="items-center" onPress={() => router.push('/farmer/forecasting')}>
           <Ionicons name="analytics" size={24} color="#9ca3af" />
           <Text className="text-gray-400 text-xs mt-1">Insights</Text>
         </TouchableOpacity>

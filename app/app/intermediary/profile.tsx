@@ -312,7 +312,7 @@ export default function IntermediaryProfileScreen() {
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.option} onPress={() => router.push('../intermediary/index')}>
+          <TouchableOpacity style={styles.option} onPress={() => router.push('/intermediary')}>
             <Ionicons name="home-outline" size={24} color="#f59e0b" style={styles.optionIcon} />
             <Text style={styles.optionText}>Dashboard</Text>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />

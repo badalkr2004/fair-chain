@@ -36,6 +36,141 @@ class TraceabilityService {
   }
 
   /**
+   * Get product traceability information including supply chain links
+   */
+  async getProductTraceability(productId: string): Promise<ApiResponse> {
+    try {
+      return await api.get(`/trace/product/${productId}/supply-chain`);
+    } catch (error) {
+      console.error(`Error fetching product traceability for ${productId}:`, error);
+      // Return mock data as fallback
+      return {
+        success: true,
+        data: {
+          product: {
+            id: productId,
+            name: 'Organic Tomatoes',
+            description: 'Fresh organic tomatoes grown without pesticides',
+            farmerId: 'f1',
+            category: 'VEGETABLES'
+          },
+          supplyChain: {
+            links: this.getMockSupplyChainLinks()
+          }
+        }
+      };
+    }
+  }
+  
+  /**
+   * Generate mock supply chain links for testing and development
+   */
+  private getMockSupplyChainLinks() {
+    return [
+      {
+        id: 'sc1',
+        type: 'HARVEST',
+        timestamp: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
+        location: 'Farm in Bangalore Rural',
+        actor: {
+          id: 'f1',
+          name: 'John Smith',
+          role: 'FARMER'
+        },
+        details: {
+          method: 'Hand picked',
+          quantity: '100kg',
+          conditions: 'Sunny day, 28°C'
+        },
+        coordinates: {
+          lat: 13.1986,
+          lng: 77.7066
+        }
+      },
+      {
+        id: 'sc2',
+        type: 'PROCESSING',
+        timestamp: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString(),
+        location: 'Processing Center, Bangalore',
+        actor: {
+          id: 'i1',
+          name: 'ABC Food Processing',
+          role: 'INTERMEDIARY'
+        },
+        details: {
+          method: 'Washing and sorting',
+          quantity: '95kg',
+          quality: 'Grade A'
+        },
+        coordinates: {
+          lat: 12.9716,
+          lng: 77.5946
+        }
+      },
+      {
+        id: 'sc3',
+        type: 'PACKAGING',
+        timestamp: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+        location: 'Packaging Facility, Bangalore',
+        actor: {
+          id: 'i2',
+          name: 'XYZ Packaging',
+          role: 'INTERMEDIARY'
+        },
+        details: {
+          method: 'Eco-friendly packaging',
+          units: '190 packages of 500g each',
+          materials: 'Biodegradable plastic'
+        },
+        coordinates: {
+          lat: 12.9352,
+          lng: 77.6245
+        }
+      },
+      {
+        id: 'sc4',
+        type: 'DISTRIBUTION',
+        timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+        location: 'Distribution Center, Mumbai',
+        actor: {
+          id: 'i3',
+          name: 'FastTrack Logistics',
+          role: 'INTERMEDIARY'
+        },
+        details: {
+          method: 'Refrigerated truck',
+          distance: '980km',
+          duration: '14 hours'
+        },
+        coordinates: {
+          lat: 19.0760,
+          lng: 72.8777
+        }
+      },
+      {
+        id: 'sc5',
+        type: 'RETAIL',
+        timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        location: 'FreshMart Supermarket, Mumbai',
+        actor: {
+          id: 'r1',
+          name: 'FreshMart',
+          role: 'RETAILER'
+        },
+        details: {
+          shelf: 'Premium organic section',
+          price: '₹120 per 500g',
+          stock: '150 packages'
+        },
+        coordinates: {
+          lat: 19.1136,
+          lng: 72.8697
+        }
+      }
+    ];
+  }
+
+  /**
    * Record a supply chain event
    */
   async recordSupplyChainEvent(data: {

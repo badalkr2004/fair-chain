@@ -325,7 +325,7 @@ export default function FarmerProfileScreen() {
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.option} onPress={() => router.push('../farmer/index')}>
+          <TouchableOpacity style={styles.option} onPress={() => router.push('/farmer')}>
             <Ionicons name="home-outline" size={24} color="#4caf50" style={styles.optionIcon} />
             <Text style={styles.optionText}>Dashboard</Text>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
@@ -342,7 +342,7 @@ export default function FarmerProfileScreen() {
       <View style={styles.footer}>
         <TouchableOpacity 
           style={styles.footerTab} 
-          onPress={() => router.push('../farmer/index')}
+          onPress={() => router.push('/farmer')}
         >
           <Ionicons name="home-outline" size={24} color="#9ca3af" />
           <Text style={styles.footerTabText}>Home</Text>

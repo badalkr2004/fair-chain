@@ -17,9 +17,11 @@ interface CreateBidRequest {
 class BidService {
   /**
    * Get all bids for the logged-in intermediary
+   * @param status Optional status filter
    */
-  async getMyBids(): Promise<any> {
-    return api.get('/bids/my-bids');
+  async getMyBids(status?: string): Promise<any> {
+    const endpoint = status ? `/bids/my-bids?status=${status}` : '/bids/my-bids';
+    return api.get(endpoint);
   }
 
   /**
@@ -70,6 +72,13 @@ class BidService {
   async rejectBid(bidId: string, reason?: string): Promise<any> {
     return api.post(`/bids/${bidId}/reject`, { reason });
   }
+
+  /**
+   * Update a bid's status
+   */
+  async updateBidStatus(bidId: string, status: string, notes?: string): Promise<any> {
+    return api.post(`/bids/${bidId}/status`, { status, notes });
+  }
 }
 
-export default new BidService(); 
+export default new BidService();

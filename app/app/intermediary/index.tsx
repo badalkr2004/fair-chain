@@ -8,6 +8,24 @@ import authService from '../../services/auth';
 import produceService from '../../services/produce';
 import bidService from '../../services/bid';
 
+// Types for supply chain activities
+interface SupplyChainActivity {
+  id: string;
+  batchId?: string;
+  product: string;
+  progress: number;
+  pickupDate?: string;
+  deliveryDate?: string;
+  status: string;
+  type?: string;
+  fromUser?: string;
+  toUser?: string;
+  location?: any;
+  details?: any;
+  timestamp?: string;
+  supplyChainId?: string;
+}
+
 // Mock data for the dashboard (will be replaced with API calls)
 const activeTransports = [
   {
@@ -30,10 +48,58 @@ const activeTransports = [
   }
 ];
 
+// Helper functions for job processing
+const calculateProgress = (type: string, totalLinks: number): number => {
+  // Different job types have different progress calculations
+  switch (type) {
+    case 'PRODUCTION':
+      return 10;
+    case 'PROCESSING':
+      return 40;
+    case 'TRANSPORTATION':
+      return 70;
+    case 'DELIVERY':
+      return 100;
+    default:
+      // Calculate based on position in supply chain
+      return Math.min(100, Math.round((1 / totalLinks) * 100));
+  }
+};
+
+const getStatusFromType = (type: string): string => {
+  switch (type) {
+    case 'PRODUCTION':
+      return 'Processing';
+    case 'PROCESSING':
+      return 'Processing';
+    case 'TRANSPORTATION':
+      return 'In Transit';
+    case 'DELIVERY':
+      return 'Delivered';
+    case 'STORAGE':
+      return 'In Storage';
+    default:
+      return 'Active';
+  }
+};
+
+const calculateDeliveryDate = (timestamp: string): string => {
+  // Calculate expected delivery date based on job type and timestamp
+  const date = new Date(timestamp);
+  date.setDate(date.getDate() + 3); // Default: 3 days after timestamp
+  return date.toLocaleDateString();
+};
+
+const formatJobType = (type: string): string => {
+  // Format job type for display
+  return type.charAt(0) + type.slice(1).toLowerCase().replace('_', ' ');
+};
+
 export default function IntermediaryDashboard() {
   const [user, setUser] = useState<any>(null);
   const [availableJobs, setAvailableJobs] = useState<any[]>([]);
   const [myBids, setMyBids] = useState<any[]>([]);
+  const [activeJobs, setActiveJobs] = useState<SupplyChainActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -89,10 +155,108 @@ export default function IntermediaryDashboard() {
         try {
           const bidsResponse = await bidService.getMyBids();
           setMyBids(bidsResponse?.bids || []);
+          
+          // For accepted bids, fetch supply chain activities
+          const acceptedBids = (bidsResponse?.bids || []).filter(bid => bid.status === 'ACCEPTED');
+          if (acceptedBids.length > 0) {
+            try {
+              // Fetch supply chain activities for each accepted bid's product
+              const activities: SupplyChainActivity[] = [];
+              
+              for (const bid of acceptedBids) {
+                if (bid.product && bid.product.supplyChain) {
+                  // Extract supply chain data
+                  const supplyChain = bid.product.supplyChain;
+                  const links = supplyChain.links || [];
+                  
+                  // Find links where this intermediary is involved
+                  const relevantLinks = links.filter(link => 
+                    link.serviceProviderId === user?.intermediaryProfile?.id ||
+                    link.fromUserId === user?.id ||
+                    link.toUserId === user?.id
+                  );
+                  
+                  // Convert to our activity format
+                  relevantLinks.forEach(link => {
+                    activities.push({
+                      id: link.id,
+                      batchId: `TR-${supplyChain.id.substring(0, 8)}`,
+                      product: bid.product.name,
+                      progress: calculateProgress(link.type, supplyChain.links.length),
+                      status: getStatusFromType(link.type),
+                      pickupDate: new Date(link.timestamp).toLocaleDateString(),
+                      deliveryDate: calculateDeliveryDate(link.timestamp),
+                      type: link.type,
+                      fromUser: link.fromUserId,
+                      toUser: link.toUserId,
+                      location: link.location,
+                      details: link.details,
+                      timestamp: link.timestamp,
+                      supplyChainId: supplyChain.id
+                    });
+                  });
+                }
+              }
+              
+              // If we couldn't get real data, use mock data for now
+              if (activities.length === 0) {
+                // Fallback to mock data
+                setActiveJobs([
+                  {
+                    id: '1',
+                    batchId: 'TR-2023-105',
+                    product: 'Rice',
+                    progress: 70,
+                    pickupDate: '15 Oct, 2023',
+                    deliveryDate: '18 Oct, 2023',
+                    status: 'In Transit',
+                  },
+                  {
+                    id: '2',
+                    batchId: 'TR-2023-098',
+                    product: 'Potatoes',
+                    progress: 100,
+                    pickupDate: '10 Oct, 2023',
+                    deliveryDate: '12 Oct, 2023',
+                    status: 'Delivered',
+                  }
+                ]);
+              } else {
+                setActiveJobs(activities);
+              }
+            } catch (activitiesError) {
+              console.error('Error loading supply chain activities:', activitiesError);
+              // Fallback to mock data
+              setActiveJobs([
+                {
+                  id: '1',
+                  batchId: 'TR-2023-105',
+                  product: 'Rice',
+                  progress: 70,
+                  pickupDate: '15 Oct, 2023',
+                  deliveryDate: '18 Oct, 2023',
+                  status: 'In Transit',
+                },
+                {
+                  id: '2',
+                  batchId: 'TR-2023-098',
+                  product: 'Potatoes',
+                  progress: 100,
+                  pickupDate: '10 Oct, 2023',
+                  deliveryDate: '12 Oct, 2023',
+                  status: 'Delivered',
+                }
+              ]);
+            }
+          } else {
+            // No accepted bids, use empty array
+            setActiveJobs([]);
+          }
         } catch (bidsError) {
           console.error('Error loading bids:', bidsError);
           setDebugInfo(debugInfo => `${debugInfo || ''}\nBids error: ${bidsError instanceof Error ? bidsError.message : 'Unknown error'}`);
           setMyBids([]); // Set empty array to avoid undefined errors
+          setActiveJobs([]);
         }
       } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -129,7 +293,7 @@ export default function IntermediaryDashboard() {
   // Navigate to bid screen
   const navigateToBidScreen = (productId: string) => {
     router.push({
-      pathname: '/(app)/intermediary/place-bid',
+      pathname: 'intermediary/place-bid',
       params: { productId }
     } as any);
   };
@@ -216,7 +380,7 @@ export default function IntermediaryDashboard() {
             <View className="flex-row justify-between">
               <View className="bg-white/20 rounded-lg p-3 flex-1 mr-2">
                 <Text className="text-white text-xs mb-1">Active Jobs</Text>
-                <Text className="text-white font-semibold">{activeTransports.length}</Text>
+                <Text className="text-white font-semibold">{activeJobs.length}</Text>
               </View>
               <View className="bg-white/20 rounded-lg p-3 flex-1 mr-2">
                 <Text className="text-white text-xs mb-1">Available Jobs</Text>
@@ -304,6 +468,72 @@ export default function IntermediaryDashboard() {
                     </View>
                   </View>
                 </TouchableOpacity>
+              ))
+            )}
+          </Animated.View>
+
+          {/* Active Jobs Section */}
+          <Animated.View entering={FadeInDown.delay(800).duration(500)} className="mb-8">
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-xl font-semibold text-gray-800">Active Jobs</Text>
+              <TouchableOpacity 
+                className="flex-row items-center"
+                onPress={() => router.push('/intermediary/jobs' as any)}
+              >
+                <Text className="text-amber-600 mr-1">View All</Text>
+                <Ionicons name="arrow-forward" size={16} color="#d97706" />
+              </TouchableOpacity>
+            </View>
+
+            {activeJobs.length === 0 ? (
+              <View className="bg-white rounded-xl p-6 items-center justify-center mb-6">
+                <Ionicons name="briefcase-outline" size={40} color="#d1d5db" />
+                <Text className="text-gray-500 mt-2">No active jobs</Text>
+                <Text className="text-gray-400 text-sm text-center mt-1">
+                  You'll see your active jobs here once you have accepted bids
+                </Text>
+              </View>
+            ) : (
+              activeJobs.map((job) => (
+                <View key={job.id} className="bg-white rounded-xl p-4 mb-4 shadow-sm">
+                  <View className="flex-row justify-between mb-2">
+                    <Text className="text-lg font-semibold text-gray-800">{job.product}</Text>
+                    <Text className={`font-medium ${job.status === 'Delivered' ? 'text-green-600' : 'text-amber-600'}`}>
+                      {job.status}
+                    </Text>
+                  </View>
+                  
+                  <View className="flex-row items-center mb-3">
+                    <Text className="text-gray-600 mr-2">Batch: {job.batchId}</Text>
+                    {job.type && (
+                      <View className="bg-amber-100 px-2 py-1 rounded-md">
+                        <Text className="text-amber-800 text-xs">{formatJobType(job.type)}</Text>
+                      </View>
+                    )}
+                  </View>
+                  
+                  <View className="bg-gray-100 h-2 rounded-full mb-3 overflow-hidden">
+                    <View 
+                      className={`h-full rounded-full ${job.status === 'Delivered' ? 'bg-green-500' : 'bg-amber-500'}`}
+                      style={{ width: `${job.progress}%` }}
+                    />
+                  </View>
+                  
+                  <View className="flex-row justify-between">
+                    <View className="flex-row items-center">
+                      <Ionicons name="calendar-outline" size={14} color="#6b7280" />
+                      <Text className="text-gray-500 text-sm ml-1">
+                        Pickup: {job.pickupDate}
+                      </Text>
+                    </View>
+                    <View className="flex-row items-center">
+                      <Ionicons name="flag-outline" size={14} color="#6b7280" />
+                      <Text className="text-gray-500 text-sm ml-1">
+                        Delivery: {job.deliveryDate}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
               ))
             )}
           </Animated.View>
