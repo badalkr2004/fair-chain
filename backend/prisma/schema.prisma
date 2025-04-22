@@ -1,0 +1,407 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User models for different stakeholders
+enum UserRole {
+  FARMER
+  INTERMEDIARY
+  CONSUMER
+  ADMIN
+}
+
+enum IntermediaryType {
+  LOGISTICS
+  AGGREGATOR
+  STORAGE
+  PROCESSOR
+}
+
+enum ConsumerType {
+  RETAILER
+  END_USER
+  BULK_BUYER
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          UserRole
+  phone         String?
+  address       String?
+  location      Json?     // For storing GeoJSON data (latitude, longitude)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Profile relationships based on role
+  farmerProfile     FarmerProfile?
+  intermediaryProfile IntermediaryProfile?
+  consumerProfile    ConsumerProfile?
+
+  // Common relationships
+  productsListed   Product[]
+  orders           Order[]
+  ratings          Rating[]
+  ratedBy          Rating[]    @relation("RatedBy")
+  transactions     Transaction[]
+  bidsCreated      Bid[]       @relation("BidCreator")
+}
+
+model FarmerProfile {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  farmSize      Float?
+  farmLocation  String?
+  farmCoordinates Json?   // For storing detailed farm location
+  cropTypes     String[]
+  certifications String[]
+  bankDetails   Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model IntermediaryProfile {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          IntermediaryType
+  serviceAreas  String[]
+  capacity      Json?     // E.g., storage capacity, transportation capacity
+  services      String[]
+  licenseNumber String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relationships
+  supplyChainLinks SupplyChainLink[] @relation("ServiceProvider")
+}
+
+model ConsumerProfile {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          ConsumerType
+  businessName  String?
+  taxId         String?
+  purchaseHistory Json?
+  preferences   String[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// Product and inventory management
+enum ProductCategory {
+  GRAINS
+  VEGETABLES
+  FRUITS
+  DAIRY
+  MEAT
+  POULTRY
+  OTHER
+}
+
+enum ProductStatus {
+  DRAFT
+  LISTED
+  SOLD
+  PROCESSING
+  EXPIRED
+  CANCELLED
+}
+
+model Product {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  farmerId      String
+  farmer        User      @relation(fields: [farmerId], references: [id])
+  category      ProductCategory
+  quantity      Float
+  unit          String    // kg, ton, etc.
+  basePrice     Float     // Farmer's asking price
+  finalPrice    Float?    // Final price after calculations
+  images        String[]  // URLs to images
+  harvestDate   DateTime?
+  availableUntil DateTime?
+  status        ProductStatus @default(DRAFT)
+  location      Json?     // Location where the product is available
+  organicCertified Boolean @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  orders        OrderItem[]
+  supplyChain   SupplyChain?
+  traceability  TraceabilityRecord[]
+  productAnalytics ProductAnalytics?
+  bids          Bid[]     // Bids from intermediaries
+}
+
+model ProductAnalytics {
+  id            String    @id @default(uuid())
+  productId     String    @unique
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  viewCount     Int       @default(0)
+  demandScore   Float?    // AI-generated demand prediction
+  priceHistory  Json[]    // Array of historical prices with timestamps
+  seasonalTrends Json?    // Seasonal demand patterns
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// Bidding system for intermediaries
+enum BidStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  EXPIRED
+}
+
+model Bid {
+  id              String    @id @default(uuid())
+  productId       String
+  product         Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  intermediaryId  String
+  intermediary    User      @relation("BidCreator", fields: [intermediaryId], references: [id])
+  price           Float     // Price per unit offered by the intermediary
+  quantity        Float     // Quantity requested
+  serviceType     String    // Type of service offered (LOGISTICS, STORAGE, etc.)
+  description     String    // Description of the service offered
+  validUntil      DateTime  // Validity period of the bid
+  terms           String?   // Additional terms and conditions
+  status          BidStatus @default(PENDING)
+  responseReason  String?   // Reason for acceptance or rejection (provided by farmer)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// Supply chain management
+model SupplyChain {
+  id            String    @id @default(uuid())
+  productId     String    @unique
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  startDate     DateTime  @default(now())
+  endDate       DateTime?
+  isComplete    Boolean   @default(false)
+  name          String?
+  description   String?
+  createdById   String?   // User who created this supply chain
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  links         SupplyChainLink[]
+}
+
+model SupplyChainLink {
+  id            String    @id @default(uuid())
+  supplyChainId String
+  supplyChain   SupplyChain @relation(fields: [supplyChainId], references: [id], onDelete: Cascade)
+  type          String    // PRODUCTION, PROCESSING, TRANSPORTATION, etc.
+  fromUserId    String
+  toUserId      String
+  timestamp     DateTime  @default(now())
+  location      Json?
+  details       Json?
+  carbonFootprint Float?
+  certifications String[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  serviceProviderId String?
+  serviceProvider IntermediaryProfile? @relation("ServiceProvider", fields: [serviceProviderId], references: [id])
+}
+
+// Order and transaction management
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id            String    @id @default(uuid())
+  orderId       String    @unique // Human-readable order ID
+  buyerId       String
+  buyer         User      @relation(fields: [buyerId], references: [id])
+  totalAmount   Float
+  status        OrderStatus
+  deliveryAddress Json?
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  items         OrderItem[]
+  transactions  Transaction[]
+  traceability  TraceabilityRecord[]
+}
+
+model OrderItem {
+  id            String    @id @default(uuid())
+  orderId       String
+  order         Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product   @relation(fields: [productId], references: [id])
+  quantity      Float
+  unitPrice     Float
+  totalPrice    Float
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum TransactionType {
+  PAYMENT
+  REFUND
+  COMMISSION
+  ESCROW_DEPOSIT
+  ESCROW_RELEASE
+  PURCHASE
+  SALE
+  TRANSFER
+}
+
+enum TransactionStatus {
+  PENDING
+  PAID
+  DELIVERED
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+model Transaction {
+  id            String    @id @default(uuid())
+  productId     String?
+  senderId      String
+  receiverId    String
+  amount        Float
+  quantity      Float?
+  unit          String?
+  type          TransactionType
+  status        TransactionStatus
+  paymentMethod String?
+  paymentReference String?
+  paymentDate   DateTime?
+  deliveryDate  DateTime?
+  notes         String?
+  metadata      Json?
+  transactionId String?   // Human-readable transaction ID
+  orderId       String?
+  order         Order?    @relation(fields: [orderId], references: [id])
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// Traceability system
+model TraceabilityRecord {
+  id            String    @id @default(uuid())
+  productId     String
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderId       String?
+  order         Order?    @relation(fields: [orderId], references: [id])
+  qrCode        String?   @unique
+  trackingId    String?   @unique
+  eventType     String    // e.g., "harvested", "packaged", "shipped", "received"
+  location      Json?
+  timestamp     DateTime  @default(now())
+  verifiedBy    String?
+  metadata      Json?
+  previousHash  String?   // For creating a hash chain for immutability
+  currentHash   String?   // Hash of this record for verification
+  createdAt     DateTime  @default(now())
+}
+
+// Ratings and feedback
+model Rating {
+  id            String    @id @default(uuid())
+  fromUserId    String
+  fromUser      User      @relation("RatedBy", fields: [fromUserId], references: [id])
+  toUserId      String
+  toUser        User      @relation(fields: [toUserId], references: [id])
+  score         Float     // Rating score (e.g., 1-5)
+  comment       String?
+  transactionId String?   // Related transaction if applicable
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// AI forecasting models
+model ForecastModel {
+  id            String    @id @default(uuid())
+  name          String
+  type          String    // e.g., "demand", "price", "weather"
+  category      ProductCategory?
+  region        String?
+  parameters    Json?     // Model parameters
+  lastTrainedAt DateTime?
+  accuracy      Float?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  predictions   Prediction[]
+}
+
+model Prediction {
+  id            String    @id @default(uuid())
+  modelId       String
+  model         ForecastModel @relation(fields: [modelId], references: [id])
+  category      ProductCategory?
+  region        String?
+  predictionDate DateTime
+  predictedValue Float
+  actualValue   Float?
+  accuracy      Float?
+  metadata      Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// Weather data for agricultural insights
+model WeatherData {
+  id            String    @id @default(uuid())
+  location      Json
+  date          DateTime
+  temperature   Float?
+  humidity      Float?
+  rainfall      Float?
+  windSpeed     Float?
+  forecast      Json?
+  source        String?
+  createdAt     DateTime  @default(now())
+}
+
+// Market price data
+model MarketPrice {
+  id            String    @id @default(uuid())
+  productCategory ProductCategory
+  location      String
+  date          DateTime
+  minPrice      Float
+  maxPrice      Float
+  averagePrice  Float
+  source        String?
+  createdAt     DateTime  @default(now())
+}

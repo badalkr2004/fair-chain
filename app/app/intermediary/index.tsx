@@ -1,43 +1,32 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, RefreshControl } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { router } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
+import authService from '../../services/auth';
+import produceService from '../../services/produce';
+import bidService from '../../services/bid';
 
-// Mock data for the dashboard
-const availableJobs = [
-  {
-    id: '1',
-    productName: 'Rice',
-    quantity: '5 tons',
-    pickup: 'Bhatinda, Punjab',
-    destination: 'Delhi NCR',
-    distance: '250 km',
-    expectedPrice: '₹8,500',
-    image: 'https://images.unsplash.com/photo-1586201375761-83865001e8d7?w=800&auto=format&fit=crop'
-  },
-  {
-    id: '2',
-    productName: 'Wheat',
-    quantity: '3.2 tons',
-    pickup: 'Ludhiana, Punjab',
-    destination: 'Chandigarh',
-    distance: '100 km',
-    expectedPrice: '₹4,200',
-    image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6962cb?w=800&auto=format&fit=crop'
-  },
-  {
-    id: '3',
-    productName: 'Tomatoes',
-    quantity: '1.5 tons',
-    pickup: 'Sonipat, Haryana',
-    destination: 'Delhi',
-    distance: '60 km',
-    expectedPrice: '₹3,800',
-    image: 'https://images.unsplash.com/photo-1592924357210-c3e81fb24baa?w=800&auto=format&fit=crop'
-  }
-];
+// Types for supply chain activities
+interface SupplyChainActivity {
+  id: string;
+  batchId?: string;
+  product: string;
+  progress: number;
+  pickupDate?: string;
+  deliveryDate?: string;
+  status: string;
+  type?: string;
+  fromUser?: string;
+  toUser?: string;
+  location?: any;
+  details?: any;
+  timestamp?: string;
+  supplyChainId?: string;
+}
 
+// Mock data for the dashboard (will be replaced with API calls)
 const activeTransports = [
   {
     id: '1',
@@ -59,27 +48,326 @@ const activeTransports = [
   }
 ];
 
+// Helper functions for job processing
+const calculateProgress = (type: string, totalLinks: number): number => {
+  // Different job types have different progress calculations
+  switch (type) {
+    case 'PRODUCTION':
+      return 10;
+    case 'PROCESSING':
+      return 40;
+    case 'TRANSPORTATION':
+      return 70;
+    case 'DELIVERY':
+      return 100;
+    default:
+      // Calculate based on position in supply chain
+      return Math.min(100, Math.round((1 / totalLinks) * 100));
+  }
+};
+
+const getStatusFromType = (type: string): string => {
+  switch (type) {
+    case 'PRODUCTION':
+      return 'Processing';
+    case 'PROCESSING':
+      return 'Processing';
+    case 'TRANSPORTATION':
+      return 'In Transit';
+    case 'DELIVERY':
+      return 'Delivered';
+    case 'STORAGE':
+      return 'In Storage';
+    default:
+      return 'Active';
+  }
+};
+
+const calculateDeliveryDate = (timestamp: string): string => {
+  // Calculate expected delivery date based on job type and timestamp
+  const date = new Date(timestamp);
+  date.setDate(date.getDate() + 3); // Default: 3 days after timestamp
+  return date.toLocaleDateString();
+};
+
+const formatJobType = (type: string): string => {
+  // Format job type for display
+  return type.charAt(0) + type.slice(1).toLowerCase().replace('_', ' ');
+};
+
 export default function IntermediaryDashboard() {
+  const [user, setUser] = useState<any>(null);
+  const [availableJobs, setAvailableJobs] = useState<any[]>([]);
+  const [myBids, setMyBids] = useState<any[]>([]);
+  const [activeJobs, setActiveJobs] = useState<SupplyChainActivity[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<string | null>(null);
+
+  // Fetch user profile and data
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      try {
+        setDebugInfo(null);
+        
+        // Get user profile
+        try {
+          const currentUser = await authService.getCurrentUser();
+          if (!currentUser) {
+            setDebugInfo("No user found in AsyncStorage. Please log in again.");
+            router.replace('/(auth)/login');
+            return;
+          }
+          setUser(currentUser);
+          
+          // Get full profile from server
+          try {
+            const profileResponse = await authService.getUserProfile();
+            if (profileResponse && profileResponse.user) {
+              setUser(profileResponse.user);
+            } else {
+              setDebugInfo("User profile response format invalid");
+            }
+          } catch (profileError) {
+            console.error('Error fetching user profile:', profileError);
+            setDebugInfo(`Profile error: ${profileError instanceof Error ? profileError.message : 'Unknown error'}`);
+            // Continue with local user data
+          }
+        } catch (userError) {
+          console.error('Error getting current user:', userError);
+          setDebugInfo(`User error: ${userError instanceof Error ? userError.message : 'Unknown error'}`);
+          router.replace('/(auth)/login');
+          return;
+        }
+
+        // Get available produce
+        try {
+          const produceResponse = await produceService.getAvailableProduce();
+          setAvailableJobs(produceResponse?.data || []);
+        } catch (produceError) {
+          console.error('Error loading available produce:', produceError);
+          setDebugInfo(debugInfo => `${debugInfo || ''}\nProduce error: ${produceError instanceof Error ? produceError.message : 'Unknown error'}`);
+          setAvailableJobs([]); // Set empty array to avoid undefined errors
+        }
+
+        // Get my bids
+        try {
+          const bidsResponse = await bidService.getMyBids();
+          setMyBids(bidsResponse?.bids || []);
+          
+          // For accepted bids, fetch supply chain activities
+          const acceptedBids = (bidsResponse?.bids || []).filter(bid => bid.status === 'ACCEPTED');
+          if (acceptedBids.length > 0) {
+            try {
+              // Fetch supply chain activities for each accepted bid's product
+              const activities: SupplyChainActivity[] = [];
+              
+              for (const bid of acceptedBids) {
+                if (bid.product && bid.product.supplyChain) {
+                  // Extract supply chain data
+                  const supplyChain = bid.product.supplyChain;
+                  const links = supplyChain.links || [];
+                  
+                  // Find links where this intermediary is involved
+                  const relevantLinks = links.filter(link => 
+                    link.serviceProviderId === user?.intermediaryProfile?.id ||
+                    link.fromUserId === user?.id ||
+                    link.toUserId === user?.id
+                  );
+                  
+                  // Convert to our activity format
+                  relevantLinks.forEach(link => {
+                    activities.push({
+                      id: link.id,
+                      batchId: `TR-${supplyChain.id.substring(0, 8)}`,
+                      product: bid.product.name,
+                      progress: calculateProgress(link.type, supplyChain.links.length),
+                      status: getStatusFromType(link.type),
+                      pickupDate: new Date(link.timestamp).toLocaleDateString(),
+                      deliveryDate: calculateDeliveryDate(link.timestamp),
+                      type: link.type,
+                      fromUser: link.fromUserId,
+                      toUser: link.toUserId,
+                      location: link.location,
+                      details: link.details,
+                      timestamp: link.timestamp,
+                      supplyChainId: supplyChain.id
+                    });
+                  });
+                }
+              }
+              
+              // If we couldn't get real data, use mock data for now
+              if (activities.length === 0) {
+                // Fallback to mock data
+                setActiveJobs([
+                  {
+                    id: '1',
+                    batchId: 'TR-2023-105',
+                    product: 'Rice',
+                    progress: 70,
+                    pickupDate: '15 Oct, 2023',
+                    deliveryDate: '18 Oct, 2023',
+                    status: 'In Transit',
+                  },
+                  {
+                    id: '2',
+                    batchId: 'TR-2023-098',
+                    product: 'Potatoes',
+                    progress: 100,
+                    pickupDate: '10 Oct, 2023',
+                    deliveryDate: '12 Oct, 2023',
+                    status: 'Delivered',
+                  }
+                ]);
+              } else {
+                setActiveJobs(activities);
+              }
+            } catch (activitiesError) {
+              console.error('Error loading supply chain activities:', activitiesError);
+              // Fallback to mock data
+              setActiveJobs([
+                {
+                  id: '1',
+                  batchId: 'TR-2023-105',
+                  product: 'Rice',
+                  progress: 70,
+                  pickupDate: '15 Oct, 2023',
+                  deliveryDate: '18 Oct, 2023',
+                  status: 'In Transit',
+                },
+                {
+                  id: '2',
+                  batchId: 'TR-2023-098',
+                  product: 'Potatoes',
+                  progress: 100,
+                  pickupDate: '10 Oct, 2023',
+                  deliveryDate: '12 Oct, 2023',
+                  status: 'Delivered',
+                }
+              ]);
+            }
+          } else {
+            // No accepted bids, use empty array
+            setActiveJobs([]);
+          }
+        } catch (bidsError) {
+          console.error('Error loading bids:', bidsError);
+          setDebugInfo(debugInfo => `${debugInfo || ''}\nBids error: ${bidsError instanceof Error ? bidsError.message : 'Unknown error'}`);
+          setMyBids([]); // Set empty array to avoid undefined errors
+          setActiveJobs([]);
+        }
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        setError('Failed to load dashboard data. Pull down to refresh.');
+        setDebugInfo(`General error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      } finally {
+        setIsLoading(false);
+        setIsRefreshing(false);
+      }
+    };
+
+    loadDashboardData();
+  }, []);
+
+  // Handle refresh
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setIsLoading(true);
+    setError(null);
+    setDebugInfo(null);
+    
+    // Verify authentication token before refreshing
+    authService.validateToken()
+      .then(isValid => {
+        if (!isValid) {
+          router.replace('/(auth)/login');
+        }
+      });
+    
+    // Re-fetch dashboard data
+    // This will trigger the useEffect above
+  };
+
+  // Navigate to bid screen
+  const navigateToBidScreen = (productId: string) => {
+    router.push({
+      pathname: 'intermediary/place-bid',
+      params: { productId }
+    } as any);
+  };
+
+  // Handle profile navigation
+  const navigateToProfile = () => {
+    router.push('/intermediary/profile' as any);
+  };
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#F8FAF5]">
+        <ActivityIndicator size="large" color="#d97706" />
+        <Text className="mt-4 text-gray-600">Loading your dashboard...</Text>
+      </View>
+    );
+  }
+
+  // Get user name or fallback
+  const userName = user?.name || 'Intermediary User';
+  const businessType = user?.intermediaryProfile?.type || 'LOGISTICS';
+  // Format business type for display
+  const formattedBusinessType = businessType.charAt(0) + businessType.slice(1).toLowerCase();
+
   return (
     <View className="flex-1 bg-[#F8FAF5]">
       <StatusBar style="dark" />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            colors={['#d97706']}
+            tintColor="#d97706"
+          />
+        }
       >
         <View className="px-6 pt-16">
           <View className="flex-row justify-between items-center mb-8">
             <View>
-              <Text className="text-2xl font-bold text-amber-800">Logistics Dashboard</Text>
-              <Text className="text-gray-600">Welcome back, Kumar Transport</Text>
+              <Text className="text-2xl font-bold text-amber-800">{formattedBusinessType} Dashboard</Text>
+              <Text className="text-gray-600">Welcome back, {userName}</Text>
             </View>
             <TouchableOpacity 
               className="w-12 h-12 rounded-full bg-amber-100 items-center justify-center"
-              onPress={() => {}}
+              onPress={navigateToProfile}
             >
-              <Ionicons name="business" size={24} color="#d97706" />
+              {user?.profileImage ? (
+                <Image
+                  source={{ uri: user.profileImage }}
+                  className="w-12 h-12 rounded-full"
+                />
+              ) : (
+                <Ionicons name="business" size={24} color="#d97706" />
+              )}
             </TouchableOpacity>
           </View>
+
+          {error && (
+            <View className="bg-red-50 p-4 rounded-lg mb-4">
+              <Text className="text-red-500 font-medium">{error}</Text>
+              {debugInfo && __DEV__ && (
+                <Text className="text-red-400 text-xs mt-2">{debugInfo}</Text>
+              )}
+              <TouchableOpacity 
+                className="bg-red-100 py-2 px-4 rounded-lg mt-2 self-start"
+                onPress={handleRefresh}
+              >
+                <Text className="text-red-700">Try Again</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           <Animated.View 
             className="bg-amber-600 rounded-xl p-5 mb-8"
@@ -92,15 +380,15 @@ export default function IntermediaryDashboard() {
             <View className="flex-row justify-between">
               <View className="bg-white/20 rounded-lg p-3 flex-1 mr-2">
                 <Text className="text-white text-xs mb-1">Active Jobs</Text>
-                <Text className="text-white font-semibold">2</Text>
+                <Text className="text-white font-semibold">{activeJobs.length}</Text>
               </View>
               <View className="bg-white/20 rounded-lg p-3 flex-1 mr-2">
                 <Text className="text-white text-xs mb-1">Available Jobs</Text>
-                <Text className="text-white font-semibold">12</Text>
+                <Text className="text-white font-semibold">{availableJobs.length}</Text>
               </View>
               <View className="bg-white/20 rounded-lg p-3 flex-1">
-                <Text className="text-white text-xs mb-1">Monthly Revenue</Text>
-                <Text className="text-white font-semibold">₹42,500</Text>
+                <Text className="text-white text-xs mb-1">My Bids</Text>
+                <Text className="text-white font-semibold">{myBids.length}</Text>
               </View>
             </View>
           </Animated.View>
@@ -109,7 +397,7 @@ export default function IntermediaryDashboard() {
             <View className="flex-row justify-between items-center mb-4">
               <Text className="text-xl font-semibold text-gray-800">Available Jobs</Text>
               <TouchableOpacity
-                onPress={() => {}}
+                onPress={() => router.push('/intermediary/available-jobs' as any)}
                 className="flex-row items-center"
               >
                 <Text className="text-amber-600 mr-1">View All</Text>
@@ -117,125 +405,232 @@ export default function IntermediaryDashboard() {
               </TouchableOpacity>
             </View>
 
-            {availableJobs.map((job) => (
+            {availableJobs.length === 0 ? (
+              <View className="bg-white rounded-xl p-6 items-center justify-center mb-4">
+                <Ionicons name="search" size={40} color="#d1d5db" />
+                <Text className="text-gray-500 mt-2">No available jobs found</Text>
+                <Text className="text-gray-400 text-sm text-center mt-1">
+                  Pull down to refresh or check back later
+                </Text>
+              </View>
+            ) : (
+              availableJobs.slice(0, 3).map((job) => (
+                <TouchableOpacity 
+                  key={job.id}
+                  className="bg-white rounded-xl overflow-hidden mb-4 shadow-sm"
+                  onPress={() => navigateToBidScreen(job.id)}
+                >
+                  {job.images && job.images.length > 0 ? (
+                    <Image
+                      source={{ uri: job.images[0] }}
+                      className="h-32 w-full"
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View className="h-32 bg-gray-200 items-center justify-center">
+                      <Ionicons name="image-outline" size={40} color="#9ca3af" />
+                    </View>
+                  )}
+                  <View className="p-4">
+                    <View className="flex-row justify-between mb-2">
+                      <Text className="text-lg font-semibold text-gray-800">{job.name}</Text>
+                      <Text className="text-amber-600 font-medium">₹{job.basePrice}/{job.unit}</Text>
+                    </View>
+                    <View className="flex-row items-center mb-3">
+                      <Text className="text-gray-600 mr-2">Quantity: {job.quantity} {job.unit}</Text>
+                      <Text className="text-gray-600">Category: {job.category}</Text>
+                    </View>
+                    <View className="flex-row items-center justify-between">
+                      <View className="flex-1">
+                        {job.location && (
+                          <View className="flex-row items-center">
+                            <Ionicons name="location" size={14} color="#6b7280" />
+                            <Text className="text-gray-500 text-sm ml-1">
+                              {job.location.lat && job.location.lng 
+                                ? `Location: ${job.location.lat.toFixed(2)}, ${job.location.lng.toFixed(2)}`
+                                : 'Location available'}
+                            </Text>
+                          </View>
+                        )}
+                        <View className="flex-row items-center mt-1">
+                          <Ionicons name="calendar" size={14} color="#6b7280" />
+                          <Text className="text-gray-500 text-sm ml-1">
+                            Available until: {new Date(job.availableUntil).toLocaleDateString()}
+                          </Text>
+                        </View>
+                      </View>
+                      <TouchableOpacity 
+                        className="bg-amber-100 px-3 py-2 rounded-lg"
+                        onPress={() => navigateToBidScreen(job.id)}
+                      >
+                        <Text className="text-amber-700 font-medium">Bid Now</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))
+            )}
+          </Animated.View>
+
+          {/* Active Jobs Section */}
+          <Animated.View entering={FadeInDown.delay(800).duration(500)} className="mb-8">
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-xl font-semibold text-gray-800">Active Jobs</Text>
               <TouchableOpacity 
-                key={job.id}
-                className="bg-white rounded-xl overflow-hidden mb-4 shadow-sm"
-                onPress={() => {}}
+                className="flex-row items-center"
+                onPress={() => router.push('/intermediary/jobs' as any)}
               >
-                <Image
-                  source={{ uri: job.image }}
-                  className="h-32 w-full"
-                  resizeMode="cover"
-                />
-                <View className="p-4">
+                <Text className="text-amber-600 mr-1">View All</Text>
+                <Ionicons name="arrow-forward" size={16} color="#d97706" />
+              </TouchableOpacity>
+            </View>
+
+            {activeJobs.length === 0 ? (
+              <View className="bg-white rounded-xl p-6 items-center justify-center mb-6">
+                <Ionicons name="briefcase-outline" size={40} color="#d1d5db" />
+                <Text className="text-gray-500 mt-2">No active jobs</Text>
+                <Text className="text-gray-400 text-sm text-center mt-1">
+                  You'll see your active jobs here once you have accepted bids
+                </Text>
+              </View>
+            ) : (
+              activeJobs.map((job) => (
+                <View key={job.id} className="bg-white rounded-xl p-4 mb-4 shadow-sm">
                   <View className="flex-row justify-between mb-2">
-                    <Text className="text-lg font-semibold text-gray-800">{job.productName}</Text>
-                    <Text className="text-amber-600 font-medium">{job.expectedPrice}</Text>
+                    <Text className="text-lg font-semibold text-gray-800">{job.product}</Text>
+                    <Text className={`font-medium ${job.status === 'Delivered' ? 'text-green-600' : 'text-amber-600'}`}>
+                      {job.status}
+                    </Text>
+                  </View>
+                  
+                  <View className="flex-row items-center mb-3">
+                    <Text className="text-gray-600 mr-2">Batch: {job.batchId}</Text>
+                    {job.type && (
+                      <View className="bg-amber-100 px-2 py-1 rounded-md">
+                        <Text className="text-amber-800 text-xs">{formatJobType(job.type)}</Text>
+                      </View>
+                    )}
+                  </View>
+                  
+                  <View className="bg-gray-100 h-2 rounded-full mb-3 overflow-hidden">
+                    <View 
+                      className={`h-full rounded-full ${job.status === 'Delivered' ? 'bg-green-500' : 'bg-amber-500'}`}
+                      style={{ width: `${job.progress}%` }}
+                    />
+                  </View>
+                  
+                  <View className="flex-row justify-between">
+                    <View className="flex-row items-center">
+                      <Ionicons name="calendar-outline" size={14} color="#6b7280" />
+                      <Text className="text-gray-500 text-sm ml-1">
+                        Pickup: {job.pickupDate}
+                      </Text>
+                    </View>
+                    <View className="flex-row items-center">
+                      <Ionicons name="flag-outline" size={14} color="#6b7280" />
+                      <Text className="text-gray-500 text-sm ml-1">
+                        Delivery: {job.deliveryDate}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              ))
+            )}
+          </Animated.View>
+
+          {/* My Bids Section */}
+          <Animated.View entering={FadeInDown.delay(600).duration(500)}>
+            <View className="flex-row justify-between items-center mb-4 mt-6">
+              <Text className="text-xl font-semibold text-gray-800">My Bids</Text>
+              <TouchableOpacity
+                onPress={() => router.push('/intermediary/my-bids' as any)}
+                className="flex-row items-center"
+              >
+                <Text className="text-amber-600 mr-1">View All</Text>
+                <Ionicons name="arrow-forward" size={16} color="#d97706" />
+              </TouchableOpacity>
+            </View>
+
+            {myBids.length === 0 ? (
+              <View className="bg-white rounded-xl p-6 items-center justify-center mb-6">
+                <Ionicons name="documents-outline" size={40} color="#d1d5db" />
+                <Text className="text-gray-500 mt-2">No bids placed yet</Text>
+                <Text className="text-gray-400 text-sm text-center mt-1">
+                  Browse available jobs and place your first bid
+                </Text>
+              </View>
+            ) : (
+              myBids.slice(0, 2).map((bid) => (
+                <View key={bid.id} className="bg-white rounded-xl p-4 mb-4 shadow-sm">
+                  <View className="flex-row justify-between mb-2">
+                    <Text className="text-lg font-semibold text-gray-800">{bid.product?.name || 'Product'}</Text>
+                    <View className={`px-3 py-1 rounded-full ${
+                      bid.status === 'ACCEPTED' ? 'bg-green-100' : 
+                      bid.status === 'REJECTED' ? 'bg-red-100' : 
+                      'bg-amber-100'
+                    }`}>
+                      <Text className={`text-xs font-medium ${
+                        bid.status === 'ACCEPTED' ? 'text-green-700' : 
+                        bid.status === 'REJECTED' ? 'text-red-700' : 
+                        'text-amber-700'
+                      }`}>
+                        {bid.status}
+                      </Text>
+                    </View>
                   </View>
                   <View className="flex-row items-center mb-3">
-                    <Text className="text-gray-600 mr-2">Quantity: {job.quantity}</Text>
-                    <Text className="text-gray-600">Distance: {job.distance}</Text>
+                    <Text className="text-gray-600 mr-2">Your bid: ₹{bid.price}</Text>
+                    <Text className="text-gray-600">Quantity: {bid.quantity}</Text>
                   </View>
                   <View className="flex-row items-center justify-between">
-                    <View className="flex-1">
-                      <View className="flex-row items-center">
-                        <Ionicons name="locate" size={14} color="#6b7280" />
-                        <Text className="text-gray-500 text-sm ml-1">From: {job.pickup}</Text>
-                      </View>
-                      <View className="flex-row items-center mt-1">
-                        <Ionicons name="location" size={14} color="#6b7280" />
-                        <Text className="text-gray-500 text-sm ml-1">To: {job.destination}</Text>
-                      </View>
+                    <View className="flex-row items-center">
+                      <Ionicons name="calendar" size={14} color="#6b7280" />
+                      <Text className="text-gray-500 text-sm ml-1">
+                        Valid until: {new Date(bid.validUntil).toLocaleDateString()}
+                      </Text>
                     </View>
                     <TouchableOpacity 
-                      className="bg-amber-100 px-3 py-2 rounded-lg"
-                      onPress={() => {}}
+                      className="bg-gray-100 px-3 py-2 rounded-lg"
+                      onPress={() => router.push({
+                        pathname: '/intermediary/bid-details',
+                        params: { bidId: bid.id }
+                      } as any)}
                     >
-                      <Text className="text-amber-700 font-medium">Bid Now</Text>
+                      <Text className="text-gray-700">Details</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
-              </TouchableOpacity>
-            ))}
+              ))
+            )}
           </Animated.View>
 
-          <Animated.View entering={FadeInDown.delay(600).duration(500)}>
-            <Text className="text-xl font-semibold text-gray-800 mt-4 mb-4">Active Transports</Text>
-            
-            {activeTransports.map((transport) => (
-              <TouchableOpacity
-                key={transport.id} 
-                className="bg-white rounded-xl p-4 mb-3 shadow-sm"
-                onPress={() => {}}
-              >
-                <View className="flex-row justify-between items-center mb-3">
-                  <View>
-                    <Text className="font-medium text-gray-800">{transport.product} - {transport.batchId}</Text>
-                    <View className="flex-row items-center mt-1">
-                      <Text className="text-xs text-gray-500 mr-2">Pickup: {transport.pickupDate}</Text>
-                      <Text className="text-xs text-gray-500">Delivery: {transport.deliveryDate}</Text>
-                    </View>
-                  </View>
-                  <View className={`px-2 py-1 rounded-full ${
-                    transport.status === 'In Transit' ? 'bg-blue-100' : 'bg-green-100'
-                  }`}>
-                    <Text className={`text-xs ${
-                      transport.status === 'In Transit' ? 'text-blue-700' : 'text-green-700'
-                    }`}>{transport.status}</Text>
-                  </View>
-                </View>
-                <View className="bg-gray-200 h-2 rounded-full w-full overflow-hidden">
-                  <View 
-                    className={`h-full ${
-                      transport.status === 'Delivered' ? 'bg-green-600' : 'bg-blue-600'
-                    }`}
-                    style={{ width: `${transport.progress}%` }}
-                  />
-                </View>
-                <View className="flex-row justify-between mt-2">
-                  <Text className="text-xs text-gray-500">Pickup</Text>
-                  <Text className="text-xs text-gray-500">In Transit</Text>
-                  <Text className="text-xs text-gray-500">Destination</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.delay(800).duration(500)}>
-            <Text className="text-xl font-semibold text-gray-800 mt-6 mb-4">AI-Powered Insights</Text>
-            
-            <View className="bg-white rounded-xl p-4 mb-3 shadow-sm">
-              <View className="flex-row items-start">
-                <View className="w-10 h-10 rounded-full bg-amber-100 items-center justify-center mr-3">
-                  <Ionicons name="flash" size={20} color="#d97706" />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-gray-800 font-medium mb-1">
-                    Optimal Route Suggestion
-                  </Text>
-                  <Text className="text-gray-600 text-sm">
-                    For your next Delhi trip, take NH-44 instead of NH-9. You'll save approximately 45 minutes and ₹800 in fuel.
-                  </Text>
-                </View>
-              </View>
+          <Animated.View 
+            entering={FadeInDown.delay(800).duration(500)} 
+            className="bg-white rounded-xl p-6 mb-8 mt-2"
+          >
+            <View className="flex-row items-center mb-4">
+              <Ionicons name="notifications-outline" size={24} color="#d97706" />
+              <Text className="text-lg font-semibold text-gray-800 ml-2">Updates</Text>
             </View>
-            
-            <View className="bg-white rounded-xl p-4 mb-3 shadow-sm">
-              <View className="flex-row items-start">
-                <View className="w-10 h-10 rounded-full bg-amber-100 items-center justify-center mr-3">
-                  <Ionicons name="trending-up" size={20} color="#d97706" />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-gray-800 font-medium mb-1">
-                    Demand Forecast
-                  </Text>
-                  <Text className="text-gray-600 text-sm">
-                    Expect 30% higher transportation demand for wheat in Punjab region next month due to harvest season.
-                  </Text>
-                </View>
-              </View>
-            </View>
+            <Text className="text-gray-600 mb-4">
+              Stay informed about your bids and current market conditions.
+            </Text>
+            <TouchableOpacity
+              className="bg-amber-50 p-3 rounded-lg border border-amber-200 mb-3"
+            >
+              <Text className="text-amber-800 font-medium mb-1">Market Insight</Text>
+              <Text className="text-gray-600 text-sm">
+                Rice prices are trending 15% higher than last month. Good time to place competitive bids!
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="bg-amber-50 p-3 rounded-lg border border-amber-200"
+            >
+              <Text className="text-amber-800 font-medium mb-1">System Update</Text>
+              <Text className="text-gray-600 text-sm">
+                New traceability features have been added. Track your shipments in real-time.
+              </Text>
+            </TouchableOpacity>
           </Animated.View>
         </View>
       </ScrollView>
@@ -247,19 +642,28 @@ export default function IntermediaryDashboard() {
           <Text className="text-amber-600 text-xs mt-1">Home</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity className="items-center">
+        <TouchableOpacity 
+          className="items-center"
+          onPress={() => router.push('/intermediary/bids' as any)}
+        >
+          <Ionicons name="list" size={24} color="#9ca3af" />
+          <Text className="text-gray-500 text-xs mt-1">My Bids</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          className="items-center"
+          onPress={() => router.push('/intermediary/available-jobs' as any)}
+        >
           <Ionicons name="briefcase" size={24} color="#9ca3af" />
-          <Text className="text-gray-400 text-xs mt-1">Jobs</Text>
+          <Text className="text-gray-500 text-xs mt-1">Jobs</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity className="items-center">
-          <Ionicons name="analytics" size={24} color="#9ca3af" />
-          <Text className="text-gray-400 text-xs mt-1">Insights</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity className="items-center">
-          <Ionicons name="wallet" size={24} color="#9ca3af" />
-          <Text className="text-gray-400 text-xs mt-1">Earnings</Text>
+        <TouchableOpacity 
+          className="items-center"
+          onPress={navigateToProfile}
+        >
+          <Ionicons name="person" size={24} color="#9ca3af" />
+          <Text className="text-gray-500 text-xs mt-1">Profile</Text>
         </TouchableOpacity>
       </View>
     </View>

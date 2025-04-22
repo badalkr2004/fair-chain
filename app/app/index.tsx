@@ -9,6 +9,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring 
 } from "react-native-reanimated";
+import { Ionicons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get('window');
 
@@ -27,6 +28,10 @@ export default function Index() {
 
   const handlePressOut = () => {
     scale.value = withSpring(1);
+  };
+
+  const navigateToLogin = () => {
+    router.push("./(auth)/login");
   };
 
   const navigateToFarmerOnboarding = () => {
@@ -49,13 +54,22 @@ export default function Index() {
         contentContainerStyle={{ paddingBottom: 40 }}
       >
         <View className="px-6 pt-16">
-          <Animated.View entering={FadeInDown.delay(200).duration(700)}>
-            <Text className="text-4xl font-bold text-green-800 mb-2">
-              FairChain
-            </Text>
-            <Text className="text-xl text-green-700 mb-8">
-              AI-Powered Transparent Agri-Marketplace
-            </Text>
+          <Animated.View entering={FadeInDown.delay(200).duration(700)} className="flex-row justify-between items-center mb-4">
+            <View>
+              <Text className="text-4xl font-bold text-green-800 mb-2">
+                FairChain
+              </Text>
+              <Text className="text-xl text-green-700">
+                AI-Powered Transparent Agri-Marketplace
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={navigateToLogin}
+              className="bg-green-100 px-4 py-2 rounded-full flex-row items-center"
+            >
+              <Ionicons name="log-in-outline" size={20} color="#16a34a" />
+              <Text className="text-green-700 font-medium ml-1">Login</Text>
+            </TouchableOpacity>
           </Animated.View>
 
           <Animated.View 
@@ -156,6 +170,16 @@ export default function Index() {
               <Text className="text-gray-600 text-sm">Smart contract-style rules for payments</Text>
             </View>
           </Animated.View>
+
+          <View className="mt-8 mx-4">
+            <TouchableOpacity
+              onPress={() => router.push('/traceability/scan')}
+              className="flex-row items-center justify-center bg-green-100 p-4 rounded-xl"
+            >
+              <Ionicons name="qr-code" size={24} color="#16a34a" />
+              <Text className="ml-2 text-green-800 font-semibold">Scan QR Code to Verify Products</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </View>

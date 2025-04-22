@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, Image, TextInput } from 'reac
 import { StatusBar } from 'expo-status-bar';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
+import {router} from "expo-router"
 
 // Mock data for the marketplace
 const products = [
@@ -83,6 +84,10 @@ const categories = [
 export default function ConsumerMarketplace() {
   const [selectedCategory, setSelectedCategory] = useState('1');
   const [showDetail, setShowDetail] = useState<string | null>(null);
+
+  const profileRoute=()=>{
+    router.replace("/consumer/profile")
+  }
 
   return (
     <View className="flex-1 bg-[#F8FAF5]">
@@ -274,7 +279,7 @@ export default function ConsumerMarketplace() {
           <Text className="text-gray-400 text-xs mt-1">Cart</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity className="items-center">
+        <TouchableOpacity className="items-center" onPress={profileRoute}>
           <Ionicons name="person" size={24} color="#9ca3af" />
           <Text className="text-gray-400 text-xs mt-1">Profile</Text>
         </TouchableOpacity>
