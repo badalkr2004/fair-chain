@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -11,16 +9,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
-import { useAuthStore } from "@/lib/store";
 import { apiClient } from "@/lib/api/client";
+import { Loader2 } from "lucide-react";
 import { UserRole } from "@/types/auth";
 
-export default function LoginPage() {
+export default function InterMediaryLogin() {
   const router = useRouter();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -38,6 +37,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
     try {
       const response = await apiClient.login({
@@ -46,61 +46,29 @@ export default function LoginPage() {
         role: formData.role,
       });
 
-      if (response.success && response.data) {
-        const { user, token, refreshToken } = response.data;
-        console.log("redirecting to ", user.role);
-
-        // Update auth store
-        useAuthStore.getState().setAuth(user, token, refreshToken);
-
-        // Show success message
-        toast({
-          title: "Success",
-          description: "Logged in successfully",
-        });
-
-        // Redirect based on role
-        switch (user.role) {
-          case UserRole.FARMER:
-            router.push("/farmer/dashboard");
-            break;
-          case UserRole.CONSUMER:
-            router.push("/consumer/dashboard");
-            break;
-          case UserRole.INTERMEDIARY:
-            router.push("/intermediary/dashboard");
-            break;
-          case UserRole.BUYER:
-            router.push("/buyer/dashboard");
-            break;
-          case UserRole.ADMIN:
-            router.push("/admin/dashboard");
-            break;
-          default:
-            throw new Error("Invalid user role");
-        }
+      if (response.success) {
+        router.push("/farmer/dashboard");
       } else {
-        throw new Error(response.message || "Login failed");
+        setError(response.message || "Login failed");
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Login failed",
-        variant: "destructive",
-      });
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An error occurred during login"
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-emerald-50 to-white">
-      <Card className="w-full max-w-md mx-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-green-50 to-green-100">
+      <Card className="w-full max-w-md mx-auto shadow-lg">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-          <CardDescription>
-            Enter your credentials to access your account
+          <CardTitle className="text-2xl font-bold text-center text-green-800">
+            Farmer Login
+          </CardTitle>
+          <CardDescription className="text-center text-green-600">
+            Welcome back! Please login to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -129,12 +97,22 @@ export default function LoginPage() {
                 required
               />
             </div>
+            {error && (
+              <div className="text-red-500 text-sm text-center">{error}</div>
+            )}
             <Button
               type="submit"
-              className="w-full bg-emerald-600 hover:bg-emerald-700"
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
               disabled={isLoading}
             >
-              {isLoading ? "Logging in..." : "Login"}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Logging in...
+                </>
+              ) : (
+                "Login"
+              )}
             </Button>
           </form>
         </CardContent>

@@ -1,7 +1,6 @@
 "use client";
 
-import { Home, ShoppingCart, Package, Clock, Truck, CreditCard, Star, Bell, HelpCircle, User } from "lucide-react";
-
+import { Home, ShoppingCart, Package, Clock, Truck, CreditCard, Star, Bell, HelpCircle, User , MapPin  } from "lucide-react";
 import { 
   Sidebar, 
   SidebarContent, 
@@ -31,6 +30,11 @@ const navItems = [
     title: "Shop",
     icon: ShoppingCart,
     path: "/consumer/shop",
+  },
+  {
+    title: "map",
+    icon: "map-pin",
+    path: "/consumer/map",
   },
   {
     title: "My Orders",

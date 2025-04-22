@@ -1,8 +1,9 @@
-import { 
-  UserFormData, 
-  FarmerFormData, 
-  ConsumerFormData, 
-  UserRole 
+import {
+  UserFormData,
+  FarmerFormData,
+  ConsumerFormData,
+  UserRole,
+  IntermediaryFormData,
 } from "@/types/auth";
 
 // Auth Types
@@ -17,6 +18,8 @@ export interface User {
   name: string;
   email: string;
   role: string;
+  phone?: string;
+  address?: string;
   farmerProfile?: {
     farmSize: number;
     location: string;
@@ -27,6 +30,13 @@ export interface User {
     businessName: string;
     businessType: string;
     location: string;
+  };
+  intermediaryProfile?: {
+    type: "LOGISTICS" | "AGGREGATOR" | "STORAGE" | "PROCESSOR";
+    serviceAreas: string[];
+    services: string[];
+    licenseNumber?: string;
+    capacity?: Record<string, any>; // Optional: can be shaped like { storageCapacity: number, transportCapacity: number }
   };
 }
 
@@ -42,7 +52,14 @@ export interface Product {
   name: string;
   description: string;
   farmerId: string;
-  category: "GRAINS" | "VEGETABLES" | "FRUITS" | "DAIRY" | "MEAT" | "POULTRY" | "OTHER";
+  category:
+    | "GRAINS"
+    | "VEGETABLES"
+    | "FRUITS"
+    | "DAIRY"
+    | "MEAT"
+    | "POULTRY"
+    | "OTHER";
   quantity: number;
   unit: string;
   basePrice: number;
@@ -129,4 +146,4 @@ export interface RegistrationFormData {
   user: UserFormData;
   profile: FarmerFormData | ConsumerFormData;
   role: UserRole;
-} 
+}

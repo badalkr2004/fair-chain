@@ -1,17 +1,17 @@
-import { API_BASE_URL, API_ENDPOINTS } from './config';
-import type { 
-  LoginCredentials, 
-  AuthResponse, 
-  Product, 
-  Order, 
-  Transaction, 
-  SupplyChain, 
-  Forecast, 
+import { API_BASE_URL, API_ENDPOINTS } from "./config";
+import type {
+  LoginCredentials,
+  AuthResponse,
+  Product,
+  Order,
+  Transaction,
+  SupplyChain,
+  Forecast,
   Traceability,
   RegistrationFormData,
-  User 
-} from './types';
-import { useAuthStore } from '../store';
+  User,
+} from "./types";
+import { useAuthStore } from "../store";
 
 interface ApiResponse<T> {
   data: T;
@@ -32,21 +32,24 @@ class ApiClient {
     this.baseUrl = API_BASE_URL;
   }
 
-  private async request<T>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
+  private async request<T>(
+    endpoint: string,
+    options: RequestOptions = {}
+  ): Promise<ApiResponse<T>> {
     const headers = new Headers({
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...options.headers,
     });
 
     const token = useAuthStore.getState().token;
     if (token) {
-      headers.append('Authorization', `Bearer ${token}`);
+      headers.append("Authorization", `Bearer ${token}`);
     }
 
     try {
-      console.log('Making request to:', `${this.baseUrl}${endpoint}`);
+      console.log("Making request to:", `${this.baseUrl}${endpoint}`);
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        method: options.method || 'GET',
+        method: options.method || "GET",
         headers,
         body: options.body ? JSON.stringify(options.body) : undefined,
       });
@@ -57,94 +60,123 @@ class ApiClient {
         if (response.status === 401) {
           // Token expired or invalid
           useAuthStore.getState().clearAuth();
-          throw new Error('Session expired. Please login again.');
+          throw new Error("Session expired. Please login again.");
         }
-        throw new Error(data.message || 'An error occurred');
+        throw new Error(data.message || "An error occurred");
       }
 
       return {
         data: data.data || data,
-        message: data.message || 'Success',
-        success: true
+        message: data.message || "Success",
+        success: true,
       };
     } catch (error) {
-      console.error('API request failed:', error);
-      throw new Error(error instanceof Error ? error.message : 'An unexpected error occurred');
+      console.error("API request failed:", error);
+      throw new Error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   }
 
   // Auth methods
-  async login(credentials: LoginCredentials): Promise<ApiResponse<AuthResponse>> {
-    const response = await this.request<AuthResponse>(API_ENDPOINTS.auth.login, {
-      method: 'POST',
-      body: credentials
-    });
-    
+  async login(
+    credentials: LoginCredentials
+  ): Promise<ApiResponse<AuthResponse>> {
+    const response = await this.request<AuthResponse>(
+      API_ENDPOINTS.auth.login,
+      {
+        method: "POST",
+        body: credentials,
+      }
+    );
+
     const { user: apiUser, token, refreshToken } = response.data;
-    
+
     // Transform API user to match store User type
     const storeUser: User = {
       id: apiUser.id,
       name: apiUser.name,
       email: apiUser.email,
       role: apiUser.role,
-      farmerProfile: apiUser.farmerProfile ? {
-        farmSize: apiUser.farmerProfile.farmSize,
-        location: apiUser.farmerProfile.location,
-        cropTypes: apiUser.farmerProfile.cropTypes,
-        certifications: apiUser.farmerProfile.certifications
-      } : undefined,
-      buyerProfile: apiUser.buyerProfile ? {
-        businessName: apiUser.buyerProfile.businessName,
-        businessType: apiUser.buyerProfile.businessType,
-        location: apiUser.buyerProfile.location
-      } : undefined
+      farmerProfile: apiUser.farmerProfile
+        ? {
+            farmSize: apiUser.farmerProfile.farmSize,
+            location: apiUser.farmerProfile.location,
+            cropTypes: apiUser.farmerProfile.cropTypes,
+            certifications: apiUser.farmerProfile.certifications,
+          }
+        : undefined,
+      buyerProfile: apiUser.buyerProfile
+        ? {
+            businessName: apiUser.buyerProfile.businessName,
+            businessType: apiUser.buyerProfile.businessType,
+            location: apiUser.buyerProfile.location,
+          }
+        : undefined,
+      intermediaryProfile: apiUser.intermediaryProfile
+        ? {
+            type: apiUser.intermediaryProfile.type,
+            serviceAreas: apiUser.intermediaryProfile.serviceAreas,
+            services: apiUser.intermediaryProfile.services,
+            licenseNumber: apiUser.intermediaryProfile.licenseNumber,
+            capacity: apiUser.intermediaryProfile.capacity,
+          }
+        : undefined,
     };
-    
+
     useAuthStore.getState().setAuth(storeUser, token, refreshToken);
-    
+
     // Set the token in a cookie
     document.cookie = `auth-token=${token}; path=/; max-age=2592000; SameSite=Lax`; // 30 days expiry
-    
+
     // Set the user role in a cookie
     document.cookie = `user-role=${storeUser.role}; path=/; max-age=2592000; SameSite=Lax`; // 30 days expiry
-    
+
     return response;
   }
 
-  async register(data: RegistrationFormData): Promise<ApiResponse<AuthResponse>> {
-    const response = await this.request<AuthResponse>(API_ENDPOINTS.auth.register, {
-      method: 'POST',
-      body: {
-        ...data.user,
-        role: data.role.toString(),
-        profile: data.profile
-      },
-    });
-    
+  async register(
+    data: RegistrationFormData
+  ): Promise<ApiResponse<AuthResponse>> {
+    const response = await this.request<AuthResponse>(
+      API_ENDPOINTS.auth.register,
+      {
+        method: "POST",
+        body: {
+          ...data.user,
+          role: data.role.toString(),
+          profile: data.profile,
+        },
+      }
+    );
+
     const { user: apiUser, token, refreshToken } = response.data;
-    
+
     // Transform API user to match store User type
     const storeUser: User = {
       id: apiUser.id,
       name: apiUser.name,
       email: apiUser.email,
       role: apiUser.role,
-      farmerProfile: apiUser.farmerProfile ? {
-        farmSize: apiUser.farmerProfile.farmSize,
-        location: apiUser.farmerProfile.location,
-        cropTypes: apiUser.farmerProfile.cropTypes,
-        certifications: apiUser.farmerProfile.certifications
-      } : undefined,
-      buyerProfile: apiUser.buyerProfile ? {
-        businessName: apiUser.buyerProfile.businessName,
-        businessType: apiUser.buyerProfile.businessType,
-        location: apiUser.buyerProfile.location
-      } : undefined
+      farmerProfile: apiUser.farmerProfile
+        ? {
+            farmSize: apiUser.farmerProfile.farmSize,
+            location: apiUser.farmerProfile.location,
+            cropTypes: apiUser.farmerProfile.cropTypes,
+            certifications: apiUser.farmerProfile.certifications,
+          }
+        : undefined,
+      buyerProfile: apiUser.buyerProfile
+        ? {
+            businessName: apiUser.buyerProfile.businessName,
+            businessType: apiUser.buyerProfile.businessType,
+            location: apiUser.buyerProfile.location,
+          }
+        : undefined,
     };
-    
+
     useAuthStore.getState().setAuth(storeUser, token, refreshToken);
-    
+
     return response;
   }
 
@@ -157,23 +189,28 @@ class ApiClient {
     return this.request<Product[]>(API_ENDPOINTS.products.list);
   }
 
-  async createProduct(product: Omit<Product, 'id'>): Promise<ApiResponse<Product>> {
+  async createProduct(
+    product: Omit<Product, "id">
+  ): Promise<ApiResponse<Product>> {
     return this.request<Product>(API_ENDPOINTS.products.create, {
-      method: 'POST',
+      method: "POST",
       body: product,
     });
   }
 
-  async updateProduct(id: string, product: Partial<Product>): Promise<ApiResponse<Product>> {
+  async updateProduct(
+    id: string,
+    product: Partial<Product>
+  ): Promise<ApiResponse<Product>> {
     return this.request<Product>(API_ENDPOINTS.products.update(id), {
-      method: 'PUT',
+      method: "PUT",
       body: product,
     });
   }
 
   async deleteProduct(id: string): Promise<ApiResponse<void>> {
     return this.request<void>(API_ENDPOINTS.products.delete(id), {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
@@ -190,49 +227,63 @@ class ApiClient {
     const headers = new Headers();
     const token = useAuthStore.getState().token;
     if (token) {
-      headers.append('Authorization', `Bearer ${token}`);
+      headers.append("Authorization", `Bearer ${token}`);
     }
     // Don't set Content-Type for FormData, let the browser set it with boundary
 
     try {
-      console.log('Sending request to:', `${this.baseUrl}${API_ENDPOINTS.produce.create}`);
-      const response = await fetch(`${this.baseUrl}${API_ENDPOINTS.produce.create}`, {
-        method: 'POST',
-        headers,
-        body: data,
-      });
+      console.log(
+        "Sending request to:",
+        `${this.baseUrl}${API_ENDPOINTS.produce.create}`
+      );
+      const response = await fetch(
+        `${this.baseUrl}${API_ENDPOINTS.produce.create}`,
+        {
+          method: "POST",
+          headers,
+          body: data,
+        }
+      );
 
       const responseData = await response.json();
-      console.log('Server response:', responseData);
+      console.log("Server response:", responseData);
 
       if (!response.ok) {
         // If there's a validation error, try to get more details from the response
-        const errorMessage = responseData.message || 
-                           (responseData.errors ? JSON.stringify(responseData.errors) : 'Validation error');
+        const errorMessage =
+          responseData.message ||
+          (responseData.errors
+            ? JSON.stringify(responseData.errors)
+            : "Validation error");
         throw new Error(errorMessage);
       }
 
       return {
         data: responseData,
-        message: responseData.message || 'Success',
-        success: true
+        message: responseData.message || "Success",
+        success: true,
       };
     } catch (error) {
-      console.error('API request failed:', error);
-      throw new Error(error instanceof Error ? error.message : 'An unexpected error occurred');
+      console.error("API request failed:", error);
+      throw new Error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   }
 
-  async updateProduce(id: string, produce: Partial<Product>): Promise<ApiResponse<Product>> {
+  async updateProduce(
+    id: string,
+    produce: Partial<Product>
+  ): Promise<ApiResponse<Product>> {
     return this.request<Product>(API_ENDPOINTS.produce.update(id), {
-      method: 'PUT',
+      method: "PUT",
       body: produce,
     });
   }
 
   async deleteProduce(id: string): Promise<ApiResponse<void>> {
     return this.request<void>(API_ENDPOINTS.produce.delete(id), {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
@@ -241,16 +292,19 @@ class ApiClient {
     return this.request<Order[]>(API_ENDPOINTS.orders.list);
   }
 
-  async createOrder(order: Omit<Order, 'id'>): Promise<ApiResponse<Order>> {
+  async createOrder(order: Omit<Order, "id">): Promise<ApiResponse<Order>> {
     return this.request<Order>(API_ENDPOINTS.orders.create, {
-      method: 'POST',
+      method: "POST",
       body: order,
     });
   }
 
-  async updateOrder(id: string, order: Partial<Order>): Promise<ApiResponse<Order>> {
+  async updateOrder(
+    id: string,
+    order: Partial<Order>
+  ): Promise<ApiResponse<Order>> {
     return this.request<Order>(API_ENDPOINTS.orders.update(id), {
-      method: 'PUT',
+      method: "PUT",
       body: order,
     });
   }
@@ -271,4 +325,4 @@ class ApiClient {
   }
 }
 
-export const apiClient = new ApiClient(); 
+export const apiClient = new ApiClient();
