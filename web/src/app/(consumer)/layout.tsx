@@ -1,9 +1,28 @@
-import React from "react";
+"use client";
 
-type Props = { children: React.ReactNode };
+import { ReactNode } from "react";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import ConsumerSidebar from "@/components/consumer/ConsumerSidebar";
+import ConsumerHeader from "@/components/consumer/ConsumerHeader";
 
-const ConsumerLayout = ({ children }: Props) => {
-  return <div>{children}</div>;
-};
+interface ConsumerLayoutProps {
+  children: ReactNode;
+}
 
-export default ConsumerLayout;
+export default function ConsumerLayout({ children }: ConsumerLayoutProps) {
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <ConsumerSidebar />
+        <SidebarInset>
+          <div className="flex flex-col h-full">
+            <ConsumerHeader />
+            <main className="flex-1 p-4 md:p-6 overflow-auto">
+              {children}
+            </main>
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
+  );
+}
