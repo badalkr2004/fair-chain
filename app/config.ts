@@ -1,5 +1,5 @@
 // Configuration variables for the application
-export const API_URL = 'https://3s955r5p-8080.inc1.devtunnels.ms'
+export const API_URL = 'https://api.fc.bitbrains.fun'
 
 // Environment
 export const IS_DEV = process.env.NODE_ENV === 'development';

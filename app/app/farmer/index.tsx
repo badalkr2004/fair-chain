@@ -111,47 +111,113 @@ export default function FarmerDashboard() {
       // Get all available crops for market data
       const availableCrops = await forecastingService.getAllCrops();
       
+      // Ensure we have valid crop names
+      const defaultCrops = ['Wheat', 'Rice', 'Maize'];
+      const validAvailableCrops = Array.isArray(availableCrops) ? availableCrops : defaultCrops;
+      
       // Get market prices for common crops
-      const cropNames = cropsList.length > 0 
-        ? cropsList.map(crop => crop.name) 
-        : ['Wheat', 'Rice', 'Maize'].filter(c => availableCrops.includes(c));
+      const cropNames = Array.isArray(cropsList) && cropsList.length > 0 
+        ? cropsList.filter(crop => crop && crop.name).map(crop => crop.name) 
+        : defaultCrops.filter(c => validAvailableCrops.includes(c));
       
       // Get price data for the first crop or default to wheat
-      const cropToCheck = cropNames[0] || 'Wheat';
-      const priceData = await forecastingService.getMarketPrices(cropToCheck);
+      const cropToCheck = (cropNames && cropNames.length > 0 && cropNames[0]) || 'Wheat';
       
-      // Get optimal crops for a default region
-      const optimalCropsData = await forecastingService.getOptimalCrops({ region: 'Patna', top_n: 3 });
+      // Get price data and handle potential errors
+      let priceData;
+      try {
+        priceData = await forecastingService.getMarketPrices(cropToCheck);
+      } catch (priceError) {
+        console.error('Error fetching price data:', priceError);
+        // Create default price data
+        priceData = {
+          status: 'success',
+          crop: cropToCheck,
+          current_price: 2000,
+          price_trend: 'stable',
+          price_forecast: [{ date: new Date().toISOString().split('T')[0], price: 2000 }],
+          last_updated: new Date().toISOString().split('T')[0]
+        };
+      }
+      
+      // Get optimal crops with error handling
+      let optimalCropsData;
+      try {
+        optimalCropsData = await forecastingService.getOptimalCrops({ region: 'Patna', top_n: 3 });
+      } catch (optimalError) {
+        console.error('Error fetching optimal crops:', optimalError);
+        // Create default optimal crops data
+        optimalCropsData = null;
+      }
       
       // Find the crop with highest growth potential
-      let topCrop = { name: cropToCheck, trend: priceData.price_trend };
-      if (optimalCropsData && optimalCropsData.optimal_crops && optimalCropsData.optimal_crops.length > 0) {
-        const bestCrop = optimalCropsData.optimal_crops.reduce(
-          (best, current) => current.growth_potential > best.growth_potential ? current : best,
-          optimalCropsData.optimal_crops[0]
-        );
-        topCrop = { name: bestCrop.crop, trend: bestCrop.yield_trend };
+      let topCrop = { 
+        name: cropToCheck, 
+        trend: priceData && typeof priceData.price_trend === 'string' ? priceData.price_trend : 'stable' 
+      };
+      
+      if (optimalCropsData && 
+          optimalCropsData.optimal_crops && 
+          Array.isArray(optimalCropsData.optimal_crops) && 
+          optimalCropsData.optimal_crops.length > 0) {
+        
+        // Find the crop with the highest growth potential
+        try {
+          const bestCrop = optimalCropsData.optimal_crops.reduce(
+            (best, current) => {
+              // Ensure both objects have the required properties
+              if (current && best && 
+                  typeof current.growth_potential === 'number' && 
+                  typeof best.growth_potential === 'number') {
+                return current.growth_potential > best.growth_potential ? current : best;
+              }
+              return best;
+            },
+            optimalCropsData.optimal_crops[0]
+          );
+          
+          if (bestCrop && bestCrop.crop && bestCrop.yield_trend) {
+            topCrop = { name: bestCrop.crop, trend: bestCrop.yield_trend };
+          }
+        } catch (reduceError) {
+          console.error('Error finding best crop:', reduceError);
+          // Keep default topCrop
+        }
       }
       
       // Calculate average price change from forecast
       let avgPriceChange = 0;
-      if (priceData && priceData.price_forecast && priceData.price_forecast.length > 0) {
-        const lastPrice = priceData.price_forecast[priceData.price_forecast.length - 1].price;
-        const priceChange = ((lastPrice - priceData.current_price) / priceData.current_price) * 100;
-        avgPriceChange = Math.round(priceChange * 10) / 10; // Round to 1 decimal place
+      if (priceData && 
+          priceData.price_forecast && 
+          Array.isArray(priceData.price_forecast) && 
+          priceData.price_forecast.length > 0 && 
+          typeof priceData.current_price === 'number') {
+        
+        const lastForecast = priceData.price_forecast[priceData.price_forecast.length - 1];
+        
+        if (lastForecast && typeof lastForecast.price === 'number') {
+          const priceChange = ((lastForecast.price - priceData.current_price) / priceData.current_price) * 100;
+          avgPriceChange = Math.round(priceChange * 10) / 10; // Round to 1 decimal place
+        }
       }
       
-      // Set market summary
+      // Set market summary with safe values
       setMarketSummary({
         topCrop,
         avgPriceChange,
-        demandTrend: priceData.price_trend,
-        lastUpdated: priceData.last_updated
+        demandTrend: priceData && typeof priceData.price_trend === 'string' ? priceData.price_trend : 'stable',
+        lastUpdated: priceData && priceData.last_updated ? priceData.last_updated : new Date().toISOString().split('T')[0]
       });
       
     } catch (error) {
       console.error('Error loading market summary:', error);
       // Keep default values if there's an error
+      setMarketSummary({
+        topCrop: { name: 'Wheat', trend: 'stable' },
+        avgPriceChange: 0,
+        demandTrend: 'stable',
+        lastUpdated: new Date().toISOString().split('T')[0]
+      });
     } finally {
       setMarketSummaryLoading(false);
     }

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Define the base URL for the forecasting API
 const API_BASE_URL = 'https://3s955r5p-8000.inc1.devtunnels.ms';
@@ -108,13 +109,39 @@ export interface CropsResponse {
 
 // Create the forecasting service
 class ForecastingService {
+  // Get authentication headers for API requests
+  private async getAuthHeaders() {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    } catch (error) {
+      console.error('Error getting auth token:', error);
+      return {};
+    }
+  }
+
   // Get list of all available crops
   async getAllCrops(): Promise<string[]> {
     try {
-      const response = await axios.get<CropsResponse>(`${API_BASE_URL}/crops`);
+      const headers = await this.getAuthHeaders();
+      const response = await axios.get<CropsResponse>(`${API_BASE_URL}/crops`, { headers });
+      
+      // Check if response has the expected format
       if (response.data && response.data.status === 'success' && Array.isArray(response.data.crops)) {
         return response.data.crops;
       }
+      
+      // If response doesn't match expected format but has crops array directly
+      if (response.data && Array.isArray(response.data)) {
+        return response.data;
+      }
+      
+      // If response has crops property directly
+      if (response.data && Array.isArray(response.data.crops)) {
+        return response.data.crops;
+      }
+      
+      console.warn('Unexpected crops response format:', response.data);
       throw new Error('Invalid response format from crops endpoint');
     } catch (error) {
       console.error('Error fetching crops:', error);
@@ -133,9 +160,23 @@ class ForecastingService {
   // Get list of all available regions
   async getAllRegions(): Promise<string[]> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/regions`);
+      const headers = await this.getAuthHeaders();
+      const response = await axios.get(`${API_BASE_URL}/regions`, { headers });
       
-      return response.data;
+      // Handle different response formats
+      if (Array.isArray(response.data)) {
+        return response.data;
+      }
+      
+      if (response.data && Array.isArray(response.data.regions)) {
+        return response.data.regions;
+      }
+      
+      console.warn('Unexpected regions response format:', response.data);
+      return [
+        'Saran', 'Patna', 'Buxar', 'Bhojpur', 'Rohtas',
+        'Kaimur', 'Nalanda', 'Gaya', 'Jehanabad', 'Arwal'
+      ];
     } catch (error) {
       console.error('Error fetching regions:', error);
       // Return mock data if API fails
@@ -177,7 +218,8 @@ class ForecastingService {
   // Get optimal crops for a region
   async getOptimalCrops(params: OptimalCropsParams): Promise<OptimalCropResponse> {
     try {
-      const response = await axios.post(`${API_BASE_URL}/recommend/optimal-crops`, params);
+      const headers = await this.getAuthHeaders();
+      const response = await axios.post(`${API_BASE_URL}/recommend/optimal-crops`, params, { headers });
       return response.data;
     } catch (error) {
       console.error('Error fetching optimal crops:', error);
@@ -249,7 +291,8 @@ class ForecastingService {
   // Get market prices for a crop
   async getMarketPrices(cropName: string): Promise<MarketPriceResponse> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/market-prices/${cropName}`);
+      const headers = await this.getAuthHeaders();
+      const response = await axios.get(`${API_BASE_URL}/market-prices/${cropName}`, { headers });
       return response.data;
     } catch (error) {
       console.error('Error fetching market prices:', error);

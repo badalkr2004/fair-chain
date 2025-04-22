@@ -69,7 +69,8 @@ class AuthService {
         throw new Error('Invalid response from server');
       }
       
-      await this.storeTokens(response.token, response.refreshToken);
+      // Check if refreshToken exists in the response before storing it
+      await this.storeTokens(response.token, response.refreshToken || '');
       await AsyncStorage.setItem('user', JSON.stringify(response.user));
       
       console.log('Signup successful for user:', response.user.name);
@@ -174,7 +175,12 @@ class AuthService {
    */
   private async storeTokens(token: string, refreshToken: string): Promise<void> {
     await AsyncStorage.setItem('token', token);
-    await AsyncStorage.setItem('refreshToken', refreshToken);
+    
+    // Only store refreshToken if it exists
+    if (refreshToken) {
+      await AsyncStorage.setItem('refreshToken', refreshToken);
+    }
+    
     console.log('Auth tokens stored successfully');
   }
 
