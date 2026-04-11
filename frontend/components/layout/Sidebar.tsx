@@ -17,7 +17,7 @@ const farmerNav = [
   { href: '/dashboard/farmer/bids', label: 'Received Bids', icon: Gavel },
   { href: '/dashboard/farmer/orders', label: 'My Orders', icon: ShoppingCart },
   { href: '/dashboard/traceability', label: 'Traceability', icon: Search },
-  { href: '/dashboard/forecast', label: 'Market Trends', icon: TrendingUp },
+  { href: '/dashboard/farmer/market-analysis', label: 'Market Analysis', icon: TrendingUp },
   { href: '/dashboard/farmer/profile', label: 'Profile', icon: User },
 ];
 

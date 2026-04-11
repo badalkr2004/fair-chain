@@ -82,12 +82,12 @@ export default function FarmerDashboard() {
             <p className="text-sm font-medium text-gray-800">Traceability</p>
           </div>
         </Link>
-        <Link href="/dashboard/forecast">
+        <Link href="/dashboard/farmer/market-analysis">
           <div className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all text-center">
             <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3">
               <TrendingUp className="w-6 h-6 text-blue-600" />
             </div>
-            <p className="text-sm font-medium text-gray-800">Market Trends</p>
+            <p className="text-sm font-medium text-gray-800">Market Analysis</p>
           </div>
         </Link>
       </div>
