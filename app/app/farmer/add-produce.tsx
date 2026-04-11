@@ -142,7 +142,7 @@ export default function AddProducePage() {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,
@@ -190,6 +190,11 @@ export default function AddProducePage() {
 
     if (!formData.name.trim()) {
       setError('Please enter a product name');
+      return false;
+    }
+
+    if (!formData.description.trim() || formData.description.trim().length < 10) {
+      setError('Please enter a description (at least 10 characters)');
       return false;
     }
 

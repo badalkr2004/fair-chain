@@ -6,17 +6,18 @@ import {
   addTraceabilityRecord,
   getMyTraceableProducts
 } from "../controllers/traceability.controller";
-import { authenticate, isFarmer, isAdmin } from "../middleware/auth.middleware";
+import { authenticate } from "../middleware/auth.middleware";
+import { asyncHandler } from "../middleware/asyncHandler";
 
 const router = Router();
 
 // Public routes
-router.get("/record/:identifier", getTraceabilityRecord);
-router.get("/product/:productId", getProductTraceability);
-router.get("/verify/:recordId", verifyTraceability);
+router.get("/record/:identifier", asyncHandler(getTraceabilityRecord));
+router.get("/product/:productId", asyncHandler(getProductTraceability));
+router.get("/verify/:recordId", asyncHandler(verifyTraceability));
 
 // Protected routes (require authentication)
-router.post("/record", authenticate, addTraceabilityRecord);
-router.get("/products/my", authenticate, getMyTraceableProducts);
+router.post("/record", asyncHandler(authenticate), asyncHandler(addTraceabilityRecord));
+router.get("/products/my", asyncHandler(authenticate), asyncHandler(getMyTraceableProducts));
 
-export default router; 
+export default router;

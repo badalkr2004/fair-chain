@@ -9,19 +9,21 @@ import {
   getMyProducts
 } from "../controllers/product.controller";
 import { authenticate, isFarmer } from "../middleware/auth.middleware";
+import { asyncHandler } from "../middleware/asyncHandler";
 
 const router = Router();
 
-// Public routes
-router.get("/", getProducts);
-router.get("/:id", getProductById);
-router.get("/farmer/:farmerId", getProductsByFarmer);
+// Protected routes (must be BEFORE /:id to avoid being caught by param route)
+router.get("/my/products", asyncHandler(authenticate), isFarmer, asyncHandler(getMyProducts));
 
-// Protected routes (require authentication)
+// Public routes - specific paths before parameterized
+router.get("/", asyncHandler(getProducts));
+router.get("/farmer/:farmerId", asyncHandler(getProductsByFarmer));
+router.get("/:id", asyncHandler(getProductById)); // Must be LAST among GET routes
+
 // Farmer only routes
-router.post("/", authenticate, isFarmer, createProduct);
-router.put("/:id", authenticate, isFarmer, updateProduct);
-router.delete("/:id", authenticate, isFarmer, deleteProduct);
-router.get("/my-products", authenticate, isFarmer, getMyProducts);
+router.post("/", asyncHandler(authenticate), isFarmer, asyncHandler(createProduct));
+router.put("/:id", asyncHandler(authenticate), isFarmer, asyncHandler(updateProduct));
+router.delete("/:id", asyncHandler(authenticate), isFarmer, asyncHandler(deleteProduct));
 
-export default router; 
+export default router;

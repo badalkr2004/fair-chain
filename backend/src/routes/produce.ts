@@ -1,31 +1,33 @@
-import express from 'express';
-import { ProduceController } from '../controllers/produce.controller.js';
-import { authenticate } from '../middleware/auth.middleware.js';
-import { validateRequest } from '../middleware/validation.middleware.js';
-import { createProduceSchema, updateProduceSchema } from '../lib/validation/produce.schema.js';
+import { Router } from 'express';
+import { ProduceController } from '../controllers/produce.controller';
+import { authenticate } from '../middleware/auth.middleware';
+import { asyncHandler } from '../middleware/asyncHandler';
+import { validateRequest } from '../middleware/validation.middleware';
+import { createProduceSchema, updateProduceSchema } from '../lib/validation/produce.schema';
 
-const router = express.Router();
+const router = Router();
 const produceController = new ProduceController();
 
-// Get all produce
-router.get('/', produceController.getAllProduce);
-
+// Specific routes BEFORE parameter routes
 // Get produce for logged-in farmer (requires authentication)
-router.get('/my-produce', authenticate, produceController.getMyProduce);
+router.get('/my-produce', asyncHandler(authenticate), asyncHandler(produceController.getMyProduce.bind(produceController)));
 
 // Get produce by farmer ID
-router.get('/farmer/:farmerId', produceController.getProduceByFarmerId);
+router.get('/farmer/:farmerId', asyncHandler(produceController.getProduceByFarmerId.bind(produceController)));
 
-// Get produce by ID
-router.get('/:id', produceController.getProduceById);
+// Get all produce
+router.get('/', asyncHandler(produceController.getAllProduce.bind(produceController)));
+
+// Get produce by ID — MUST be after /my-produce and /farmer/:farmerId
+router.get('/:id', asyncHandler(produceController.getProduceById.bind(produceController)));
 
 // Create produce (requires authentication)
-router.post('/', authenticate, validateRequest(createProduceSchema), produceController.createProduce);
+router.post('/', asyncHandler(authenticate), validateRequest(createProduceSchema), asyncHandler(produceController.createProduce.bind(produceController)));
 
 // Update produce (requires authentication)
-router.put('/:id', authenticate, validateRequest(updateProduceSchema), produceController.updateProduce);
+router.put('/:id', asyncHandler(authenticate), validateRequest(updateProduceSchema), asyncHandler(produceController.updateProduce.bind(produceController)));
 
 // Delete produce (requires authentication)
-router.delete('/:id', authenticate, produceController.deleteProduce);
+router.delete('/:id', asyncHandler(authenticate), asyncHandler(produceController.deleteProduce.bind(produceController)));
 
 export default router;

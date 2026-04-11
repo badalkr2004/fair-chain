@@ -105,7 +105,7 @@ export const addPrediction = async (req: Request, res: Response) => {
     // Create prediction
     const prediction = await prisma.prediction.create({
       data: {
-        modelId,
+        modelId: modelId!,
         category,
         region,
         predictionDate: new Date(predictionDate),
@@ -156,7 +156,7 @@ export const applyDemandPredictions = async (req: Request, res: Response) => {
     // Get products that match the model's category
     const products = await prisma.product.findMany({
       where: {
-        category: model.category,
+        category: model.category ?? undefined,
         status: 'LISTED'
       },
       include: {

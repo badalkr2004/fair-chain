@@ -1,4 +1,3 @@
-import axios from 'axios';
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -76,7 +75,7 @@ export const getProductsByFarmer = async (farmerId: string) => {
 
 export const getMyProducts = async () => {
   try {
-    return await api.get(`/products/my-products`);
+    return await api.get(`/products/my/products`);
   } catch (error) {
     console.error('Error fetching my products:', error);
     throw error;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { getBidsForProduct, getMyBids, Bid, respondToBid, cancelBid } from '../../services/bids';
@@ -41,18 +41,21 @@ export default function BidsScreen() {
         
         if (userData.role === UserRole.FARMER) {
           // Farmers need to select a product to view bids for
-          const myProducts = await getMyProducts();
-          setProducts(myProducts || []);
+          const response = await getMyProducts();
+          const myProducts = response?.products ?? response?.data?.products ?? [];
+          setProducts(Array.isArray(myProducts) ? myProducts : []);
           
-          if (myProducts && myProducts.length > 0) {
+          if (Array.isArray(myProducts) && myProducts.length > 0) {
             setSelectedProductId(myProducts[0].id);
             const productBids = await getBidsForProduct(myProducts[0].id);
-            setBids(productBids || []);
+            const bidsArray = productBids?.data?.bids ?? productBids?.bids ?? productBids?.data ?? [];
+            setBids(Array.isArray(bidsArray) ? bidsArray : []);
           }
         } else if (userData.role === UserRole.INTERMEDIARY) {
           // Intermediaries see all their bids
-          const myBids = await getMyBids();
-          setBids(myBids || []);
+          const myBidsResponse = await getMyBids();
+          const myBidsArray = myBidsResponse?.data?.bids ?? myBidsResponse?.bids ?? myBidsResponse?.data ?? [];
+          setBids(Array.isArray(myBidsArray) ? myBidsArray : []);
         } else {
           Alert.alert('Not Authorized', 'Your account type cannot access bids');
           router.back();
@@ -74,7 +77,8 @@ export default function BidsScreen() {
       setSelectedProductId(productId);
       
       const productBids = await getBidsForProduct(productId);
-      setBids(productBids || []);
+      const bidsArray = productBids?.data?.bids ?? productBids?.bids ?? productBids?.data ?? [];
+      setBids(Array.isArray(bidsArray) ? bidsArray : []);
     } catch (error) {
       console.error('Error fetching bids for product:', error);
       Alert.alert('Error', 'Failed to load bids for selected product');
@@ -98,16 +102,17 @@ export default function BidsScreen() {
       setLoading(true);
       
       await respondToBid(bidId, {
-        status: accept ? 'ACCEPTED' : 'REJECTED',
-        responseReason: accept 
+        action: accept ? 'ACCEPT' : 'REJECT',
+        reason: accept 
           ? 'Your bid has been accepted.' 
           : 'Your bid has been rejected.'
       });
       
       // Refresh bids list
       if (selectedProductId) {
-        const updatedBids = await getBidsForProduct(selectedProductId);
-        setBids(updatedBids || []);
+        const updatedBidsResponse = await getBidsForProduct(selectedProductId);
+        const updatedBids = updatedBidsResponse?.data?.bids ?? updatedBidsResponse?.bids ?? updatedBidsResponse?.data ?? [];
+        setBids(Array.isArray(updatedBids) ? updatedBids : []);
       }
       
       Alert.alert(
@@ -138,8 +143,9 @@ export default function BidsScreen() {
               await cancelBid(bidId);
               
               // Refresh bids list
-              const updatedBids = await getMyBids();
-              setBids(updatedBids || []);
+              const updatedBidsResponse = await getMyBids();
+              const updatedBids = updatedBidsResponse?.data?.bids ?? updatedBidsResponse?.bids ?? updatedBidsResponse?.data ?? [];
+              setBids(Array.isArray(updatedBids) ? updatedBids : []);
               
               Alert.alert('Success', 'Bid cancelled successfully');
             } catch (error) {
@@ -331,13 +337,17 @@ export default function BidsScreen() {
       
       {renderProductSelector()}
       
-      <FlatList
-        data={bids}
-        renderItem={renderBidItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.bidsList}
-        ListEmptyComponent={renderEmptyList}
-      />
+      <ScrollView contentContainerStyle={styles.bidsList}>
+        {bids.length === 0 ? (
+          renderEmptyList()
+        ) : (
+          bids.map((item) => (
+            <View key={item.id}>
+              {renderBidItem({ item })}
+            </View>
+          ))
+        )}
+      </ScrollView>
     </View>
   );
 }

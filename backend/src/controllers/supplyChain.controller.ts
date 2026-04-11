@@ -1,7 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '../generated/prisma';
+import prisma from '../lib/prisma';
 
-const prisma = new PrismaClient();
 
 export class SupplyChainController {
   /**
@@ -394,7 +393,7 @@ export class SupplyChainController {
       // Create the supply chain link
       const newLink = await prisma.supplyChainLink.create({
         data: {
-          supplyChainId: id,
+          supplyChainId: id!,
           type,
           fromUserId: from,
           toUserId: to,

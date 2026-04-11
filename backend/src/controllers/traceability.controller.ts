@@ -276,20 +276,10 @@ export const addTraceabilityRecord = async (req: Request, res: Response) => {
   }
 };
 
-// Helper function to create a hash
+// Helper function to create a proper SHA-256 hash
 async function createHash(data: string): Promise<string> {
-  // In a real implementation, you'd use a proper crypto library
-  // For this example, we'll use a simple approach
-  const encoder = new TextEncoder();
-  const dataBuffer = encoder.encode(data);
-  
-  // Use the browser's SubtleCrypto API or Node.js crypto module
-  // Here we're just simulating it
-  const hashHex = Array.from(dataBuffer)
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-  
-  return hashHex;
+  const { createHash: cryptoHash } = await import('crypto');
+  return cryptoHash('sha256').update(data).digest('hex');
 }
 
 // Helper function to verify a hash
@@ -315,7 +305,6 @@ async function verifyHash(record: any, previousRecord: any | null): Promise<bool
 export const getMyTraceableProducts = async (req: Request, res: Response) => {
   try {
     const userId = req.user.id;
-    console.log(userId)
     
     // Get all traceability records for products created by this user
     const traceabilityRecords = await prisma.traceabilityRecord.findMany({

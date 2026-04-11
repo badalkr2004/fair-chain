@@ -1,6 +1,8 @@
 import express from "express";
-require("dotenv").config();
+import "dotenv/config";
 import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import { initializeServer } from "./src/lib/server";
 
 // Routes
@@ -13,14 +15,44 @@ import transactionsRoutes from "./src/routes/transactions";
 import bidRoutes from "./src/routes/bid";
 import supplyChainRoutes from "./src/routes/supplyChain";
 import produceRoutes from "./src/routes/produce";
+import prisma from "./src/lib/prisma";
 
 const PORT = process.env.PORT || 8080;
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({extended:true}))
+// Security middleware
+app.use(helmet());
+
+// CORS configuration
+const corsOrigins = process.env.CORS_ORIGIN === '*' 
+  ? '*' 
+  : (process.env.CORS_ORIGIN?.split(',') || ['http://localhost:8081']);
+app.use(cors({
+  origin: corsOrigins,
+  credentials: true,
+}));
+
+// Body parsing
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Rate limiting for auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // limit each IP to 20 auth requests per window
+  message: { message: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// General rate limiter
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(generalLimiter);
 
 // Welcome route
 app.get("/", (req, res) => {
@@ -42,7 +74,7 @@ app.get("/", (req, res) => {
 });
 
 // Register routes
-app.use("/auth", authRoutes);
+app.use("/auth", authLimiter, authRoutes);
 app.use("/products", productRoutes);
 app.use("/produce", produceRoutes);
 app.use("/orders", orderRoutes);
@@ -52,25 +84,63 @@ app.use("/transactions", transactionsRoutes);
 app.use("/bids", bidRoutes);
 app.use("/supply-chain", supplyChainRoutes);
 
+// 404 handler
+app.use((req: express.Request, res: express.Response) => {
+  res.status(404).json({ message: `Route ${req.method} ${req.path} not found` });
+});
+
 // Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction): void => {
   console.error("Error:", err);
-  res.status(err.status || 500).json({
+  
+  // Handle Prisma errors
+  if (err.code === 'P2002') {
+    res.status(409).json({ message: 'A record with this data already exists.' });
+    return;
+  }
+  if (err.code === 'P2025') {
+    res.status(404).json({ message: 'Record not found.' });
+    return;
+  }
+  
+  const status = err.status || err.statusCode || 500;
+  res.status(status).json({
     message: err.message || "Internal Server Error",
-    error: process.env.NODE_ENV === "production" ? {} : err.stack
+    ...(process.env.NODE_ENV !== "production" ? { error: err.stack } : {})
   });
 });
 
 // Initialize server services and start server
+let server: any;
 (async () => {
   try {
     await initializeServer();
     
-    app.listen(PORT, () => {
-      console.log(`Server is running on port http://localhost:${PORT}`);
+    server = app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error("Failed to initialize server:", error);
     process.exit(1);
   }
 })();
+
+// Graceful shutdown
+const gracefulShutdown = async (signal: string) => {
+  console.log(`\n${signal} received. Shutting down gracefully...`);
+  if (server) {
+    server.close(async () => {
+      await prisma.$disconnect();
+      console.log('Database connection closed.');
+      process.exit(0);
+    });
+    // Force exit after 10 seconds
+    setTimeout(() => {
+      console.error('Forced shutdown after timeout.');
+      process.exit(1);
+    }, 10000);
+  }
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

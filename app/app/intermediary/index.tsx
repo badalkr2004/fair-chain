@@ -144,11 +144,12 @@ export default function IntermediaryDashboard() {
         // Get available produce
         try {
           const produceResponse = await produceService.getAvailableProduce();
-          setAvailableJobs(produceResponse?.data || []);
+          const produceData = produceResponse?.data?.produce ?? produceResponse?.data ?? [];
+          setAvailableJobs(Array.isArray(produceData) ? produceData : []);
         } catch (produceError) {
           console.error('Error loading available produce:', produceError);
           setDebugInfo(debugInfo => `${debugInfo || ''}\nProduce error: ${produceError instanceof Error ? produceError.message : 'Unknown error'}`);
-          setAvailableJobs([]); // Set empty array to avoid undefined errors
+          setAvailableJobs([]);
         }
 
         // Get my bids

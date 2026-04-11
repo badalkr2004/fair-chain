@@ -8,6 +8,7 @@ import produceService from '../../services/produce';
 import authService from '../../services/auth';
 import traceabilityService from '../../services/traceability';
 import forecastingService from '../../services/forecasting';
+import { getBidsForProduct, respondToBid, Bid } from '../../services/bids';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function FarmerDashboard() {
@@ -16,6 +17,8 @@ export default function FarmerDashboard() {
   const [marketSummaryLoading, setMarketSummaryLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [crops, setCrops] = useState<any[]>([]);
+  const [receivedBids, setReceivedBids] = useState<Bid[]>([]);
+  const [bidsLoading, setBidsLoading] = useState(false);
   const [supplyChainActivities, setSupplyChainActivities] = useState<any[]>([]);
   const [marketSummary, setMarketSummary] = useState({
     topCrop: { name: 'Loading...', trend: 'stable' },
@@ -89,6 +92,9 @@ export default function FarmerDashboard() {
 
       // Set crops after loading
       setCrops(cropsList);
+      
+      // Load bids for all farmer products
+      loadReceivedBids(cropsList);
       
       // Complete main UI loading
       setIsLoading(false);
@@ -274,6 +280,59 @@ export default function FarmerDashboard() {
     } catch (error) {
       Alert.alert('Error', 'Failed to logout');
     }
+  };
+
+  // Load bids received on the farmer's products
+  const loadReceivedBids = async (cropsList: any[]) => {
+    if (!cropsList || cropsList.length === 0) return;
+    setBidsLoading(true);
+    try {
+      const allBids: Bid[] = [];
+      for (const crop of cropsList) {
+        try {
+          const response = await getBidsForProduct(crop.id);
+          const bids = response?.data?.bids ?? response?.bids ?? response?.data ?? [];
+          if (Array.isArray(bids)) {
+            allBids.push(...bids.map((b: any) => ({ ...b, product: { name: crop.name, unit: 'kg' } })));
+          }
+        } catch {
+          // Skip products with no bids
+        }
+      }
+      setReceivedBids(allBids);
+    } catch (error) {
+      console.error('Error loading received bids:', error);
+    } finally {
+      setBidsLoading(false);
+    }
+  };
+
+  // Handle accept or reject bid
+  const handleRespondToBid = async (bidId: string, accept: boolean) => {
+    Alert.alert(
+      accept ? 'Accept Bid' : 'Reject Bid',
+      accept ? 'Are you sure you want to accept this bid?' : 'Are you sure you want to reject this bid?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: accept ? 'Accept' : 'Reject',
+          style: accept ? 'default' : 'destructive',
+          onPress: async () => {
+            try {
+              await respondToBid(bidId, {
+                action: accept ? 'ACCEPT' : 'REJECT',
+              });
+              Alert.alert('Success', `Bid ${accept ? 'accepted' : 'rejected'} successfully`);
+              // Refresh bids
+              loadReceivedBids(crops);
+            } catch (error) {
+              console.error('Error responding to bid:', error);
+              Alert.alert('Error', 'Failed to respond to bid. Please try again.');
+            }
+          }
+        }
+      ]
+    );
   };
 
   const profileRoute=()=>{
@@ -493,6 +552,91 @@ export default function FarmerDashboard() {
             )}
           </Animated.View>
 
+          {/* Received Bids Section */}
+          <Animated.View entering={FadeInDown.delay(500).duration(500)} className="mb-8">
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-xl font-semibold text-gray-800">Received Bids</Text>
+              <TouchableOpacity
+                onPress={() => router.push('/bids' as any)}
+                className="flex-row items-center"
+              >
+                <Text className="text-green-600 mr-1">View All</Text>
+                <Ionicons name="arrow-forward" size={16} color="#16a34a" />
+              </TouchableOpacity>
+            </View>
+
+            {bidsLoading ? (
+              <View className="bg-white rounded-xl p-6 items-center justify-center">
+                <ActivityIndicator size="small" color="#16a34a" />
+                <Text className="text-gray-400 mt-2">Loading bids...</Text>
+              </View>
+            ) : receivedBids.filter(b => b.status === 'PENDING').length === 0 ? (
+              <View className="bg-white rounded-xl p-6 items-center justify-center">
+                <Ionicons name="documents-outline" size={40} color="#d1d5db" />
+                <Text className="text-gray-400 mt-2 text-center">No pending bids</Text>
+                <Text className="text-gray-400 text-sm text-center mt-1">
+                  Intermediaries will bid on your listed products
+                </Text>
+              </View>
+            ) : (
+              receivedBids.filter(b => b.status === 'PENDING').slice(0, 3).map((bid) => (
+                <View key={bid.id} className="bg-white rounded-xl p-4 mb-3 shadow-sm">
+                  <View className="flex-row justify-between items-center mb-2">
+                    <Text className="text-lg font-semibold text-gray-800">
+                      {bid.product?.name || 'Product'}
+                    </Text>
+                    <View className="bg-amber-100 px-3 py-1 rounded-full">
+                      <Text className="text-amber-700 text-xs font-medium">{bid.status}</Text>
+                    </View>
+                  </View>
+  
+                  <View className="flex-row items-center mb-2">
+                    <Ionicons name="person-outline" size={14} color="#6b7280" />
+                    <Text className="text-gray-600 text-sm ml-1">
+                      {bid.intermediary?.name || 'Intermediary'}
+                    </Text>
+                  </View>
+  
+                  <View className="flex-row justify-between mb-3">
+                    <View>
+                      <Text className="text-gray-500 text-xs">Bid Price</Text>
+                      <Text className="text-green-700 font-semibold">₹{bid.price}/unit</Text>
+                    </View>
+                    <View>
+                      <Text className="text-gray-500 text-xs">Quantity</Text>
+                      <Text className="text-gray-800 font-medium">{bid.quantity}</Text>
+                    </View>
+                    <View>
+                      <Text className="text-gray-500 text-xs">Service</Text>
+                      <Text className="text-gray-800 font-medium">{bid.serviceType}</Text>
+                    </View>
+                  </View>
+  
+                  {bid.description && (
+                    <Text className="text-gray-500 text-sm mb-3" numberOfLines={2}>
+                      {bid.description}
+                    </Text>
+                  )}
+  
+                  <View className="flex-row">
+                    <TouchableOpacity
+                      className="flex-1 bg-green-500 py-3 rounded-lg mr-2 items-center"
+                      onPress={() => handleRespondToBid(bid.id, true)}
+                    >
+                      <Text className="text-white font-semibold">Accept</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      className="flex-1 bg-red-500 py-3 rounded-lg items-center"
+                      onPress={() => handleRespondToBid(bid.id, false)}
+                    >
+                      <Text className="text-white font-semibold">Reject</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))
+            )}
+          </Animated.View>
+
           <Animated.View entering={FadeInDown.delay(600).duration(500)}>
             <View className="mt-4 mb-4">
               <Text className="text-xl font-semibold text-gray-800 mb-4">AI Market Insights</Text>
@@ -605,6 +749,11 @@ export default function FarmerDashboard() {
         <TouchableOpacity className="items-center">
           <Ionicons name="leaf" size={24} color="#9ca3af" />
           <Text className="text-gray-400 text-xs mt-1">Crops</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity className="items-center" onPress={() => router.push('/bids' as any)}>
+          <Ionicons name="documents" size={24} color="#9ca3af" />
+          <Text className="text-gray-400 text-xs mt-1">Bids</Text>
         </TouchableOpacity>
         
         <TouchableOpacity className="items-center" onPress={() => router.push('/farmer/forecasting')}>

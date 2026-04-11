@@ -22,9 +22,9 @@ export const createOrder = async (req: Request, res: Response) => {
     // Begin transaction
     const result = await prisma.$transaction(async (tx) => {
       let totalAmount = 0;
-      const orderItems = [];
-      const productUpdates = [];
-      const profitSplits = {};
+      const orderItems: { productId: string; quantity: number; unitPrice: number; totalPrice: number }[] = [];
+      const productUpdates: Promise<any>[] = [];
+      const profitSplits: Record<string, any> = {};
 
       // Create human-readable order ID
       const orderId = `ORD-${nanoid(8).toUpperCase()}`;
@@ -50,14 +50,14 @@ export const createOrder = async (req: Request, res: Response) => {
         }
 
         // Calculate item total
-        const itemTotal = product.finalPrice * item.quantity;
+        const itemTotal = (product.finalPrice ?? product.basePrice) * item.quantity;
         totalAmount += itemTotal;
 
         // Add to order items
         orderItems.push({
           productId: product.id,
           quantity: item.quantity,
-          unitPrice: product.finalPrice,
+          unitPrice: product.finalPrice ?? product.basePrice,
           totalPrice: itemTotal
         });
 
@@ -108,16 +108,19 @@ export const createOrder = async (req: Request, res: Response) => {
         }
       });
 
-      // Create transaction record
+      // Create transaction record — use the first item's farmer as receiver
+      const firstFarmerId = items[0]?.productId ? (await tx.product.findUnique({ where: { id: items[0].productId }, select: { farmerId: true } }))?.farmerId : buyerId;
       const transaction = await tx.transaction.create({
         data: {
           transactionId: `TXN-${nanoid(8).toUpperCase()}`,
           orderId: order.id,
           userId: buyerId,
+          senderId: buyerId,
+          receiverId: firstFarmerId || buyerId,
           amount: totalAmount,
           type: 'PAYMENT',
           status: 'COMPLETED',
-          profitSplit: profitSplits
+          metadata: { profitSplits: profitSplits }
         }
       });
 
@@ -126,14 +129,14 @@ export const createOrder = async (req: Request, res: Response) => {
 
       // Create traceability records for each product
       const traceabilityRecords = [];
-      for (const item of order.items) {
+      for (const item of (order as any).items) {
         const previousRecords = await tx.traceabilityRecord.findMany({
           where: { productId: item.productId },
           orderBy: { timestamp: 'desc' },
           take: 1
         });
 
-        const previousHash = previousRecords.length > 0 ? previousRecords[0].currentHash : '';
+        const previousHash = previousRecords.length > 0 ? (previousRecords[0]?.currentHash ?? '') : '';
         const eventData = {
           productId: item.productId,
           orderId: order.id,
@@ -349,7 +352,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
         // Create traceability record for cancellation
         await tx.traceabilityRecord.create({
           data: {
-            productId: order.items[0].productId,
+            productId: order.items?.[0]?.productId || '',
             orderId: order.id,
             eventType: 'ORDER_CANCELLED',
             metadata: {
@@ -378,7 +381,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
     // Create traceability record for status change
     await prisma.traceabilityRecord.create({
       data: {
-        productId: order.items[0].productId,
+        productId: order.items?.[0]?.productId || '',
         orderId: order.id,
         eventType: `ORDER_${status}`,
         metadata: {
@@ -514,18 +517,8 @@ export const getFarmerOrders = async (req: Request, res: Response) => {
   }
 };
 
-// Helper function to create a simple hash for traceability
+// Helper function to create a proper SHA-256 hash for traceability
 async function createHash(data: string): Promise<string> {
-  // In a real implementation, you'd use a proper crypto library
-  // For this example, we'll use a simple approach
-  const encoder = new TextEncoder();
-  const dataBuffer = encoder.encode(data);
-  
-  // Use the browser's SubtleCrypto API or Node.js crypto module
-  // Here we're just simulating it
-  const hashHex = Array.from(dataBuffer)
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-  
-  return hashHex;
+  const { createHash: cryptoHash } = await import('crypto');
+  return cryptoHash('sha256').update(data).digest('hex');
 } 

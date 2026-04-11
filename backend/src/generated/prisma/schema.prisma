@@ -53,12 +53,16 @@ model User {
   consumerProfile     ConsumerProfile?
 
   // Common relationships
-  productsListed Product[]
-  orders         Order[]
-  ratings        Rating[]
-  ratedBy        Rating[]      @relation("RatedBy")
-  transactions   Transaction[]
-  bidsCreated    Bid[]         @relation("BidCreator")
+  productsListed       Product[]
+  orders               Order[]
+  ratings              Rating[]
+  ratedBy              Rating[]          @relation("RatedBy")
+  transactionsSent     Transaction[]     @relation("TransactionSender")
+  transactionsReceived Transaction[]     @relation("TransactionReceiver")
+  transactionsOwned    Transaction[]     @relation("TransactionOwner")
+  bidsCreated          Bid[]             @relation("BidCreator")
+  supplyChainLinksFrom SupplyChainLink[] @relation("LinkFromUser")
+  supplyChainLinksTo   SupplyChainLink[] @relation("LinkToUser")
 }
 
 model FarmerProfile {
@@ -150,6 +154,11 @@ model Product {
   traceability     TraceabilityRecord[]
   productAnalytics ProductAnalytics?
   bids             Bid[] // Bids from intermediaries
+  transactions     Transaction[]
+
+  @@index([farmerId])
+  @@index([category])
+  @@index([status])
 }
 
 model ProductAnalytics {
@@ -189,6 +198,10 @@ model Bid {
   responseReason String? // Reason for acceptance or rejection (provided by farmer)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+
+  @@index([productId])
+  @@index([intermediaryId])
+  @@index([status])
 }
 
 // Supply chain management
@@ -215,7 +228,9 @@ model SupplyChainLink {
   supplyChain     SupplyChain @relation(fields: [supplyChainId], references: [id], onDelete: Cascade)
   type            String // PRODUCTION, PROCESSING, TRANSPORTATION, etc.
   fromUserId      String
+  fromUser        User        @relation("LinkFromUser", fields: [fromUserId], references: [id])
   toUserId        String
+  toUser          User        @relation("LinkToUser", fields: [toUserId], references: [id])
   timestamp       DateTime    @default(now())
   location        Json?
   details         Json?
@@ -254,6 +269,9 @@ model Order {
   items        OrderItem[]
   transactions Transaction[]
   traceability TraceabilityRecord[]
+
+  @@index([buyerId])
+  @@index([status])
 }
 
 model OrderItem {
@@ -292,8 +310,11 @@ enum TransactionStatus {
 model Transaction {
   id               String            @id @default(uuid())
   productId        String?
+  product          Product?          @relation(fields: [productId], references: [id])
   senderId         String
+  sender           User              @relation("TransactionSender", fields: [senderId], references: [id])
   receiverId       String
+  receiver         User              @relation("TransactionReceiver", fields: [receiverId], references: [id])
   amount           Float
   quantity         Float?
   unit             String?
@@ -309,9 +330,15 @@ model Transaction {
   orderId          String?
   order            Order?            @relation(fields: [orderId], references: [id])
   userId           String?
-  user             User?             @relation(fields: [userId], references: [id])
+  user             User?             @relation("TransactionOwner", fields: [userId], references: [id])
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([productId])
+  @@index([orderId])
+  @@index([status])
 }
 
 // Traceability system
@@ -331,6 +358,9 @@ model TraceabilityRecord {
   previousHash String? // For creating a hash chain for immutability
   currentHash  String? // Hash of this record for verification
   createdAt    DateTime @default(now())
+
+  @@index([productId])
+  @@index([orderId])
 }
 
 // Ratings and feedback

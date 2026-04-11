@@ -1,83 +1,52 @@
+/**
+ * @deprecated Use `bids.ts` instead. This file re-exports for backward compatibility.
+ */
 import api from './api';
-import { BidStatus } from '../types/bid';
-
-interface CreateBidRequest {
-  productId: string;
-  price: number;
-  quantity: number;
-  serviceType: string;
-  description: string;
-  validUntil: string;
-  terms?: string;
-}
+import { 
+  createBid, 
+  getBidsForProduct, 
+  getMyBids, 
+  updateBid, 
+  cancelBid, 
+  respondToBid,
+  type CreateBidDTO 
+} from './bids';
 
 /**
- * Service for handling bid-related API calls
+ * Legacy BidService class — wraps the new exported functions
+ * for backward compat with screens that use `bidService.method()` pattern.
  */
 class BidService {
-  /**
-   * Get all bids for the logged-in intermediary
-   * @param status Optional status filter
-   */
   async getMyBids(status?: string): Promise<any> {
-    const endpoint = status ? `/bids/my-bids?status=${status}` : '/bids/my-bids';
-    return api.get(endpoint);
+    return getMyBids(status);
   }
 
-  /**
-   * Get bids by product ID
-   */
   async getBidsByProduct(productId: string): Promise<any> {
-    return api.get(`/bids/product/${productId}`);
+    return getBidsForProduct(productId);
   }
 
-  /**
-   * Place a new bid on a product
-   */
-  async createBid(data: CreateBidRequest): Promise<any> {
-    return api.post('/bids', data);
+  async createBid(data: CreateBidDTO): Promise<any> {
+    return createBid(data);
   }
 
-  /**
-   * Update an existing bid
-   */
-  async updateBid(bidId: string, data: Partial<CreateBidRequest>): Promise<any> {
-    return api.put(`/bids/${bidId}`, data);
+  async updateBid(bidId: string, data: Partial<CreateBidDTO>): Promise<any> {
+    return updateBid(bidId, data);
   }
 
-  /**
-   * Cancel a bid
-   */
   async cancelBid(bidId: string): Promise<any> {
-    return api.post(`/bids/${bidId}/cancel`, {});
+    return cancelBid(bidId);
   }
 
-  /**
-   * Get a single bid by ID
-   */
   async getBidById(bidId: string): Promise<any> {
     return api.get(`/bids/${bidId}`);
   }
 
-  /**
-   * For farmers to accept a bid
-   */
   async acceptBid(bidId: string, reason?: string): Promise<any> {
-    return api.post(`/bids/${bidId}/accept`, { reason });
+    return respondToBid(bidId, { status: 'ACCEPTED', responseReason: reason });
   }
 
-  /**
-   * For farmers to reject a bid
-   */
   async rejectBid(bidId: string, reason?: string): Promise<any> {
-    return api.post(`/bids/${bidId}/reject`, { reason });
-  }
-
-  /**
-   * Update a bid's status
-   */
-  async updateBidStatus(bidId: string, status: string, notes?: string): Promise<any> {
-    return api.post(`/bids/${bidId}/status`, { status, notes });
+    return respondToBid(bidId, { status: 'REJECTED', responseReason: reason });
   }
 }
 

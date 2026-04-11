@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express';
-import { PrismaClient } from '../generated/prisma';
+import prisma from '../lib/prisma';
 
-const prisma = new PrismaClient();
 
 export class BidController {
   /**

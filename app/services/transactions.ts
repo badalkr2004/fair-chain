@@ -1,122 +1,140 @@
 import api from './api';
 
-/**
- * Service for handling transactions, bids, and orders
- */
-class TransactionsService {
-  // ======= BIDS ========
-  /**
-   * Get all bids received (for farmers)
-   */
-  async getMyReceivedBids(): Promise<any> {
-    return api.get('/bid/received');
-  }
-
-  /**
-   * Get all bids placed (for buyers)
-   */
-  async getMyPlacedBids(): Promise<any> {
-    return api.get('/bid/placed');
-  }
-
-  /**
-   * Place a bid on a produce
-   */
-  async placeBid(data: {
-    produceId: string;
-    price: number;
-    quantity: number;
-    message?: string;
-    deliveryDetails?: {
-      address: string;
-      date: string;
-      instructions?: string;
-    };
-  }): Promise<any> {
-    return api.post('/bid', data);
-  }
-
-  /**
-   * Accept a bid
-   */
-  async acceptBid(bidId: string): Promise<any> {
-    return api.post(`/bid/${bidId}/accept`, {});
-  }
-
-  /**
-   * Reject a bid
-   */
-  async rejectBid(bidId: string, reason?: string): Promise<any> {
-    return api.post(`/bid/${bidId}/reject`, { reason });
-  }
-
-  /**
-   * Withdraw a bid
-   */
-  async withdrawBid(bidId: string): Promise<any> {
-    return api.post(`/bid/${bidId}/withdraw`, {});
-  }
-
-  /**
-   * Get bid by ID
-   */
-  async getBidById(bidId: string): Promise<any> {
-    return api.get(`/bid/${bidId}`);
-  }
-
-  // ======= ORDERS ========
-  /**
-   * Get all orders (for buyer or seller)
-   */
-  async getMyOrders(): Promise<any> {
-    return api.get('/order/my-orders');
-  }
-
-  /**
-   * Get order by ID
-   */
-  async getOrderById(orderId: string): Promise<any> {
-    return api.get(`/order/${orderId}`);
-  }
-
-  /**
-   * Update order status (for seller)
-   */
-  async updateOrderStatus(orderId: string, status: 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'): Promise<any> {
-    return api.put(`/order/${orderId}/status`, { status });
-  }
-
-  /**
-   * Confirm order delivery (for buyer)
-   */
-  async confirmDelivery(orderId: string): Promise<any> {
-    return api.post(`/order/${orderId}/confirm-delivery`, {});
-  }
-
-  // ======= TRANSACTIONS ========
-  /**
-   * Get all transactions
-   */
-  async getMyTransactions(): Promise<any> {
-    return api.get('/transactions/my-transactions');
-  }
-
-  /**
-   * Get transaction by ID
-   */
-  async getTransactionById(transactionId: string): Promise<any> {
-    return api.get(`/transactions/${transactionId}`);
-  }
-
-  /**
-   * Make a payment (dummy implementation for demo)
-   */
-  async makePayment(orderId: string, paymentDetails: {
-    method: 'CREDIT_CARD' | 'BANK_TRANSFER' | 'WALLET';
-    amount: number;
-  }): Promise<any> {
-    return api.post(`/transactions/pay/${orderId}`, paymentDetails);
-  }
+export interface Transaction {
+  id: string;
+  productId?: string;
+  senderId: string;
+  receiverId: string;
+  amount: number;
+  currency?: string;
+  quantity?: number;
+  unit?: string;
+  type: 'SALE' | 'PURCHASE' | 'PAYMENT' | 'REFUND';
+  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED';
+  metadata?: any;
+  createdAt: string;
+  updatedAt: string;
+  product?: any;
+  sender?: any;
+  receiver?: any;
 }
 
-export default new TransactionsService(); 
+export interface CreateTransactionDTO {
+  productId: string;
+  receiverId: string;
+  amount: number;
+  currency?: string;
+  quantity: number;
+  unit: string;
+  type: 'SALE' | 'PURCHASE' | 'PAYMENT' | 'REFUND';
+  metadata?: any;
+}
+
+export interface UpdateTransactionDTO {
+  status?: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED';
+  notes?: string;
+}
+
+/**
+ * Get all transactions for the current user
+ */
+export const getMyTransactions = async (status?: string) => {
+  try {
+    // Backend route: GET /transactions (returns user's transactions based on auth)
+    const endpoint = status ? `/transactions?status=${status}` : '/transactions';
+    return await api.get(endpoint);
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get transaction by ID
+ */
+export const getTransactionById = async (id: string) => {
+  try {
+    return await api.get(`/transactions/${id}`);
+  } catch (error) {
+    console.error(`Error fetching transaction with id ${id}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Create a new transaction
+ */
+export const createTransaction = async (data: CreateTransactionDTO) => {
+  try {
+    return await api.post('/transactions', data);
+  } catch (error) {
+    console.error('Error creating transaction:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update transaction
+ */
+export const updateTransaction = async (id: string, data: UpdateTransactionDTO) => {
+  try {
+    return await api.put(`/transactions/${id}`, data);
+  } catch (error) {
+    console.error(`Error updating transaction ${id}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Get transactions for a specific product
+ */
+export const getProductTransactions = async (productId: string) => {
+  try {
+    return await api.get(`/transactions/product/${productId}`);
+  } catch (error) {
+    console.error(`Error fetching transactions for product ${productId}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Get transactions by user ID
+ */
+export const getTransactionsByUser = async (userId: string) => {
+  try {
+    return await api.get(`/transactions/user/${userId}`);
+  } catch (error) {
+    console.error(`Error fetching transactions for user ${userId}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Process payment for a transaction
+ */
+export const processPayment = async (transactionId: string, paymentDetails: {
+  method: string;
+  amount: number;
+}) => {
+  try {
+    return await api.post(`/transactions/${transactionId}/process-payment`, paymentDetails);
+  } catch (error) {
+    console.error(`Error processing payment for ${transactionId}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Record delivery for a transaction
+ */
+export const recordDelivery = async (transactionId: string, deliveryDetails: {
+  location?: any;
+  notes?: string;
+}) => {
+  try {
+    return await api.post(`/transactions/${transactionId}/record-delivery`, deliveryDetails);
+  } catch (error) {
+    console.error(`Error recording delivery for ${transactionId}:`, error);
+    throw error;
+  }
+};

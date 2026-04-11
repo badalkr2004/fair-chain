@@ -13,22 +13,23 @@ import {
   isConsumer, 
   isFarmer 
 } from "../middleware/auth.middleware";
+import { asyncHandler } from "../middleware/asyncHandler";
 
 const router = Router();
 
-// Protected routes (require authentication)
-// Order routes
-router.post("/", authenticate, isConsumer, createOrder);
-router.get("/:id", authenticate, getOrderById);
-router.patch("/:id/status", authenticate, updateOrderStatus);
-
+// Specific routes MUST come before /:id parameter routes
 // Consumer routes
-router.get("/my/orders", authenticate, isConsumer, getMyOrders);
+router.get("/my/orders", asyncHandler(authenticate), isConsumer, asyncHandler(getMyOrders));
 
 // Farmer routes
-router.get("/farmer/orders", authenticate, isFarmer, getFarmerOrders);
+router.get("/farmer/orders", asyncHandler(authenticate), isFarmer, asyncHandler(getFarmerOrders));
+
+// Order CRUD
+router.post("/", asyncHandler(authenticate), isConsumer, asyncHandler(createOrder));
+router.get("/:id", asyncHandler(authenticate), asyncHandler(getOrderById)); // Must be AFTER specific paths
+router.patch("/:id/status", asyncHandler(authenticate), asyncHandler(updateOrderStatus));
 
 // Admin routes
-router.get("/", authenticate, isAdmin, getAllOrders);
+router.get("/", asyncHandler(authenticate), isAdmin, asyncHandler(getAllOrders));
 
 export default router;

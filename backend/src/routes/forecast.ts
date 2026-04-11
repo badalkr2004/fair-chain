@@ -8,17 +8,18 @@ import {
   addMarketPrice
 } from "../controllers/forecast.controller";
 import { authenticate, isAdmin } from "../middleware/auth.middleware";
+import { asyncHandler } from "../middleware/asyncHandler";
 
 const router = Router();
 
 // Public routes
-router.get("/demand", getDemandForecasts);
-router.get("/market-trends", getMarketPriceTrends);
+router.get("/demand", asyncHandler(getDemandForecasts));
+router.get("/market-trends", asyncHandler(getMarketPriceTrends));
 
 // Admin only routes
-router.post("/models", authenticate, isAdmin, createForecastModel);
-router.post("/models/:modelId/predictions", authenticate, isAdmin, addPrediction);
-router.post("/models/:modelId/apply", authenticate, isAdmin, applyDemandPredictions);
-router.post("/market-prices", authenticate, isAdmin, addMarketPrice);
+router.post("/models", asyncHandler(authenticate), isAdmin, asyncHandler(createForecastModel));
+router.post("/models/:modelId/predictions", asyncHandler(authenticate), isAdmin, asyncHandler(addPrediction));
+router.post("/models/:modelId/apply", asyncHandler(authenticate), isAdmin, asyncHandler(applyDemandPredictions));
+router.post("/market-prices", asyncHandler(authenticate), isAdmin, asyncHandler(addMarketPrice));
 
 export default router;

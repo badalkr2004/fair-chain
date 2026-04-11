@@ -163,7 +163,7 @@ class AuthService {
   async changePassword(data: { currentPassword: string; newPassword: string }): Promise<any> {
     try {
       console.log('Changing user password');
-      return await api.put('/auth/change-password', data);
+      return await api.post('/auth/change-password', data);
     } catch (error) {
       console.error('Failed to change password:', error);
       throw error;

@@ -89,7 +89,7 @@ export const getFarmerOrders = async () => {
 // Update order status
 export const updateOrderStatus = async (id: string, status: OrderStatus) => {
   try {
-    return await api.put(`/orders/${id}/status`, { status });
+    return await api.patch(`/orders/${id}/status`, { status });
   } catch (error) {
     console.error(`Error updating order ${id} status:`, error);
     throw error;

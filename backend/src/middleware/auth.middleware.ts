@@ -1,14 +1,15 @@
-import type { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import authConfig from '../config/auth.config';
-import prisma from '../lib/prisma';
+import type { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import authConfig from "../config/auth.config";
+import prisma from "../lib/prisma";
+import type { StringValue } from "ms";
 
 // Since we may not have Prisma client generated yet, define UserRole enum here
 enum UserRole {
-  FARMER = 'FARMER',
-  INTERMEDIARY = 'INTERMEDIARY',
-  CONSUMER = 'CONSUMER',
-  ADMIN = 'ADMIN'
+  FARMER = "FARMER",
+  INTERMEDIARY = "INTERMEDIARY",
+  CONSUMER = "CONSUMER",
+  ADMIN = "ADMIN",
 }
 
 // Extend Express Request type to include user property
@@ -23,41 +24,50 @@ declare global {
 /**
  * Middleware to authenticate JWT token
  */
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
+    const bearerToken = typeof authHeader === 'string' ? authHeader : undefined;
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'No token provided' });
+    if (!bearerToken || !bearerToken.startsWith("Bearer ")) {
+      res.status(401).json({ message: "No token provided" });
+      return;
     }
-    
-    const token = authHeader.split(' ')[1];
-    
+
+    const token = bearerToken.split(" ")[1]!;
+
     // Verify token
     const decoded: any = jwt.verify(token, authConfig.jwtSecret);
-    
+
     // Check if user exists
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
     });
-    
+
     if (!user) {
-      return res.status(401).json({ message: 'User not found' });
+      res.status(401).json({ message: "User not found" });
+      return;
     }
-    
+
     // Attach user to request object
     req.user = user;
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({ message: 'Token expired' });
+      res.status(401).json({ message: "Token expired" });
+      return;
     }
-    
+
     if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({ message: 'Invalid token' });
+      res.status(401).json({ message: "Invalid token" });
+      return;
     }
-    
-    return res.status(500).json({ message: 'Authentication error' });
+
+    res.status(500).json({ message: "Authentication error" });
   }
 };
 
@@ -65,15 +75,19 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
  * Middleware to check if user has required role
  */
 export const authorize = (roles: UserRole[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      return res.status(401).json({ message: 'Authentication required' });
+      res.status(401).json({ message: "Authentication required" });
+      return;
     }
-    
+
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: 'Unauthorized - Insufficient permissions' });
+      res
+        .status(403)
+        .json({ message: "Unauthorized - Insufficient permissions" });
+      return;
     }
-    
+
     next();
   };
 };
@@ -81,9 +95,14 @@ export const authorize = (roles: UserRole[]) => {
 /**
  * Middleware to validate farmer
  */
-export const isFarmer = (req: Request, res: Response, next: NextFunction) => {
+export const isFarmer = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   if (req.user.role !== UserRole.FARMER) {
-    return res.status(403).json({ message: 'Requires farmer role' });
+    res.status(403).json({ message: "Requires farmer role" });
+    return;
   }
   next();
 };
@@ -91,9 +110,14 @@ export const isFarmer = (req: Request, res: Response, next: NextFunction) => {
 /**
  * Middleware to validate intermediary
  */
-export const isIntermediary = (req: Request, res: Response, next: NextFunction) => {
+export const isIntermediary = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   if (req.user.role !== UserRole.INTERMEDIARY) {
-    return res.status(403).json({ message: 'Requires intermediary role' });
+    res.status(403).json({ message: "Requires intermediary role" });
+    return;
   }
   next();
 };
@@ -101,9 +125,14 @@ export const isIntermediary = (req: Request, res: Response, next: NextFunction) 
 /**
  * Middleware to validate consumer
  */
-export const isConsumer = (req: Request, res: Response, next: NextFunction) => {
+export const isConsumer = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   if (req.user.role !== UserRole.CONSUMER) {
-    return res.status(403).json({ message: 'Requires consumer role' });
+    res.status(403).json({ message: "Requires consumer role" });
+    return;
   }
   next();
 };
@@ -111,9 +140,14 @@ export const isConsumer = (req: Request, res: Response, next: NextFunction) => {
 /**
  * Middleware to validate admin
  */
-export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+export const isAdmin = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   if (req.user.role !== UserRole.ADMIN) {
-    return res.status(403).json({ message: 'Requires admin role' });
+    res.status(403).json({ message: "Requires admin role" });
+    return;
   }
   next();
-}; 
+};

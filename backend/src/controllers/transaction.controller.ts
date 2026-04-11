@@ -1,7 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '../generated/prisma';
-
-const prisma = new PrismaClient();
+import prisma from '../lib/prisma';
 
 export class TransactionController {
   /**
@@ -186,7 +184,7 @@ export class TransactionController {
         userRole !== 'ADMIN' && 
         transaction.senderId !== userId && 
         transaction.receiverId !== userId &&
-        transaction.product.farmerId !== userId
+        transaction.product?.farmerId !== userId
       ) {
         return res.status(403).json({
           status: 'error',
@@ -374,10 +372,10 @@ export class TransactionController {
         if (req.body.status === 'CANCELLED' && existingTransaction.status !== 'CANCELLED') {
           if (existingTransaction.type === 'PURCHASE') {
             await prisma.product.update({
-              where: { id: existingTransaction.productId },
+              where: { id: existingTransaction.productId! },
               data: {
                 quantity: {
-                  increment: existingTransaction.quantity
+                  increment: existingTransaction.quantity ?? 0
                 }
               }
             });
@@ -739,7 +737,7 @@ export class TransactionController {
           deliveryDate: new Date(deliveryDate),
           notes: notes || transaction.notes,
           metadata: {
-            ...transaction.metadata,
+            ...(transaction.metadata as object ?? {}),
             delivery: {
               receivedBy,
               location,

@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
-import { PrismaClient, ProductCategory, ProductStatus } from '../generated/prisma';
+import prisma from '../lib/prisma';
+import { ProductCategory, ProductStatus } from '../generated/prisma';
 
-const prisma = new PrismaClient();
 
 export class ProduceController {
   /**

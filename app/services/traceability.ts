@@ -40,135 +40,13 @@ class TraceabilityService {
    */
   async getProductTraceability(productId: string): Promise<ApiResponse> {
     try {
-      return await api.get(`/trace/product/${productId}/supply-chain`);
+      return await api.get(`/trace/product/${productId}`);
     } catch (error) {
       console.error(`Error fetching product traceability for ${productId}:`, error);
-      // Return mock data as fallback
-      return {
-        success: true,
-        data: {
-          product: {
-            id: productId,
-            name: 'Organic Tomatoes',
-            description: 'Fresh organic tomatoes grown without pesticides',
-            farmerId: 'f1',
-            category: 'VEGETABLES'
-          },
-          supplyChain: {
-            links: this.getMockSupplyChainLinks()
-          }
-        }
-      };
+      throw error;
     }
   }
-  
-  /**
-   * Generate mock supply chain links for testing and development
-   */
-  private getMockSupplyChainLinks() {
-    return [
-      {
-        id: 'sc1',
-        type: 'HARVEST',
-        timestamp: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-        location: 'Farm in Bangalore Rural',
-        actor: {
-          id: 'f1',
-          name: 'John Smith',
-          role: 'FARMER'
-        },
-        details: {
-          method: 'Hand picked',
-          quantity: '100kg',
-          conditions: 'Sunny day, 28°C'
-        },
-        coordinates: {
-          lat: 13.1986,
-          lng: 77.7066
-        }
-      },
-      {
-        id: 'sc2',
-        type: 'PROCESSING',
-        timestamp: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString(),
-        location: 'Processing Center, Bangalore',
-        actor: {
-          id: 'i1',
-          name: 'ABC Food Processing',
-          role: 'INTERMEDIARY'
-        },
-        details: {
-          method: 'Washing and sorting',
-          quantity: '95kg',
-          quality: 'Grade A'
-        },
-        coordinates: {
-          lat: 12.9716,
-          lng: 77.5946
-        }
-      },
-      {
-        id: 'sc3',
-        type: 'PACKAGING',
-        timestamp: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-        location: 'Packaging Facility, Bangalore',
-        actor: {
-          id: 'i2',
-          name: 'XYZ Packaging',
-          role: 'INTERMEDIARY'
-        },
-        details: {
-          method: 'Eco-friendly packaging',
-          units: '190 packages of 500g each',
-          materials: 'Biodegradable plastic'
-        },
-        coordinates: {
-          lat: 12.9352,
-          lng: 77.6245
-        }
-      },
-      {
-        id: 'sc4',
-        type: 'DISTRIBUTION',
-        timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-        location: 'Distribution Center, Mumbai',
-        actor: {
-          id: 'i3',
-          name: 'FastTrack Logistics',
-          role: 'INTERMEDIARY'
-        },
-        details: {
-          method: 'Refrigerated truck',
-          distance: '980km',
-          duration: '14 hours'
-        },
-        coordinates: {
-          lat: 19.0760,
-          lng: 72.8777
-        }
-      },
-      {
-        id: 'sc5',
-        type: 'RETAIL',
-        timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        location: 'FreshMart Supermarket, Mumbai',
-        actor: {
-          id: 'r1',
-          name: 'FreshMart',
-          role: 'RETAILER'
-        },
-        details: {
-          shelf: 'Premium organic section',
-          price: '₹120 per 500g',
-          stock: '150 packages'
-        },
-        coordinates: {
-          lat: 19.1136,
-          lng: 72.8697
-        }
-      }
-    ];
-  }
+
 
   /**
    * Record a supply chain event
@@ -271,10 +149,8 @@ class TraceabilityService {
     try {
       console.log('Fetching traceable products from API...');
       
-      // Try standard API call first
       try {
         const response = await api.get('/trace/products/my') as ApiResponse;
-        console.log("traceable product:",response)
         
         // Check if the response has the expected structure with products
         if (response?.data?.products && Array.isArray(response.data.products)) {
@@ -331,61 +207,14 @@ class TraceabilityService {
         }
       }
       
-      // Fallback to mock data if all API attempts fail
-      console.warn('All API attempts failed, using mock data');
-      return this.getMockTraceableProducts();
+      console.warn('Failed to fetch traceable products from any source');
+      return [];
     } catch (error) {
-      console.error('Error fetching traceable products, falling back to mock data:', error);
-      
-      // Always return mock data on error to prevent app crashes
-      return this.getMockTraceableProducts();
+      console.error('Error fetching traceable products:', error);
+      return [];
     }
   }
-  
-  /**
-   * Get mock data for traceability products when API fails
-   */
-  getMockTraceableProducts() {
-    console.log('Using mock traceability data');
-    // Generate a unique ID for mock data to prevent React key warnings
-    const mockId1 = `mock-${Date.now()}-1`;
-    const mockId2 = `mock-${Date.now()}-2`;
-    
-    return [
-      {
-        id: mockId1,
-        productId: mockId1,
-        name: 'Organic Rice',
-        batchNumber: 'BATCH-001',
-        quantity: 100,
-        unit: 'kg',
-        currentStage: 'HARVESTED',
-        origin: {
-          name: 'Sample Farm',
-          latitude: 28.6139,
-          longitude: 77.2090
-        },
-        productionDate: new Date().toISOString(),
-        expiryDate: new Date(new Date().setMonth(new Date().getMonth() + 6)).toISOString()
-      },
-      {
-        id: mockId2,
-        productId: mockId2,
-        name: 'Premium Wheat',
-        batchNumber: 'BATCH-002',
-        quantity: 150,
-        unit: 'kg',
-        currentStage: 'PROCESSED',
-        origin: {
-          name: 'Sample Farm',
-          latitude: 28.6139,
-          longitude: 77.2090
-        },
-        productionDate: new Date().toISOString(),
-        expiryDate: new Date(new Date().setMonth(new Date().getMonth() + 8)).toISOString()
-      }
-    ];
-  }
+
 
   /**
    * Get QR code for a product

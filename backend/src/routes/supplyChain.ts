@@ -1,31 +1,33 @@
-import express from 'express';
-import { SupplyChainController } from '../controllers/supplyChain.controller.js';
-import { authenticate } from '../middleware/auth.middleware.js';
-import { validateRequest } from '../middleware/validation.middleware.js';
-import { createSupplyChainSchema, updateSupplyChainSchema } from '../lib/validation/supplyChain.schema.js';
+import { Router } from 'express';
+import { SupplyChainController } from '../controllers/supplyChain.controller';
+import { authenticate } from '../middleware/auth.middleware';
+import { asyncHandler } from '../middleware/asyncHandler';
+import { validateRequest } from '../middleware/validation.middleware';
+import { createSupplyChainSchema, updateSupplyChainSchema } from '../lib/validation/supplyChain.schema';
 
-const router = express.Router();
+const router = Router();
 const supplyChainController = new SupplyChainController();
 
-// Get all supply chains
-router.get('/', supplyChainController.getAllSupplyChains);
+// Specific routes before parameter routes
+// Get product supply chain
+router.get('/product/:productId', asyncHandler(supplyChainController.getProductSupplyChain.bind(supplyChainController)));
 
-// Get supply chain by ID
-router.get('/:id', supplyChainController.getSupplyChainById);
+// Get all supply chains
+router.get('/', asyncHandler(supplyChainController.getAllSupplyChains.bind(supplyChainController)));
+
+// Get supply chain by ID — AFTER /product/:productId
+router.get('/:id', asyncHandler(supplyChainController.getSupplyChainById.bind(supplyChainController)));
 
 // Create supply chain (requires authentication)
-router.post('/', authenticate, validateRequest(createSupplyChainSchema), supplyChainController.createSupplyChain);
+router.post('/', asyncHandler(authenticate), validateRequest(createSupplyChainSchema), asyncHandler(supplyChainController.createSupplyChain.bind(supplyChainController)));
 
 // Update supply chain (requires authentication)
-router.put('/:id', authenticate, validateRequest(updateSupplyChainSchema), supplyChainController.updateSupplyChain);
+router.put('/:id', asyncHandler(authenticate), validateRequest(updateSupplyChainSchema), asyncHandler(supplyChainController.updateSupplyChain.bind(supplyChainController)));
 
 // Delete supply chain (requires authentication)
-router.delete('/:id', authenticate, supplyChainController.deleteSupplyChain);
+router.delete('/:id', asyncHandler(authenticate), asyncHandler(supplyChainController.deleteSupplyChain.bind(supplyChainController)));
 
 // Add link to supply chain
-router.post('/:id/links', authenticate, supplyChainController.addSupplyChainLink);
-
-// Get product supply chain
-router.get('/product/:productId', supplyChainController.getProductSupplyChain);
+router.post('/:id/links', asyncHandler(authenticate), asyncHandler(supplyChainController.addSupplyChainLink.bind(supplyChainController)));
 
 export default router;

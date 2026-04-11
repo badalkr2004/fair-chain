@@ -2563,8 +2563,12 @@ export namespace Prisma {
     orders: number
     ratings: number
     ratedBy: number
-    transactions: number
+    transactionsSent: number
+    transactionsReceived: number
+    transactionsOwned: number
     bidsCreated: number
+    supplyChainLinksFrom: number
+    supplyChainLinksTo: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2572,8 +2576,12 @@ export namespace Prisma {
     orders?: boolean | UserCountOutputTypeCountOrdersArgs
     ratings?: boolean | UserCountOutputTypeCountRatingsArgs
     ratedBy?: boolean | UserCountOutputTypeCountRatedByArgs
-    transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
+    transactionsSent?: boolean | UserCountOutputTypeCountTransactionsSentArgs
+    transactionsReceived?: boolean | UserCountOutputTypeCountTransactionsReceivedArgs
+    transactionsOwned?: boolean | UserCountOutputTypeCountTransactionsOwnedArgs
     bidsCreated?: boolean | UserCountOutputTypeCountBidsCreatedArgs
+    supplyChainLinksFrom?: boolean | UserCountOutputTypeCountSupplyChainLinksFromArgs
+    supplyChainLinksTo?: boolean | UserCountOutputTypeCountSupplyChainLinksToArgs
   }
 
   // Custom InputTypes
@@ -2618,7 +2626,21 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type UserCountOutputTypeCountTransactionsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransactionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountTransactionsReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransactionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountTransactionsOwnedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransactionWhereInput
   }
 
@@ -2627,6 +2649,20 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountBidsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BidWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSupplyChainLinksFromArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupplyChainLinkWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSupplyChainLinksToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupplyChainLinkWhereInput
   }
 
 
@@ -2669,12 +2705,14 @@ export namespace Prisma {
     orders: number
     traceability: number
     bids: number
+    transactions: number
   }
 
   export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | ProductCountOutputTypeCountOrdersArgs
     traceability?: boolean | ProductCountOutputTypeCountTraceabilityArgs
     bids?: boolean | ProductCountOutputTypeCountBidsArgs
+    transactions?: boolean | ProductCountOutputTypeCountTransactionsArgs
   }
 
   // Custom InputTypes
@@ -2707,6 +2745,13 @@ export namespace Prisma {
    */
   export type ProductCountOutputTypeCountBidsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BidWhereInput
+  }
+
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransactionWhereInput
   }
 
 
@@ -3032,8 +3077,12 @@ export namespace Prisma {
     orders?: boolean | User$ordersArgs<ExtArgs>
     ratings?: boolean | User$ratingsArgs<ExtArgs>
     ratedBy?: boolean | User$ratedByArgs<ExtArgs>
-    transactions?: boolean | User$transactionsArgs<ExtArgs>
+    transactionsSent?: boolean | User$transactionsSentArgs<ExtArgs>
+    transactionsReceived?: boolean | User$transactionsReceivedArgs<ExtArgs>
+    transactionsOwned?: boolean | User$transactionsOwnedArgs<ExtArgs>
     bidsCreated?: boolean | User$bidsCreatedArgs<ExtArgs>
+    supplyChainLinksFrom?: boolean | User$supplyChainLinksFromArgs<ExtArgs>
+    supplyChainLinksTo?: boolean | User$supplyChainLinksToArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3085,8 +3134,12 @@ export namespace Prisma {
     orders?: boolean | User$ordersArgs<ExtArgs>
     ratings?: boolean | User$ratingsArgs<ExtArgs>
     ratedBy?: boolean | User$ratedByArgs<ExtArgs>
-    transactions?: boolean | User$transactionsArgs<ExtArgs>
+    transactionsSent?: boolean | User$transactionsSentArgs<ExtArgs>
+    transactionsReceived?: boolean | User$transactionsReceivedArgs<ExtArgs>
+    transactionsOwned?: boolean | User$transactionsOwnedArgs<ExtArgs>
     bidsCreated?: boolean | User$bidsCreatedArgs<ExtArgs>
+    supplyChainLinksFrom?: boolean | User$supplyChainLinksFromArgs<ExtArgs>
+    supplyChainLinksTo?: boolean | User$supplyChainLinksToArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3102,8 +3155,12 @@ export namespace Prisma {
       orders: Prisma.$OrderPayload<ExtArgs>[]
       ratings: Prisma.$RatingPayload<ExtArgs>[]
       ratedBy: Prisma.$RatingPayload<ExtArgs>[]
-      transactions: Prisma.$TransactionPayload<ExtArgs>[]
+      transactionsSent: Prisma.$TransactionPayload<ExtArgs>[]
+      transactionsReceived: Prisma.$TransactionPayload<ExtArgs>[]
+      transactionsOwned: Prisma.$TransactionPayload<ExtArgs>[]
       bidsCreated: Prisma.$BidPayload<ExtArgs>[]
+      supplyChainLinksFrom: Prisma.$SupplyChainLinkPayload<ExtArgs>[]
+      supplyChainLinksTo: Prisma.$SupplyChainLinkPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3517,8 +3574,12 @@ export namespace Prisma {
     orders<T extends User$ordersArgs<ExtArgs> = {}>(args?: Subset<T, User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     ratings<T extends User$ratingsArgs<ExtArgs> = {}>(args?: Subset<T, User$ratingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RatingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     ratedBy<T extends User$ratedByArgs<ExtArgs> = {}>(args?: Subset<T, User$ratedByArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RatingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    transactions<T extends User$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    transactionsSent<T extends User$transactionsSentArgs<ExtArgs> = {}>(args?: Subset<T, User$transactionsSentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    transactionsReceived<T extends User$transactionsReceivedArgs<ExtArgs> = {}>(args?: Subset<T, User$transactionsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    transactionsOwned<T extends User$transactionsOwnedArgs<ExtArgs> = {}>(args?: Subset<T, User$transactionsOwnedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     bidsCreated<T extends User$bidsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$bidsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    supplyChainLinksFrom<T extends User$supplyChainLinksFromArgs<ExtArgs> = {}>(args?: Subset<T, User$supplyChainLinksFromArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupplyChainLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    supplyChainLinksTo<T extends User$supplyChainLinksToArgs<ExtArgs> = {}>(args?: Subset<T, User$supplyChainLinksToArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupplyChainLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4099,9 +4160,57 @@ export namespace Prisma {
   }
 
   /**
-   * User.transactions
+   * User.transactionsSent
    */
-  export type User$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$transactionsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    where?: TransactionWhereInput
+    orderBy?: TransactionOrderByWithRelationInput | TransactionOrderByWithRelationInput[]
+    cursor?: TransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * User.transactionsReceived
+   */
+  export type User$transactionsReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    where?: TransactionWhereInput
+    orderBy?: TransactionOrderByWithRelationInput | TransactionOrderByWithRelationInput[]
+    cursor?: TransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * User.transactionsOwned
+   */
+  export type User$transactionsOwnedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Transaction
      */
@@ -4144,6 +4253,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: BidScalarFieldEnum | BidScalarFieldEnum[]
+  }
+
+  /**
+   * User.supplyChainLinksFrom
+   */
+  export type User$supplyChainLinksFromArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupplyChainLink
+     */
+    select?: SupplyChainLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupplyChainLink
+     */
+    omit?: SupplyChainLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupplyChainLinkInclude<ExtArgs> | null
+    where?: SupplyChainLinkWhereInput
+    orderBy?: SupplyChainLinkOrderByWithRelationInput | SupplyChainLinkOrderByWithRelationInput[]
+    cursor?: SupplyChainLinkWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SupplyChainLinkScalarFieldEnum | SupplyChainLinkScalarFieldEnum[]
+  }
+
+  /**
+   * User.supplyChainLinksTo
+   */
+  export type User$supplyChainLinksToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupplyChainLink
+     */
+    select?: SupplyChainLinkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupplyChainLink
+     */
+    omit?: SupplyChainLinkOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupplyChainLinkInclude<ExtArgs> | null
+    where?: SupplyChainLinkWhereInput
+    orderBy?: SupplyChainLinkOrderByWithRelationInput | SupplyChainLinkOrderByWithRelationInput[]
+    cursor?: SupplyChainLinkWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SupplyChainLinkScalarFieldEnum | SupplyChainLinkScalarFieldEnum[]
   }
 
   /**
@@ -7836,6 +7993,7 @@ export namespace Prisma {
     traceability?: boolean | Product$traceabilityArgs<ExtArgs>
     productAnalytics?: boolean | Product$productAnalyticsArgs<ExtArgs>
     bids?: boolean | Product$bidsArgs<ExtArgs>
+    transactions?: boolean | Product$transactionsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -7909,6 +8067,7 @@ export namespace Prisma {
     traceability?: boolean | Product$traceabilityArgs<ExtArgs>
     productAnalytics?: boolean | Product$productAnalyticsArgs<ExtArgs>
     bids?: boolean | Product$bidsArgs<ExtArgs>
+    transactions?: boolean | Product$transactionsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7927,6 +8086,7 @@ export namespace Prisma {
       traceability: Prisma.$TraceabilityRecordPayload<ExtArgs>[]
       productAnalytics: Prisma.$ProductAnalyticsPayload<ExtArgs> | null
       bids: Prisma.$BidPayload<ExtArgs>[]
+      transactions: Prisma.$TransactionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8346,6 +8506,7 @@ export namespace Prisma {
     traceability<T extends Product$traceabilityArgs<ExtArgs> = {}>(args?: Subset<T, Product$traceabilityArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TraceabilityRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     productAnalytics<T extends Product$productAnalyticsArgs<ExtArgs> = {}>(args?: Subset<T, Product$productAnalyticsArgs<ExtArgs>>): Prisma__ProductAnalyticsClient<$Result.GetResult<Prisma.$ProductAnalyticsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     bids<T extends Product$bidsArgs<ExtArgs> = {}>(args?: Subset<T, Product$bidsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BidPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    transactions<T extends Product$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, Product$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8895,6 +9056,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: BidScalarFieldEnum | BidScalarFieldEnum[]
+  }
+
+  /**
+   * Product.transactions
+   */
+  export type Product$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    where?: TransactionWhereInput
+    orderBy?: TransactionOrderByWithRelationInput | TransactionOrderByWithRelationInput[]
+    cursor?: TransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
   }
 
   /**
@@ -12655,6 +12840,8 @@ export namespace Prisma {
     updatedAt?: boolean
     serviceProviderId?: boolean
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
+    fromUser?: boolean | UserDefaultArgs<ExtArgs>
+    toUser?: boolean | UserDefaultArgs<ExtArgs>
     serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }, ExtArgs["result"]["supplyChainLink"]>
 
@@ -12673,6 +12860,8 @@ export namespace Prisma {
     updatedAt?: boolean
     serviceProviderId?: boolean
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
+    fromUser?: boolean | UserDefaultArgs<ExtArgs>
+    toUser?: boolean | UserDefaultArgs<ExtArgs>
     serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }, ExtArgs["result"]["supplyChainLink"]>
 
@@ -12691,6 +12880,8 @@ export namespace Prisma {
     updatedAt?: boolean
     serviceProviderId?: boolean
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
+    fromUser?: boolean | UserDefaultArgs<ExtArgs>
+    toUser?: boolean | UserDefaultArgs<ExtArgs>
     serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }, ExtArgs["result"]["supplyChainLink"]>
 
@@ -12713,14 +12904,20 @@ export namespace Prisma {
   export type SupplyChainLinkOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "supplyChainId" | "type" | "fromUserId" | "toUserId" | "timestamp" | "location" | "details" | "carbonFootprint" | "certifications" | "createdAt" | "updatedAt" | "serviceProviderId", ExtArgs["result"]["supplyChainLink"]>
   export type SupplyChainLinkInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
+    fromUser?: boolean | UserDefaultArgs<ExtArgs>
+    toUser?: boolean | UserDefaultArgs<ExtArgs>
     serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }
   export type SupplyChainLinkIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
+    fromUser?: boolean | UserDefaultArgs<ExtArgs>
+    toUser?: boolean | UserDefaultArgs<ExtArgs>
     serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }
   export type SupplyChainLinkIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     supplyChain?: boolean | SupplyChainDefaultArgs<ExtArgs>
+    fromUser?: boolean | UserDefaultArgs<ExtArgs>
+    toUser?: boolean | UserDefaultArgs<ExtArgs>
     serviceProvider?: boolean | SupplyChainLink$serviceProviderArgs<ExtArgs>
   }
 
@@ -12728,6 +12925,8 @@ export namespace Prisma {
     name: "SupplyChainLink"
     objects: {
       supplyChain: Prisma.$SupplyChainPayload<ExtArgs>
+      fromUser: Prisma.$UserPayload<ExtArgs>
+      toUser: Prisma.$UserPayload<ExtArgs>
       serviceProvider: Prisma.$IntermediaryProfilePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -13139,6 +13338,8 @@ export namespace Prisma {
   export interface Prisma__SupplyChainLinkClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     supplyChain<T extends SupplyChainDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SupplyChainDefaultArgs<ExtArgs>>): Prisma__SupplyChainClient<$Result.GetResult<Prisma.$SupplyChainPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    fromUser<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    toUser<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     serviceProvider<T extends SupplyChainLink$serviceProviderArgs<ExtArgs> = {}>(args?: Subset<T, SupplyChainLink$serviceProviderArgs<ExtArgs>>): Prisma__IntermediaryProfileClient<$Result.GetResult<Prisma.$IntermediaryProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -16306,6 +16507,9 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    product?: boolean | Transaction$productArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
     order?: boolean | Transaction$orderArgs<ExtArgs>
     user?: boolean | Transaction$userArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
@@ -16331,6 +16535,9 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    product?: boolean | Transaction$productArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
     order?: boolean | Transaction$orderArgs<ExtArgs>
     user?: boolean | Transaction$userArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
@@ -16356,6 +16563,9 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    product?: boolean | Transaction$productArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
     order?: boolean | Transaction$orderArgs<ExtArgs>
     user?: boolean | Transaction$userArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
@@ -16385,14 +16595,23 @@ export namespace Prisma {
 
   export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "senderId" | "receiverId" | "amount" | "quantity" | "unit" | "type" | "status" | "paymentMethod" | "paymentReference" | "paymentDate" | "deliveryDate" | "notes" | "metadata" | "transactionId" | "orderId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | Transaction$productArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
     order?: boolean | Transaction$orderArgs<ExtArgs>
     user?: boolean | Transaction$userArgs<ExtArgs>
   }
   export type TransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | Transaction$productArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
     order?: boolean | Transaction$orderArgs<ExtArgs>
     user?: boolean | Transaction$userArgs<ExtArgs>
   }
   export type TransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | Transaction$productArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
     order?: boolean | Transaction$orderArgs<ExtArgs>
     user?: boolean | Transaction$userArgs<ExtArgs>
   }
@@ -16400,6 +16619,9 @@ export namespace Prisma {
   export type $TransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Transaction"
     objects: {
+      product: Prisma.$ProductPayload<ExtArgs> | null
+      sender: Prisma.$UserPayload<ExtArgs>
+      receiver: Prisma.$UserPayload<ExtArgs>
       order: Prisma.$OrderPayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs> | null
     }
@@ -16818,6 +17040,9 @@ export namespace Prisma {
    */
   export interface Prisma__TransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    product<T extends Transaction$productArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$productArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    sender<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    receiver<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     order<T extends Transaction$orderArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$orderArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     user<T extends Transaction$userArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
@@ -17262,6 +17487,25 @@ export namespace Prisma {
      * Limit how many Transactions to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Transaction.product
+   */
+  export type Transaction$productArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    where?: ProductWhereInput
   }
 
   /**
@@ -24773,8 +25017,12 @@ export namespace Prisma {
     orders?: OrderListRelationFilter
     ratings?: RatingListRelationFilter
     ratedBy?: RatingListRelationFilter
-    transactions?: TransactionListRelationFilter
+    transactionsSent?: TransactionListRelationFilter
+    transactionsReceived?: TransactionListRelationFilter
+    transactionsOwned?: TransactionListRelationFilter
     bidsCreated?: BidListRelationFilter
+    supplyChainLinksFrom?: SupplyChainLinkListRelationFilter
+    supplyChainLinksTo?: SupplyChainLinkListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -24795,8 +25043,12 @@ export namespace Prisma {
     orders?: OrderOrderByRelationAggregateInput
     ratings?: RatingOrderByRelationAggregateInput
     ratedBy?: RatingOrderByRelationAggregateInput
-    transactions?: TransactionOrderByRelationAggregateInput
+    transactionsSent?: TransactionOrderByRelationAggregateInput
+    transactionsReceived?: TransactionOrderByRelationAggregateInput
+    transactionsOwned?: TransactionOrderByRelationAggregateInput
     bidsCreated?: BidOrderByRelationAggregateInput
+    supplyChainLinksFrom?: SupplyChainLinkOrderByRelationAggregateInput
+    supplyChainLinksTo?: SupplyChainLinkOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -24820,8 +25072,12 @@ export namespace Prisma {
     orders?: OrderListRelationFilter
     ratings?: RatingListRelationFilter
     ratedBy?: RatingListRelationFilter
-    transactions?: TransactionListRelationFilter
+    transactionsSent?: TransactionListRelationFilter
+    transactionsReceived?: TransactionListRelationFilter
+    transactionsOwned?: TransactionListRelationFilter
     bidsCreated?: BidListRelationFilter
+    supplyChainLinksFrom?: SupplyChainLinkListRelationFilter
+    supplyChainLinksTo?: SupplyChainLinkListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -25118,6 +25374,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordListRelationFilter
     productAnalytics?: XOR<ProductAnalyticsNullableScalarRelationFilter, ProductAnalyticsWhereInput> | null
     bids?: BidListRelationFilter
+    transactions?: TransactionListRelationFilter
   }
 
   export type ProductOrderByWithRelationInput = {
@@ -25144,6 +25401,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordOrderByRelationAggregateInput
     productAnalytics?: ProductAnalyticsOrderByWithRelationInput
     bids?: BidOrderByRelationAggregateInput
+    transactions?: TransactionOrderByRelationAggregateInput
   }
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -25173,6 +25431,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordListRelationFilter
     productAnalytics?: XOR<ProductAnalyticsNullableScalarRelationFilter, ProductAnalyticsWhereInput> | null
     bids?: BidListRelationFilter
+    transactions?: TransactionListRelationFilter
   }, "id">
 
   export type ProductOrderByWithAggregationInput = {
@@ -25496,6 +25755,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
     serviceProviderId?: StringNullableFilter<"SupplyChainLink"> | string | null
     supplyChain?: XOR<SupplyChainScalarRelationFilter, SupplyChainWhereInput>
+    fromUser?: XOR<UserScalarRelationFilter, UserWhereInput>
+    toUser?: XOR<UserScalarRelationFilter, UserWhereInput>
     serviceProvider?: XOR<IntermediaryProfileNullableScalarRelationFilter, IntermediaryProfileWhereInput> | null
   }
 
@@ -25514,6 +25775,8 @@ export namespace Prisma {
     updatedAt?: SortOrder
     serviceProviderId?: SortOrderInput | SortOrder
     supplyChain?: SupplyChainOrderByWithRelationInput
+    fromUser?: UserOrderByWithRelationInput
+    toUser?: UserOrderByWithRelationInput
     serviceProvider?: IntermediaryProfileOrderByWithRelationInput
   }
 
@@ -25535,6 +25798,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
     serviceProviderId?: StringNullableFilter<"SupplyChainLink"> | string | null
     supplyChain?: XOR<SupplyChainScalarRelationFilter, SupplyChainWhereInput>
+    fromUser?: XOR<UserScalarRelationFilter, UserWhereInput>
+    toUser?: XOR<UserScalarRelationFilter, UserWhereInput>
     serviceProvider?: XOR<IntermediaryProfileNullableScalarRelationFilter, IntermediaryProfileWhereInput> | null
   }, "id">
 
@@ -25763,6 +26028,9 @@ export namespace Prisma {
     userId?: StringNullableFilter<"Transaction"> | string | null
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
+    product?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
+    sender?: XOR<UserScalarRelationFilter, UserWhereInput>
+    receiver?: XOR<UserScalarRelationFilter, UserWhereInput>
     order?: XOR<OrderNullableScalarRelationFilter, OrderWhereInput> | null
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
@@ -25788,6 +26056,9 @@ export namespace Prisma {
     userId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    product?: ProductOrderByWithRelationInput
+    sender?: UserOrderByWithRelationInput
+    receiver?: UserOrderByWithRelationInput
     order?: OrderOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
@@ -25816,6 +26087,9 @@ export namespace Prisma {
     userId?: StringNullableFilter<"Transaction"> | string | null
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
+    product?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
+    sender?: XOR<UserScalarRelationFilter, UserWhereInput>
+    receiver?: XOR<UserScalarRelationFilter, UserWhereInput>
     order?: XOR<OrderNullableScalarRelationFilter, OrderWhereInput> | null
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
@@ -26387,8 +26661,12 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
     bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -26409,8 +26687,12 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
     bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
   }
 
   export type UserUpdateInput = {
@@ -26431,8 +26713,12 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -26453,8 +26739,12 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -26779,6 +27069,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
     bids?: BidCreateNestedManyWithoutProductInput
+    transactions?: TransactionCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateInput = {
@@ -26804,6 +27095,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
     bids?: BidUncheckedCreateNestedManyWithoutProductInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductUpdateInput = {
@@ -26829,6 +27121,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
     bids?: BidUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateInput = {
@@ -26854,6 +27147,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
     bids?: BidUncheckedUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductCreateManyInput = {
@@ -27198,8 +27492,6 @@ export namespace Prisma {
   export type SupplyChainLinkCreateInput = {
     id?: string
     type: string
-    fromUserId: string
-    toUserId: string
     timestamp?: Date | string
     location?: NullableJsonNullValueInput | InputJsonValue
     details?: NullableJsonNullValueInput | InputJsonValue
@@ -27208,6 +27500,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     supplyChain: SupplyChainCreateNestedOneWithoutLinksInput
+    fromUser: UserCreateNestedOneWithoutSupplyChainLinksFromInput
+    toUser: UserCreateNestedOneWithoutSupplyChainLinksToInput
     serviceProvider?: IntermediaryProfileCreateNestedOneWithoutSupplyChainLinksInput
   }
 
@@ -27230,8 +27524,6 @@ export namespace Prisma {
   export type SupplyChainLinkUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    fromUserId?: StringFieldUpdateOperationsInput | string
-    toUserId?: StringFieldUpdateOperationsInput | string
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: NullableJsonNullValueInput | InputJsonValue
     details?: NullableJsonNullValueInput | InputJsonValue
@@ -27240,6 +27532,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     supplyChain?: SupplyChainUpdateOneRequiredWithoutLinksNestedInput
+    fromUser?: UserUpdateOneRequiredWithoutSupplyChainLinksFromNestedInput
+    toUser?: UserUpdateOneRequiredWithoutSupplyChainLinksToNestedInput
     serviceProvider?: IntermediaryProfileUpdateOneWithoutSupplyChainLinksNestedInput
   }
 
@@ -27278,8 +27572,6 @@ export namespace Prisma {
   export type SupplyChainLinkUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    fromUserId?: StringFieldUpdateOperationsInput | string
-    toUserId?: StringFieldUpdateOperationsInput | string
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: NullableJsonNullValueInput | InputJsonValue
     details?: NullableJsonNullValueInput | InputJsonValue
@@ -27477,9 +27769,6 @@ export namespace Prisma {
 
   export type TransactionCreateInput = {
     id?: string
-    productId?: string | null
-    senderId: string
-    receiverId: string
     amount: number
     quantity?: number | null
     unit?: string | null
@@ -27494,8 +27783,11 @@ export namespace Prisma {
     transactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    product?: ProductCreateNestedOneWithoutTransactionsInput
+    sender: UserCreateNestedOneWithoutTransactionsSentInput
+    receiver: UserCreateNestedOneWithoutTransactionsReceivedInput
     order?: OrderCreateNestedOneWithoutTransactionsInput
-    user?: UserCreateNestedOneWithoutTransactionsInput
+    user?: UserCreateNestedOneWithoutTransactionsOwnedInput
   }
 
   export type TransactionUncheckedCreateInput = {
@@ -27523,9 +27815,6 @@ export namespace Prisma {
 
   export type TransactionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    productId?: NullableStringFieldUpdateOperationsInput | string | null
-    senderId?: StringFieldUpdateOperationsInput | string
-    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     quantity?: NullableFloatFieldUpdateOperationsInput | number | null
     unit?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27540,8 +27829,11 @@ export namespace Prisma {
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneWithoutTransactionsNestedInput
+    sender?: UserUpdateOneRequiredWithoutTransactionsSentNestedInput
+    receiver?: UserUpdateOneRequiredWithoutTransactionsReceivedNestedInput
     order?: OrderUpdateOneWithoutTransactionsNestedInput
-    user?: UserUpdateOneWithoutTransactionsNestedInput
+    user?: UserUpdateOneWithoutTransactionsOwnedNestedInput
   }
 
   export type TransactionUncheckedUpdateInput = {
@@ -27592,9 +27884,6 @@ export namespace Prisma {
 
   export type TransactionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    productId?: NullableStringFieldUpdateOperationsInput | string | null
-    senderId?: StringFieldUpdateOperationsInput | string
-    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     quantity?: NullableFloatFieldUpdateOperationsInput | number | null
     unit?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28302,6 +28591,12 @@ export namespace Prisma {
     none?: BidWhereInput
   }
 
+  export type SupplyChainLinkListRelationFilter = {
+    every?: SupplyChainLinkWhereInput
+    some?: SupplyChainLinkWhereInput
+    none?: SupplyChainLinkWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -28324,6 +28619,10 @@ export namespace Prisma {
   }
 
   export type BidOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SupplyChainLinkOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -28534,16 +28833,6 @@ export namespace Prisma {
     in?: $Enums.IntermediaryType[] | ListEnumIntermediaryTypeFieldRefInput<$PrismaModel>
     notIn?: $Enums.IntermediaryType[] | ListEnumIntermediaryTypeFieldRefInput<$PrismaModel>
     not?: NestedEnumIntermediaryTypeFilter<$PrismaModel> | $Enums.IntermediaryType
-  }
-
-  export type SupplyChainLinkListRelationFilter = {
-    every?: SupplyChainLinkWhereInput
-    some?: SupplyChainLinkWhereInput
-    none?: SupplyChainLinkWhereInput
-  }
-
-  export type SupplyChainLinkOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type IntermediaryProfileCountOrderByAggregateInput = {
@@ -29209,6 +29498,11 @@ export namespace Prisma {
     not?: NestedEnumTransactionStatusFilter<$PrismaModel> | $Enums.TransactionStatus
   }
 
+  export type ProductNullableScalarRelationFilter = {
+    is?: ProductWhereInput | null
+    isNot?: ProductWhereInput | null
+  }
+
   export type OrderNullableScalarRelationFilter = {
     is?: OrderWhereInput | null
     isNot?: OrderWhereInput | null
@@ -29722,6 +30016,20 @@ export namespace Prisma {
     connect?: RatingWhereUniqueInput | RatingWhereUniqueInput[]
   }
 
+  export type TransactionCreateNestedManyWithoutSenderInput = {
+    create?: XOR<TransactionCreateWithoutSenderInput, TransactionUncheckedCreateWithoutSenderInput> | TransactionCreateWithoutSenderInput[] | TransactionUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutSenderInput | TransactionCreateOrConnectWithoutSenderInput[]
+    createMany?: TransactionCreateManySenderInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type TransactionCreateNestedManyWithoutReceiverInput = {
+    create?: XOR<TransactionCreateWithoutReceiverInput, TransactionUncheckedCreateWithoutReceiverInput> | TransactionCreateWithoutReceiverInput[] | TransactionUncheckedCreateWithoutReceiverInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutReceiverInput | TransactionCreateOrConnectWithoutReceiverInput[]
+    createMany?: TransactionCreateManyReceiverInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
   export type TransactionCreateNestedManyWithoutUserInput = {
     create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
@@ -29734,6 +30042,20 @@ export namespace Prisma {
     connectOrCreate?: BidCreateOrConnectWithoutIntermediaryInput | BidCreateOrConnectWithoutIntermediaryInput[]
     createMany?: BidCreateManyIntermediaryInputEnvelope
     connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+  }
+
+  export type SupplyChainLinkCreateNestedManyWithoutFromUserInput = {
+    create?: XOR<SupplyChainLinkCreateWithoutFromUserInput, SupplyChainLinkUncheckedCreateWithoutFromUserInput> | SupplyChainLinkCreateWithoutFromUserInput[] | SupplyChainLinkUncheckedCreateWithoutFromUserInput[]
+    connectOrCreate?: SupplyChainLinkCreateOrConnectWithoutFromUserInput | SupplyChainLinkCreateOrConnectWithoutFromUserInput[]
+    createMany?: SupplyChainLinkCreateManyFromUserInputEnvelope
+    connect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+  }
+
+  export type SupplyChainLinkCreateNestedManyWithoutToUserInput = {
+    create?: XOR<SupplyChainLinkCreateWithoutToUserInput, SupplyChainLinkUncheckedCreateWithoutToUserInput> | SupplyChainLinkCreateWithoutToUserInput[] | SupplyChainLinkUncheckedCreateWithoutToUserInput[]
+    connectOrCreate?: SupplyChainLinkCreateOrConnectWithoutToUserInput | SupplyChainLinkCreateOrConnectWithoutToUserInput[]
+    createMany?: SupplyChainLinkCreateManyToUserInputEnvelope
+    connect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
   }
 
   export type FarmerProfileUncheckedCreateNestedOneWithoutUserInput = {
@@ -29782,6 +30104,20 @@ export namespace Prisma {
     connect?: RatingWhereUniqueInput | RatingWhereUniqueInput[]
   }
 
+  export type TransactionUncheckedCreateNestedManyWithoutSenderInput = {
+    create?: XOR<TransactionCreateWithoutSenderInput, TransactionUncheckedCreateWithoutSenderInput> | TransactionCreateWithoutSenderInput[] | TransactionUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutSenderInput | TransactionCreateOrConnectWithoutSenderInput[]
+    createMany?: TransactionCreateManySenderInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type TransactionUncheckedCreateNestedManyWithoutReceiverInput = {
+    create?: XOR<TransactionCreateWithoutReceiverInput, TransactionUncheckedCreateWithoutReceiverInput> | TransactionCreateWithoutReceiverInput[] | TransactionUncheckedCreateWithoutReceiverInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutReceiverInput | TransactionCreateOrConnectWithoutReceiverInput[]
+    createMany?: TransactionCreateManyReceiverInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
   export type TransactionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
@@ -29794,6 +30130,20 @@ export namespace Prisma {
     connectOrCreate?: BidCreateOrConnectWithoutIntermediaryInput | BidCreateOrConnectWithoutIntermediaryInput[]
     createMany?: BidCreateManyIntermediaryInputEnvelope
     connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+  }
+
+  export type SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput = {
+    create?: XOR<SupplyChainLinkCreateWithoutFromUserInput, SupplyChainLinkUncheckedCreateWithoutFromUserInput> | SupplyChainLinkCreateWithoutFromUserInput[] | SupplyChainLinkUncheckedCreateWithoutFromUserInput[]
+    connectOrCreate?: SupplyChainLinkCreateOrConnectWithoutFromUserInput | SupplyChainLinkCreateOrConnectWithoutFromUserInput[]
+    createMany?: SupplyChainLinkCreateManyFromUserInputEnvelope
+    connect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+  }
+
+  export type SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput = {
+    create?: XOR<SupplyChainLinkCreateWithoutToUserInput, SupplyChainLinkUncheckedCreateWithoutToUserInput> | SupplyChainLinkCreateWithoutToUserInput[] | SupplyChainLinkUncheckedCreateWithoutToUserInput[]
+    connectOrCreate?: SupplyChainLinkCreateOrConnectWithoutToUserInput | SupplyChainLinkCreateOrConnectWithoutToUserInput[]
+    createMany?: SupplyChainLinkCreateManyToUserInputEnvelope
+    connect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -29898,6 +30248,34 @@ export namespace Prisma {
     deleteMany?: RatingScalarWhereInput | RatingScalarWhereInput[]
   }
 
+  export type TransactionUpdateManyWithoutSenderNestedInput = {
+    create?: XOR<TransactionCreateWithoutSenderInput, TransactionUncheckedCreateWithoutSenderInput> | TransactionCreateWithoutSenderInput[] | TransactionUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutSenderInput | TransactionCreateOrConnectWithoutSenderInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutSenderInput | TransactionUpsertWithWhereUniqueWithoutSenderInput[]
+    createMany?: TransactionCreateManySenderInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutSenderInput | TransactionUpdateWithWhereUniqueWithoutSenderInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutSenderInput | TransactionUpdateManyWithWhereWithoutSenderInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type TransactionUpdateManyWithoutReceiverNestedInput = {
+    create?: XOR<TransactionCreateWithoutReceiverInput, TransactionUncheckedCreateWithoutReceiverInput> | TransactionCreateWithoutReceiverInput[] | TransactionUncheckedCreateWithoutReceiverInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutReceiverInput | TransactionCreateOrConnectWithoutReceiverInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutReceiverInput | TransactionUpsertWithWhereUniqueWithoutReceiverInput[]
+    createMany?: TransactionCreateManyReceiverInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutReceiverInput | TransactionUpdateWithWhereUniqueWithoutReceiverInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutReceiverInput | TransactionUpdateManyWithWhereWithoutReceiverInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
   export type TransactionUpdateManyWithoutUserNestedInput = {
     create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
@@ -29924,6 +30302,34 @@ export namespace Prisma {
     update?: BidUpdateWithWhereUniqueWithoutIntermediaryInput | BidUpdateWithWhereUniqueWithoutIntermediaryInput[]
     updateMany?: BidUpdateManyWithWhereWithoutIntermediaryInput | BidUpdateManyWithWhereWithoutIntermediaryInput[]
     deleteMany?: BidScalarWhereInput | BidScalarWhereInput[]
+  }
+
+  export type SupplyChainLinkUpdateManyWithoutFromUserNestedInput = {
+    create?: XOR<SupplyChainLinkCreateWithoutFromUserInput, SupplyChainLinkUncheckedCreateWithoutFromUserInput> | SupplyChainLinkCreateWithoutFromUserInput[] | SupplyChainLinkUncheckedCreateWithoutFromUserInput[]
+    connectOrCreate?: SupplyChainLinkCreateOrConnectWithoutFromUserInput | SupplyChainLinkCreateOrConnectWithoutFromUserInput[]
+    upsert?: SupplyChainLinkUpsertWithWhereUniqueWithoutFromUserInput | SupplyChainLinkUpsertWithWhereUniqueWithoutFromUserInput[]
+    createMany?: SupplyChainLinkCreateManyFromUserInputEnvelope
+    set?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    disconnect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    delete?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    connect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    update?: SupplyChainLinkUpdateWithWhereUniqueWithoutFromUserInput | SupplyChainLinkUpdateWithWhereUniqueWithoutFromUserInput[]
+    updateMany?: SupplyChainLinkUpdateManyWithWhereWithoutFromUserInput | SupplyChainLinkUpdateManyWithWhereWithoutFromUserInput[]
+    deleteMany?: SupplyChainLinkScalarWhereInput | SupplyChainLinkScalarWhereInput[]
+  }
+
+  export type SupplyChainLinkUpdateManyWithoutToUserNestedInput = {
+    create?: XOR<SupplyChainLinkCreateWithoutToUserInput, SupplyChainLinkUncheckedCreateWithoutToUserInput> | SupplyChainLinkCreateWithoutToUserInput[] | SupplyChainLinkUncheckedCreateWithoutToUserInput[]
+    connectOrCreate?: SupplyChainLinkCreateOrConnectWithoutToUserInput | SupplyChainLinkCreateOrConnectWithoutToUserInput[]
+    upsert?: SupplyChainLinkUpsertWithWhereUniqueWithoutToUserInput | SupplyChainLinkUpsertWithWhereUniqueWithoutToUserInput[]
+    createMany?: SupplyChainLinkCreateManyToUserInputEnvelope
+    set?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    disconnect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    delete?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    connect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    update?: SupplyChainLinkUpdateWithWhereUniqueWithoutToUserInput | SupplyChainLinkUpdateWithWhereUniqueWithoutToUserInput[]
+    updateMany?: SupplyChainLinkUpdateManyWithWhereWithoutToUserInput | SupplyChainLinkUpdateManyWithWhereWithoutToUserInput[]
+    deleteMany?: SupplyChainLinkScalarWhereInput | SupplyChainLinkScalarWhereInput[]
   }
 
   export type FarmerProfileUncheckedUpdateOneWithoutUserNestedInput = {
@@ -30012,6 +30418,34 @@ export namespace Prisma {
     deleteMany?: RatingScalarWhereInput | RatingScalarWhereInput[]
   }
 
+  export type TransactionUncheckedUpdateManyWithoutSenderNestedInput = {
+    create?: XOR<TransactionCreateWithoutSenderInput, TransactionUncheckedCreateWithoutSenderInput> | TransactionCreateWithoutSenderInput[] | TransactionUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutSenderInput | TransactionCreateOrConnectWithoutSenderInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutSenderInput | TransactionUpsertWithWhereUniqueWithoutSenderInput[]
+    createMany?: TransactionCreateManySenderInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutSenderInput | TransactionUpdateWithWhereUniqueWithoutSenderInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutSenderInput | TransactionUpdateManyWithWhereWithoutSenderInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type TransactionUncheckedUpdateManyWithoutReceiverNestedInput = {
+    create?: XOR<TransactionCreateWithoutReceiverInput, TransactionUncheckedCreateWithoutReceiverInput> | TransactionCreateWithoutReceiverInput[] | TransactionUncheckedCreateWithoutReceiverInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutReceiverInput | TransactionCreateOrConnectWithoutReceiverInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutReceiverInput | TransactionUpsertWithWhereUniqueWithoutReceiverInput[]
+    createMany?: TransactionCreateManyReceiverInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutReceiverInput | TransactionUpdateWithWhereUniqueWithoutReceiverInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutReceiverInput | TransactionUpdateManyWithWhereWithoutReceiverInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
   export type TransactionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput> | TransactionCreateWithoutUserInput[] | TransactionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
@@ -30038,6 +30472,34 @@ export namespace Prisma {
     update?: BidUpdateWithWhereUniqueWithoutIntermediaryInput | BidUpdateWithWhereUniqueWithoutIntermediaryInput[]
     updateMany?: BidUpdateManyWithWhereWithoutIntermediaryInput | BidUpdateManyWithWhereWithoutIntermediaryInput[]
     deleteMany?: BidScalarWhereInput | BidScalarWhereInput[]
+  }
+
+  export type SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput = {
+    create?: XOR<SupplyChainLinkCreateWithoutFromUserInput, SupplyChainLinkUncheckedCreateWithoutFromUserInput> | SupplyChainLinkCreateWithoutFromUserInput[] | SupplyChainLinkUncheckedCreateWithoutFromUserInput[]
+    connectOrCreate?: SupplyChainLinkCreateOrConnectWithoutFromUserInput | SupplyChainLinkCreateOrConnectWithoutFromUserInput[]
+    upsert?: SupplyChainLinkUpsertWithWhereUniqueWithoutFromUserInput | SupplyChainLinkUpsertWithWhereUniqueWithoutFromUserInput[]
+    createMany?: SupplyChainLinkCreateManyFromUserInputEnvelope
+    set?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    disconnect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    delete?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    connect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    update?: SupplyChainLinkUpdateWithWhereUniqueWithoutFromUserInput | SupplyChainLinkUpdateWithWhereUniqueWithoutFromUserInput[]
+    updateMany?: SupplyChainLinkUpdateManyWithWhereWithoutFromUserInput | SupplyChainLinkUpdateManyWithWhereWithoutFromUserInput[]
+    deleteMany?: SupplyChainLinkScalarWhereInput | SupplyChainLinkScalarWhereInput[]
+  }
+
+  export type SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput = {
+    create?: XOR<SupplyChainLinkCreateWithoutToUserInput, SupplyChainLinkUncheckedCreateWithoutToUserInput> | SupplyChainLinkCreateWithoutToUserInput[] | SupplyChainLinkUncheckedCreateWithoutToUserInput[]
+    connectOrCreate?: SupplyChainLinkCreateOrConnectWithoutToUserInput | SupplyChainLinkCreateOrConnectWithoutToUserInput[]
+    upsert?: SupplyChainLinkUpsertWithWhereUniqueWithoutToUserInput | SupplyChainLinkUpsertWithWhereUniqueWithoutToUserInput[]
+    createMany?: SupplyChainLinkCreateManyToUserInputEnvelope
+    set?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    disconnect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    delete?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    connect?: SupplyChainLinkWhereUniqueInput | SupplyChainLinkWhereUniqueInput[]
+    update?: SupplyChainLinkUpdateWithWhereUniqueWithoutToUserInput | SupplyChainLinkUpdateWithWhereUniqueWithoutToUserInput[]
+    updateMany?: SupplyChainLinkUpdateManyWithWhereWithoutToUserInput | SupplyChainLinkUpdateManyWithWhereWithoutToUserInput[]
+    deleteMany?: SupplyChainLinkScalarWhereInput | SupplyChainLinkScalarWhereInput[]
   }
 
   export type FarmerProfileCreatecropTypesInput = {
@@ -30228,6 +30690,13 @@ export namespace Prisma {
     connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
   }
 
+  export type TransactionCreateNestedManyWithoutProductInput = {
+    create?: XOR<TransactionCreateWithoutProductInput, TransactionUncheckedCreateWithoutProductInput> | TransactionCreateWithoutProductInput[] | TransactionUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutProductInput | TransactionCreateOrConnectWithoutProductInput[]
+    createMany?: TransactionCreateManyProductInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
   export type OrderItemUncheckedCreateNestedManyWithoutProductInput = {
     create?: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput> | OrderItemCreateWithoutProductInput[] | OrderItemUncheckedCreateWithoutProductInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
@@ -30259,6 +30728,13 @@ export namespace Prisma {
     connectOrCreate?: BidCreateOrConnectWithoutProductInput | BidCreateOrConnectWithoutProductInput[]
     createMany?: BidCreateManyProductInputEnvelope
     connect?: BidWhereUniqueInput | BidWhereUniqueInput[]
+  }
+
+  export type TransactionUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<TransactionCreateWithoutProductInput, TransactionUncheckedCreateWithoutProductInput> | TransactionCreateWithoutProductInput[] | TransactionUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutProductInput | TransactionCreateOrConnectWithoutProductInput[]
+    createMany?: TransactionCreateManyProductInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
   }
 
   export type EnumProductCategoryFieldUpdateOperationsInput = {
@@ -30360,6 +30836,20 @@ export namespace Prisma {
     deleteMany?: BidScalarWhereInput | BidScalarWhereInput[]
   }
 
+  export type TransactionUpdateManyWithoutProductNestedInput = {
+    create?: XOR<TransactionCreateWithoutProductInput, TransactionUncheckedCreateWithoutProductInput> | TransactionCreateWithoutProductInput[] | TransactionUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutProductInput | TransactionCreateOrConnectWithoutProductInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutProductInput | TransactionUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: TransactionCreateManyProductInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutProductInput | TransactionUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutProductInput | TransactionUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
   export type OrderItemUncheckedUpdateManyWithoutProductNestedInput = {
     create?: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput> | OrderItemCreateWithoutProductInput[] | OrderItemUncheckedCreateWithoutProductInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
@@ -30420,6 +30910,20 @@ export namespace Prisma {
     update?: BidUpdateWithWhereUniqueWithoutProductInput | BidUpdateWithWhereUniqueWithoutProductInput[]
     updateMany?: BidUpdateManyWithWhereWithoutProductInput | BidUpdateManyWithWhereWithoutProductInput[]
     deleteMany?: BidScalarWhereInput | BidScalarWhereInput[]
+  }
+
+  export type TransactionUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<TransactionCreateWithoutProductInput, TransactionUncheckedCreateWithoutProductInput> | TransactionCreateWithoutProductInput[] | TransactionUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutProductInput | TransactionCreateOrConnectWithoutProductInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutProductInput | TransactionUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: TransactionCreateManyProductInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutProductInput | TransactionUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutProductInput | TransactionUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
   export type ProductAnalyticsCreatepriceHistoryInput = {
@@ -30551,6 +31055,18 @@ export namespace Prisma {
     connect?: SupplyChainWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutSupplyChainLinksFromInput = {
+    create?: XOR<UserCreateWithoutSupplyChainLinksFromInput, UserUncheckedCreateWithoutSupplyChainLinksFromInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupplyChainLinksFromInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutSupplyChainLinksToInput = {
+    create?: XOR<UserCreateWithoutSupplyChainLinksToInput, UserUncheckedCreateWithoutSupplyChainLinksToInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupplyChainLinksToInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type IntermediaryProfileCreateNestedOneWithoutSupplyChainLinksInput = {
     create?: XOR<IntermediaryProfileCreateWithoutSupplyChainLinksInput, IntermediaryProfileUncheckedCreateWithoutSupplyChainLinksInput>
     connectOrCreate?: IntermediaryProfileCreateOrConnectWithoutSupplyChainLinksInput
@@ -30568,6 +31084,22 @@ export namespace Prisma {
     upsert?: SupplyChainUpsertWithoutLinksInput
     connect?: SupplyChainWhereUniqueInput
     update?: XOR<XOR<SupplyChainUpdateToOneWithWhereWithoutLinksInput, SupplyChainUpdateWithoutLinksInput>, SupplyChainUncheckedUpdateWithoutLinksInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutSupplyChainLinksFromNestedInput = {
+    create?: XOR<UserCreateWithoutSupplyChainLinksFromInput, UserUncheckedCreateWithoutSupplyChainLinksFromInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupplyChainLinksFromInput
+    upsert?: UserUpsertWithoutSupplyChainLinksFromInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSupplyChainLinksFromInput, UserUpdateWithoutSupplyChainLinksFromInput>, UserUncheckedUpdateWithoutSupplyChainLinksFromInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutSupplyChainLinksToNestedInput = {
+    create?: XOR<UserCreateWithoutSupplyChainLinksToInput, UserUncheckedCreateWithoutSupplyChainLinksToInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSupplyChainLinksToInput
+    upsert?: UserUpsertWithoutSupplyChainLinksToInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSupplyChainLinksToInput, UserUpdateWithoutSupplyChainLinksToInput>, UserUncheckedUpdateWithoutSupplyChainLinksToInput>
   }
 
   export type IntermediaryProfileUpdateOneWithoutSupplyChainLinksNestedInput = {
@@ -30752,15 +31284,33 @@ export namespace Prisma {
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutOrdersInput, ProductUpdateWithoutOrdersInput>, ProductUncheckedUpdateWithoutOrdersInput>
   }
 
+  export type ProductCreateNestedOneWithoutTransactionsInput = {
+    create?: XOR<ProductCreateWithoutTransactionsInput, ProductUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutTransactionsInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutTransactionsSentInput = {
+    create?: XOR<UserCreateWithoutTransactionsSentInput, UserUncheckedCreateWithoutTransactionsSentInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransactionsSentInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutTransactionsReceivedInput = {
+    create?: XOR<UserCreateWithoutTransactionsReceivedInput, UserUncheckedCreateWithoutTransactionsReceivedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransactionsReceivedInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type OrderCreateNestedOneWithoutTransactionsInput = {
     create?: XOR<OrderCreateWithoutTransactionsInput, OrderUncheckedCreateWithoutTransactionsInput>
     connectOrCreate?: OrderCreateOrConnectWithoutTransactionsInput
     connect?: OrderWhereUniqueInput
   }
 
-  export type UserCreateNestedOneWithoutTransactionsInput = {
-    create?: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTransactionsInput
+  export type UserCreateNestedOneWithoutTransactionsOwnedInput = {
+    create?: XOR<UserCreateWithoutTransactionsOwnedInput, UserUncheckedCreateWithoutTransactionsOwnedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransactionsOwnedInput
     connect?: UserWhereUniqueInput
   }
 
@@ -30770,6 +31320,32 @@ export namespace Prisma {
 
   export type EnumTransactionStatusFieldUpdateOperationsInput = {
     set?: $Enums.TransactionStatus
+  }
+
+  export type ProductUpdateOneWithoutTransactionsNestedInput = {
+    create?: XOR<ProductCreateWithoutTransactionsInput, ProductUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutTransactionsInput
+    upsert?: ProductUpsertWithoutTransactionsInput
+    disconnect?: ProductWhereInput | boolean
+    delete?: ProductWhereInput | boolean
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutTransactionsInput, ProductUpdateWithoutTransactionsInput>, ProductUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutTransactionsSentNestedInput = {
+    create?: XOR<UserCreateWithoutTransactionsSentInput, UserUncheckedCreateWithoutTransactionsSentInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransactionsSentInput
+    upsert?: UserUpsertWithoutTransactionsSentInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactionsSentInput, UserUpdateWithoutTransactionsSentInput>, UserUncheckedUpdateWithoutTransactionsSentInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutTransactionsReceivedNestedInput = {
+    create?: XOR<UserCreateWithoutTransactionsReceivedInput, UserUncheckedCreateWithoutTransactionsReceivedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransactionsReceivedInput
+    upsert?: UserUpsertWithoutTransactionsReceivedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactionsReceivedInput, UserUpdateWithoutTransactionsReceivedInput>, UserUncheckedUpdateWithoutTransactionsReceivedInput>
   }
 
   export type OrderUpdateOneWithoutTransactionsNestedInput = {
@@ -30782,14 +31358,14 @@ export namespace Prisma {
     update?: XOR<XOR<OrderUpdateToOneWithWhereWithoutTransactionsInput, OrderUpdateWithoutTransactionsInput>, OrderUncheckedUpdateWithoutTransactionsInput>
   }
 
-  export type UserUpdateOneWithoutTransactionsNestedInput = {
-    create?: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTransactionsInput
-    upsert?: UserUpsertWithoutTransactionsInput
+  export type UserUpdateOneWithoutTransactionsOwnedNestedInput = {
+    create?: XOR<UserCreateWithoutTransactionsOwnedInput, UserUncheckedCreateWithoutTransactionsOwnedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransactionsOwnedInput
+    upsert?: UserUpsertWithoutTransactionsOwnedInput
     disconnect?: UserWhereInput | boolean
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactionsInput, UserUpdateWithoutTransactionsInput>, UserUncheckedUpdateWithoutTransactionsInput>
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactionsOwnedInput, UserUpdateWithoutTransactionsOwnedInput>, UserUncheckedUpdateWithoutTransactionsOwnedInput>
   }
 
   export type ProductCreateNestedOneWithoutTraceabilityInput = {
@@ -31450,6 +32026,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
     bids?: BidCreateNestedManyWithoutProductInput
+    transactions?: TransactionCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutFarmerInput = {
@@ -31474,6 +32051,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
     bids?: BidUncheckedCreateNestedManyWithoutProductInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutFarmerInput = {
@@ -31584,11 +32162,8 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type TransactionCreateWithoutUserInput = {
+  export type TransactionCreateWithoutSenderInput = {
     id?: string
-    productId?: string | null
-    senderId: string
-    receiverId: string
     amount: number
     quantity?: number | null
     unit?: string | null
@@ -31603,6 +32178,117 @@ export namespace Prisma {
     transactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    product?: ProductCreateNestedOneWithoutTransactionsInput
+    receiver: UserCreateNestedOneWithoutTransactionsReceivedInput
+    order?: OrderCreateNestedOneWithoutTransactionsInput
+    user?: UserCreateNestedOneWithoutTransactionsOwnedInput
+  }
+
+  export type TransactionUncheckedCreateWithoutSenderInput = {
+    id?: string
+    productId?: string | null
+    receiverId: string
+    amount: number
+    quantity?: number | null
+    unit?: string | null
+    type: $Enums.TransactionType
+    status: $Enums.TransactionStatus
+    paymentMethod?: string | null
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    orderId?: string | null
+    userId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransactionCreateOrConnectWithoutSenderInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutSenderInput, TransactionUncheckedCreateWithoutSenderInput>
+  }
+
+  export type TransactionCreateManySenderInputEnvelope = {
+    data: TransactionCreateManySenderInput | TransactionCreateManySenderInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TransactionCreateWithoutReceiverInput = {
+    id?: string
+    amount: number
+    quantity?: number | null
+    unit?: string | null
+    type: $Enums.TransactionType
+    status: $Enums.TransactionStatus
+    paymentMethod?: string | null
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product?: ProductCreateNestedOneWithoutTransactionsInput
+    sender: UserCreateNestedOneWithoutTransactionsSentInput
+    order?: OrderCreateNestedOneWithoutTransactionsInput
+    user?: UserCreateNestedOneWithoutTransactionsOwnedInput
+  }
+
+  export type TransactionUncheckedCreateWithoutReceiverInput = {
+    id?: string
+    productId?: string | null
+    senderId: string
+    amount: number
+    quantity?: number | null
+    unit?: string | null
+    type: $Enums.TransactionType
+    status: $Enums.TransactionStatus
+    paymentMethod?: string | null
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    orderId?: string | null
+    userId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransactionCreateOrConnectWithoutReceiverInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutReceiverInput, TransactionUncheckedCreateWithoutReceiverInput>
+  }
+
+  export type TransactionCreateManyReceiverInputEnvelope = {
+    data: TransactionCreateManyReceiverInput | TransactionCreateManyReceiverInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TransactionCreateWithoutUserInput = {
+    id?: string
+    amount: number
+    quantity?: number | null
+    unit?: string | null
+    type: $Enums.TransactionType
+    status: $Enums.TransactionStatus
+    paymentMethod?: string | null
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product?: ProductCreateNestedOneWithoutTransactionsInput
+    sender: UserCreateNestedOneWithoutTransactionsSentInput
+    receiver: UserCreateNestedOneWithoutTransactionsReceivedInput
     order?: OrderCreateNestedOneWithoutTransactionsInput
   }
 
@@ -31675,6 +32361,86 @@ export namespace Prisma {
 
   export type BidCreateManyIntermediaryInputEnvelope = {
     data: BidCreateManyIntermediaryInput | BidCreateManyIntermediaryInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SupplyChainLinkCreateWithoutFromUserInput = {
+    id?: string
+    type: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    supplyChain: SupplyChainCreateNestedOneWithoutLinksInput
+    toUser: UserCreateNestedOneWithoutSupplyChainLinksToInput
+    serviceProvider?: IntermediaryProfileCreateNestedOneWithoutSupplyChainLinksInput
+  }
+
+  export type SupplyChainLinkUncheckedCreateWithoutFromUserInput = {
+    id?: string
+    supplyChainId: string
+    type: string
+    toUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceProviderId?: string | null
+  }
+
+  export type SupplyChainLinkCreateOrConnectWithoutFromUserInput = {
+    where: SupplyChainLinkWhereUniqueInput
+    create: XOR<SupplyChainLinkCreateWithoutFromUserInput, SupplyChainLinkUncheckedCreateWithoutFromUserInput>
+  }
+
+  export type SupplyChainLinkCreateManyFromUserInputEnvelope = {
+    data: SupplyChainLinkCreateManyFromUserInput | SupplyChainLinkCreateManyFromUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SupplyChainLinkCreateWithoutToUserInput = {
+    id?: string
+    type: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    supplyChain: SupplyChainCreateNestedOneWithoutLinksInput
+    fromUser: UserCreateNestedOneWithoutSupplyChainLinksFromInput
+    serviceProvider?: IntermediaryProfileCreateNestedOneWithoutSupplyChainLinksInput
+  }
+
+  export type SupplyChainLinkUncheckedCreateWithoutToUserInput = {
+    id?: string
+    supplyChainId: string
+    type: string
+    fromUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceProviderId?: string | null
+  }
+
+  export type SupplyChainLinkCreateOrConnectWithoutToUserInput = {
+    where: SupplyChainLinkWhereUniqueInput
+    create: XOR<SupplyChainLinkCreateWithoutToUserInput, SupplyChainLinkUncheckedCreateWithoutToUserInput>
+  }
+
+  export type SupplyChainLinkCreateManyToUserInputEnvelope = {
+    data: SupplyChainLinkCreateManyToUserInput | SupplyChainLinkCreateManyToUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -31897,20 +32663,20 @@ export namespace Prisma {
     data: XOR<RatingUpdateManyMutationInput, RatingUncheckedUpdateManyWithoutFromUserInput>
   }
 
-  export type TransactionUpsertWithWhereUniqueWithoutUserInput = {
+  export type TransactionUpsertWithWhereUniqueWithoutSenderInput = {
     where: TransactionWhereUniqueInput
-    update: XOR<TransactionUpdateWithoutUserInput, TransactionUncheckedUpdateWithoutUserInput>
-    create: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput>
+    update: XOR<TransactionUpdateWithoutSenderInput, TransactionUncheckedUpdateWithoutSenderInput>
+    create: XOR<TransactionCreateWithoutSenderInput, TransactionUncheckedCreateWithoutSenderInput>
   }
 
-  export type TransactionUpdateWithWhereUniqueWithoutUserInput = {
+  export type TransactionUpdateWithWhereUniqueWithoutSenderInput = {
     where: TransactionWhereUniqueInput
-    data: XOR<TransactionUpdateWithoutUserInput, TransactionUncheckedUpdateWithoutUserInput>
+    data: XOR<TransactionUpdateWithoutSenderInput, TransactionUncheckedUpdateWithoutSenderInput>
   }
 
-  export type TransactionUpdateManyWithWhereWithoutUserInput = {
+  export type TransactionUpdateManyWithWhereWithoutSenderInput = {
     where: TransactionScalarWhereInput
-    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutUserInput>
+    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutSenderInput>
   }
 
   export type TransactionScalarWhereInput = {
@@ -31937,6 +32703,38 @@ export namespace Prisma {
     userId?: StringNullableFilter<"Transaction"> | string | null
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
+  }
+
+  export type TransactionUpsertWithWhereUniqueWithoutReceiverInput = {
+    where: TransactionWhereUniqueInput
+    update: XOR<TransactionUpdateWithoutReceiverInput, TransactionUncheckedUpdateWithoutReceiverInput>
+    create: XOR<TransactionCreateWithoutReceiverInput, TransactionUncheckedCreateWithoutReceiverInput>
+  }
+
+  export type TransactionUpdateWithWhereUniqueWithoutReceiverInput = {
+    where: TransactionWhereUniqueInput
+    data: XOR<TransactionUpdateWithoutReceiverInput, TransactionUncheckedUpdateWithoutReceiverInput>
+  }
+
+  export type TransactionUpdateManyWithWhereWithoutReceiverInput = {
+    where: TransactionScalarWhereInput
+    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutReceiverInput>
+  }
+
+  export type TransactionUpsertWithWhereUniqueWithoutUserInput = {
+    where: TransactionWhereUniqueInput
+    update: XOR<TransactionUpdateWithoutUserInput, TransactionUncheckedUpdateWithoutUserInput>
+    create: XOR<TransactionCreateWithoutUserInput, TransactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type TransactionUpdateWithWhereUniqueWithoutUserInput = {
+    where: TransactionWhereUniqueInput
+    data: XOR<TransactionUpdateWithoutUserInput, TransactionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type TransactionUpdateManyWithWhereWithoutUserInput = {
+    where: TransactionScalarWhereInput
+    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutUserInput>
   }
 
   export type BidUpsertWithWhereUniqueWithoutIntermediaryInput = {
@@ -31974,6 +32772,57 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Bid"> | Date | string
   }
 
+  export type SupplyChainLinkUpsertWithWhereUniqueWithoutFromUserInput = {
+    where: SupplyChainLinkWhereUniqueInput
+    update: XOR<SupplyChainLinkUpdateWithoutFromUserInput, SupplyChainLinkUncheckedUpdateWithoutFromUserInput>
+    create: XOR<SupplyChainLinkCreateWithoutFromUserInput, SupplyChainLinkUncheckedCreateWithoutFromUserInput>
+  }
+
+  export type SupplyChainLinkUpdateWithWhereUniqueWithoutFromUserInput = {
+    where: SupplyChainLinkWhereUniqueInput
+    data: XOR<SupplyChainLinkUpdateWithoutFromUserInput, SupplyChainLinkUncheckedUpdateWithoutFromUserInput>
+  }
+
+  export type SupplyChainLinkUpdateManyWithWhereWithoutFromUserInput = {
+    where: SupplyChainLinkScalarWhereInput
+    data: XOR<SupplyChainLinkUpdateManyMutationInput, SupplyChainLinkUncheckedUpdateManyWithoutFromUserInput>
+  }
+
+  export type SupplyChainLinkScalarWhereInput = {
+    AND?: SupplyChainLinkScalarWhereInput | SupplyChainLinkScalarWhereInput[]
+    OR?: SupplyChainLinkScalarWhereInput[]
+    NOT?: SupplyChainLinkScalarWhereInput | SupplyChainLinkScalarWhereInput[]
+    id?: StringFilter<"SupplyChainLink"> | string
+    supplyChainId?: StringFilter<"SupplyChainLink"> | string
+    type?: StringFilter<"SupplyChainLink"> | string
+    fromUserId?: StringFilter<"SupplyChainLink"> | string
+    toUserId?: StringFilter<"SupplyChainLink"> | string
+    timestamp?: DateTimeFilter<"SupplyChainLink"> | Date | string
+    location?: JsonNullableFilter<"SupplyChainLink">
+    details?: JsonNullableFilter<"SupplyChainLink">
+    carbonFootprint?: FloatNullableFilter<"SupplyChainLink"> | number | null
+    certifications?: StringNullableListFilter<"SupplyChainLink">
+    createdAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
+    updatedAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
+    serviceProviderId?: StringNullableFilter<"SupplyChainLink"> | string | null
+  }
+
+  export type SupplyChainLinkUpsertWithWhereUniqueWithoutToUserInput = {
+    where: SupplyChainLinkWhereUniqueInput
+    update: XOR<SupplyChainLinkUpdateWithoutToUserInput, SupplyChainLinkUncheckedUpdateWithoutToUserInput>
+    create: XOR<SupplyChainLinkCreateWithoutToUserInput, SupplyChainLinkUncheckedCreateWithoutToUserInput>
+  }
+
+  export type SupplyChainLinkUpdateWithWhereUniqueWithoutToUserInput = {
+    where: SupplyChainLinkWhereUniqueInput
+    data: XOR<SupplyChainLinkUpdateWithoutToUserInput, SupplyChainLinkUncheckedUpdateWithoutToUserInput>
+  }
+
+  export type SupplyChainLinkUpdateManyWithWhereWithoutToUserInput = {
+    where: SupplyChainLinkScalarWhereInput
+    data: XOR<SupplyChainLinkUpdateManyMutationInput, SupplyChainLinkUncheckedUpdateManyWithoutToUserInput>
+  }
+
   export type UserCreateWithoutFarmerProfileInput = {
     id?: string
     email: string
@@ -31991,8 +32840,12 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
     bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
   }
 
   export type UserUncheckedCreateWithoutFarmerProfileInput = {
@@ -32012,8 +32865,12 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
     bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
   }
 
   export type UserCreateOrConnectWithoutFarmerProfileInput = {
@@ -32049,8 +32906,12 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFarmerProfileInput = {
@@ -32070,8 +32931,12 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
   }
 
   export type UserCreateWithoutIntermediaryProfileInput = {
@@ -32091,8 +32956,12 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
     bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
   }
 
   export type UserUncheckedCreateWithoutIntermediaryProfileInput = {
@@ -32112,8 +32981,12 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
     bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
   }
 
   export type UserCreateOrConnectWithoutIntermediaryProfileInput = {
@@ -32124,8 +32997,6 @@ export namespace Prisma {
   export type SupplyChainLinkCreateWithoutServiceProviderInput = {
     id?: string
     type: string
-    fromUserId: string
-    toUserId: string
     timestamp?: Date | string
     location?: NullableJsonNullValueInput | InputJsonValue
     details?: NullableJsonNullValueInput | InputJsonValue
@@ -32134,6 +33005,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     supplyChain: SupplyChainCreateNestedOneWithoutLinksInput
+    fromUser: UserCreateNestedOneWithoutSupplyChainLinksFromInput
+    toUser: UserCreateNestedOneWithoutSupplyChainLinksToInput
   }
 
   export type SupplyChainLinkUncheckedCreateWithoutServiceProviderInput = {
@@ -32189,8 +33062,12 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutIntermediaryProfileInput = {
@@ -32210,8 +33087,12 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
   }
 
   export type SupplyChainLinkUpsertWithWhereUniqueWithoutServiceProviderInput = {
@@ -32228,25 +33109,6 @@ export namespace Prisma {
   export type SupplyChainLinkUpdateManyWithWhereWithoutServiceProviderInput = {
     where: SupplyChainLinkScalarWhereInput
     data: XOR<SupplyChainLinkUpdateManyMutationInput, SupplyChainLinkUncheckedUpdateManyWithoutServiceProviderInput>
-  }
-
-  export type SupplyChainLinkScalarWhereInput = {
-    AND?: SupplyChainLinkScalarWhereInput | SupplyChainLinkScalarWhereInput[]
-    OR?: SupplyChainLinkScalarWhereInput[]
-    NOT?: SupplyChainLinkScalarWhereInput | SupplyChainLinkScalarWhereInput[]
-    id?: StringFilter<"SupplyChainLink"> | string
-    supplyChainId?: StringFilter<"SupplyChainLink"> | string
-    type?: StringFilter<"SupplyChainLink"> | string
-    fromUserId?: StringFilter<"SupplyChainLink"> | string
-    toUserId?: StringFilter<"SupplyChainLink"> | string
-    timestamp?: DateTimeFilter<"SupplyChainLink"> | Date | string
-    location?: JsonNullableFilter<"SupplyChainLink">
-    details?: JsonNullableFilter<"SupplyChainLink">
-    carbonFootprint?: FloatNullableFilter<"SupplyChainLink"> | number | null
-    certifications?: StringNullableListFilter<"SupplyChainLink">
-    createdAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
-    updatedAt?: DateTimeFilter<"SupplyChainLink"> | Date | string
-    serviceProviderId?: StringNullableFilter<"SupplyChainLink"> | string | null
   }
 
   export type UserCreateWithoutConsumerProfileInput = {
@@ -32266,8 +33128,12 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
     bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
   }
 
   export type UserUncheckedCreateWithoutConsumerProfileInput = {
@@ -32287,8 +33153,12 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
     bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
   }
 
   export type UserCreateOrConnectWithoutConsumerProfileInput = {
@@ -32324,8 +33194,12 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutConsumerProfileInput = {
@@ -32345,8 +33219,12 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
   }
 
   export type UserCreateWithoutProductsListedInput = {
@@ -32366,8 +33244,12 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
     bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
   }
 
   export type UserUncheckedCreateWithoutProductsListedInput = {
@@ -32387,8 +33269,12 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
     bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
   }
 
   export type UserCreateOrConnectWithoutProductsListedInput = {
@@ -32562,6 +33448,60 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TransactionCreateWithoutProductInput = {
+    id?: string
+    amount: number
+    quantity?: number | null
+    unit?: string | null
+    type: $Enums.TransactionType
+    status: $Enums.TransactionStatus
+    paymentMethod?: string | null
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sender: UserCreateNestedOneWithoutTransactionsSentInput
+    receiver: UserCreateNestedOneWithoutTransactionsReceivedInput
+    order?: OrderCreateNestedOneWithoutTransactionsInput
+    user?: UserCreateNestedOneWithoutTransactionsOwnedInput
+  }
+
+  export type TransactionUncheckedCreateWithoutProductInput = {
+    id?: string
+    senderId: string
+    receiverId: string
+    amount: number
+    quantity?: number | null
+    unit?: string | null
+    type: $Enums.TransactionType
+    status: $Enums.TransactionStatus
+    paymentMethod?: string | null
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    orderId?: string | null
+    userId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransactionCreateOrConnectWithoutProductInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutProductInput, TransactionUncheckedCreateWithoutProductInput>
+  }
+
+  export type TransactionCreateManyProductInputEnvelope = {
+    data: TransactionCreateManyProductInput | TransactionCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutProductsListedInput = {
     update: XOR<UserUpdateWithoutProductsListedInput, UserUncheckedUpdateWithoutProductsListedInput>
     create: XOR<UserCreateWithoutProductsListedInput, UserUncheckedCreateWithoutProductsListedInput>
@@ -32590,8 +33530,12 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProductsListedInput = {
@@ -32611,8 +33555,12 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
   }
 
   export type OrderItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -32764,6 +33712,22 @@ export namespace Prisma {
     data: XOR<BidUpdateManyMutationInput, BidUncheckedUpdateManyWithoutProductInput>
   }
 
+  export type TransactionUpsertWithWhereUniqueWithoutProductInput = {
+    where: TransactionWhereUniqueInput
+    update: XOR<TransactionUpdateWithoutProductInput, TransactionUncheckedUpdateWithoutProductInput>
+    create: XOR<TransactionCreateWithoutProductInput, TransactionUncheckedCreateWithoutProductInput>
+  }
+
+  export type TransactionUpdateWithWhereUniqueWithoutProductInput = {
+    where: TransactionWhereUniqueInput
+    data: XOR<TransactionUpdateWithoutProductInput, TransactionUncheckedUpdateWithoutProductInput>
+  }
+
+  export type TransactionUpdateManyWithWhereWithoutProductInput = {
+    where: TransactionScalarWhereInput
+    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutProductInput>
+  }
+
   export type ProductCreateWithoutProductAnalyticsInput = {
     id?: string
     name: string
@@ -32786,6 +33750,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
     bids?: BidCreateNestedManyWithoutProductInput
+    transactions?: TransactionCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutProductAnalyticsInput = {
@@ -32810,6 +33775,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
     bids?: BidUncheckedCreateNestedManyWithoutProductInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutProductAnalyticsInput = {
@@ -32850,6 +33816,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
     bids?: BidUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutProductAnalyticsInput = {
@@ -32874,6 +33841,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
     bids?: BidUncheckedUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductCreateWithoutBidsInput = {
@@ -32898,6 +33866,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
+    transactions?: TransactionCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutBidsInput = {
@@ -32922,6 +33891,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedCreateNestedOneWithoutProductInput
     traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutBidsInput = {
@@ -32947,7 +33917,11 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
   }
 
   export type UserUncheckedCreateWithoutBidsCreatedInput = {
@@ -32968,7 +33942,11 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
   }
 
   export type UserCreateOrConnectWithoutBidsCreatedInput = {
@@ -33009,6 +33987,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
+    transactions?: TransactionUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutBidsInput = {
@@ -33033,6 +34012,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedUpdateOneWithoutProductNestedInput
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type UserUpsertWithoutBidsCreatedInput = {
@@ -33064,7 +34044,11 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBidsCreatedInput = {
@@ -33085,7 +34069,11 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
   }
 
   export type ProductCreateWithoutSupplyChainInput = {
@@ -33110,6 +34098,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
     bids?: BidCreateNestedManyWithoutProductInput
+    transactions?: TransactionCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutSupplyChainInput = {
@@ -33134,6 +34123,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
     bids?: BidUncheckedCreateNestedManyWithoutProductInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutSupplyChainInput = {
@@ -33144,8 +34134,6 @@ export namespace Prisma {
   export type SupplyChainLinkCreateWithoutSupplyChainInput = {
     id?: string
     type: string
-    fromUserId: string
-    toUserId: string
     timestamp?: Date | string
     location?: NullableJsonNullValueInput | InputJsonValue
     details?: NullableJsonNullValueInput | InputJsonValue
@@ -33153,6 +34141,8 @@ export namespace Prisma {
     certifications?: SupplyChainLinkCreatecertificationsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    fromUser: UserCreateNestedOneWithoutSupplyChainLinksFromInput
+    toUser: UserCreateNestedOneWithoutSupplyChainLinksToInput
     serviceProvider?: IntermediaryProfileCreateNestedOneWithoutSupplyChainLinksInput
   }
 
@@ -33214,6 +34204,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
     bids?: BidUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutSupplyChainInput = {
@@ -33238,6 +34229,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
     bids?: BidUncheckedUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type SupplyChainLinkUpsertWithWhereUniqueWithoutSupplyChainInput = {
@@ -33285,6 +34277,116 @@ export namespace Prisma {
   export type SupplyChainCreateOrConnectWithoutLinksInput = {
     where: SupplyChainWhereUniqueInput
     create: XOR<SupplyChainCreateWithoutLinksInput, SupplyChainUncheckedCreateWithoutLinksInput>
+  }
+
+  export type UserCreateWithoutSupplyChainLinksFromInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    phone?: string | null
+    address?: string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmerProfile?: FarmerProfileCreateNestedOneWithoutUserInput
+    intermediaryProfile?: IntermediaryProfileCreateNestedOneWithoutUserInput
+    consumerProfile?: ConsumerProfileCreateNestedOneWithoutUserInput
+    productsListed?: ProductCreateNestedManyWithoutFarmerInput
+    orders?: OrderCreateNestedManyWithoutBuyerInput
+    ratings?: RatingCreateNestedManyWithoutToUserInput
+    ratedBy?: RatingCreateNestedManyWithoutFromUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
+  }
+
+  export type UserUncheckedCreateWithoutSupplyChainLinksFromInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    phone?: string | null
+    address?: string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmerProfile?: FarmerProfileUncheckedCreateNestedOneWithoutUserInput
+    intermediaryProfile?: IntermediaryProfileUncheckedCreateNestedOneWithoutUserInput
+    consumerProfile?: ConsumerProfileUncheckedCreateNestedOneWithoutUserInput
+    productsListed?: ProductUncheckedCreateNestedManyWithoutFarmerInput
+    orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
+    ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
+    ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSupplyChainLinksFromInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSupplyChainLinksFromInput, UserUncheckedCreateWithoutSupplyChainLinksFromInput>
+  }
+
+  export type UserCreateWithoutSupplyChainLinksToInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    phone?: string | null
+    address?: string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmerProfile?: FarmerProfileCreateNestedOneWithoutUserInput
+    intermediaryProfile?: IntermediaryProfileCreateNestedOneWithoutUserInput
+    consumerProfile?: ConsumerProfileCreateNestedOneWithoutUserInput
+    productsListed?: ProductCreateNestedManyWithoutFarmerInput
+    orders?: OrderCreateNestedManyWithoutBuyerInput
+    ratings?: RatingCreateNestedManyWithoutToUserInput
+    ratedBy?: RatingCreateNestedManyWithoutFromUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+  }
+
+  export type UserUncheckedCreateWithoutSupplyChainLinksToInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    phone?: string | null
+    address?: string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmerProfile?: FarmerProfileUncheckedCreateNestedOneWithoutUserInput
+    intermediaryProfile?: IntermediaryProfileUncheckedCreateNestedOneWithoutUserInput
+    consumerProfile?: ConsumerProfileUncheckedCreateNestedOneWithoutUserInput
+    productsListed?: ProductUncheckedCreateNestedManyWithoutFarmerInput
+    orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
+    ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
+    ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSupplyChainLinksToInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSupplyChainLinksToInput, UserUncheckedCreateWithoutSupplyChainLinksToInput>
   }
 
   export type IntermediaryProfileCreateWithoutSupplyChainLinksInput = {
@@ -33353,6 +34455,128 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UserUpsertWithoutSupplyChainLinksFromInput = {
+    update: XOR<UserUpdateWithoutSupplyChainLinksFromInput, UserUncheckedUpdateWithoutSupplyChainLinksFromInput>
+    create: XOR<UserCreateWithoutSupplyChainLinksFromInput, UserUncheckedCreateWithoutSupplyChainLinksFromInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSupplyChainLinksFromInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSupplyChainLinksFromInput, UserUncheckedUpdateWithoutSupplyChainLinksFromInput>
+  }
+
+  export type UserUpdateWithoutSupplyChainLinksFromInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmerProfile?: FarmerProfileUpdateOneWithoutUserNestedInput
+    intermediaryProfile?: IntermediaryProfileUpdateOneWithoutUserNestedInput
+    consumerProfile?: ConsumerProfileUpdateOneWithoutUserNestedInput
+    productsListed?: ProductUpdateManyWithoutFarmerNestedInput
+    orders?: OrderUpdateManyWithoutBuyerNestedInput
+    ratings?: RatingUpdateManyWithoutToUserNestedInput
+    ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSupplyChainLinksFromInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmerProfile?: FarmerProfileUncheckedUpdateOneWithoutUserNestedInput
+    intermediaryProfile?: IntermediaryProfileUncheckedUpdateOneWithoutUserNestedInput
+    consumerProfile?: ConsumerProfileUncheckedUpdateOneWithoutUserNestedInput
+    productsListed?: ProductUncheckedUpdateManyWithoutFarmerNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
+    ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
+    ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
+  }
+
+  export type UserUpsertWithoutSupplyChainLinksToInput = {
+    update: XOR<UserUpdateWithoutSupplyChainLinksToInput, UserUncheckedUpdateWithoutSupplyChainLinksToInput>
+    create: XOR<UserCreateWithoutSupplyChainLinksToInput, UserUncheckedCreateWithoutSupplyChainLinksToInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSupplyChainLinksToInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSupplyChainLinksToInput, UserUncheckedUpdateWithoutSupplyChainLinksToInput>
+  }
+
+  export type UserUpdateWithoutSupplyChainLinksToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmerProfile?: FarmerProfileUpdateOneWithoutUserNestedInput
+    intermediaryProfile?: IntermediaryProfileUpdateOneWithoutUserNestedInput
+    consumerProfile?: ConsumerProfileUpdateOneWithoutUserNestedInput
+    productsListed?: ProductUpdateManyWithoutFarmerNestedInput
+    orders?: OrderUpdateManyWithoutBuyerNestedInput
+    ratings?: RatingUpdateManyWithoutToUserNestedInput
+    ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSupplyChainLinksToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmerProfile?: FarmerProfileUncheckedUpdateOneWithoutUserNestedInput
+    intermediaryProfile?: IntermediaryProfileUncheckedUpdateOneWithoutUserNestedInput
+    consumerProfile?: ConsumerProfileUncheckedUpdateOneWithoutUserNestedInput
+    productsListed?: ProductUncheckedUpdateManyWithoutFarmerNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
+    ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
+    ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+  }
+
   export type IntermediaryProfileUpsertWithoutSupplyChainLinksInput = {
     update: XOR<IntermediaryProfileUpdateWithoutSupplyChainLinksInput, IntermediaryProfileUncheckedUpdateWithoutSupplyChainLinksInput>
     create: XOR<IntermediaryProfileCreateWithoutSupplyChainLinksInput, IntermediaryProfileUncheckedCreateWithoutSupplyChainLinksInput>
@@ -33405,8 +34629,12 @@ export namespace Prisma {
     productsListed?: ProductCreateNestedManyWithoutFarmerInput
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
     bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
   }
 
   export type UserUncheckedCreateWithoutOrdersInput = {
@@ -33426,8 +34654,12 @@ export namespace Prisma {
     productsListed?: ProductUncheckedCreateNestedManyWithoutFarmerInput
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
     bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
   }
 
   export type UserCreateOrConnectWithoutOrdersInput = {
@@ -33467,9 +34699,6 @@ export namespace Prisma {
 
   export type TransactionCreateWithoutOrderInput = {
     id?: string
-    productId?: string | null
-    senderId: string
-    receiverId: string
     amount: number
     quantity?: number | null
     unit?: string | null
@@ -33484,7 +34713,10 @@ export namespace Prisma {
     transactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    user?: UserCreateNestedOneWithoutTransactionsInput
+    product?: ProductCreateNestedOneWithoutTransactionsInput
+    sender: UserCreateNestedOneWithoutTransactionsSentInput
+    receiver: UserCreateNestedOneWithoutTransactionsReceivedInput
+    user?: UserCreateNestedOneWithoutTransactionsOwnedInput
   }
 
   export type TransactionUncheckedCreateWithoutOrderInput = {
@@ -33587,8 +34819,12 @@ export namespace Prisma {
     productsListed?: ProductUpdateManyWithoutFarmerNestedInput
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -33608,8 +34844,12 @@ export namespace Prisma {
     productsListed?: ProductUncheckedUpdateManyWithoutFarmerNestedInput
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
   }
 
   export type OrderItemUpsertWithWhereUniqueWithoutOrderInput = {
@@ -33715,6 +34955,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
     bids?: BidCreateNestedManyWithoutProductInput
+    transactions?: TransactionCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutOrdersInput = {
@@ -33739,6 +34980,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
     productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
     bids?: BidUncheckedCreateNestedManyWithoutProductInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutOrdersInput = {
@@ -33818,6 +35060,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
     bids?: BidUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutOrdersInput = {
@@ -33842,6 +35085,172 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
     bids?: BidUncheckedUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductCreateWithoutTransactionsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    category: $Enums.ProductCategory
+    quantity: number
+    unit: string
+    basePrice: number
+    finalPrice?: number | null
+    images?: ProductCreateimagesInput | string[]
+    harvestDate?: Date | string | null
+    availableUntil?: Date | string | null
+    status?: $Enums.ProductStatus
+    location?: NullableJsonNullValueInput | InputJsonValue
+    organicCertified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmer: UserCreateNestedOneWithoutProductsListedInput
+    orders?: OrderItemCreateNestedManyWithoutProductInput
+    supplyChain?: SupplyChainCreateNestedOneWithoutProductInput
+    traceability?: TraceabilityRecordCreateNestedManyWithoutProductInput
+    productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
+    bids?: BidCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutTransactionsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    farmerId: string
+    category: $Enums.ProductCategory
+    quantity: number
+    unit: string
+    basePrice: number
+    finalPrice?: number | null
+    images?: ProductCreateimagesInput | string[]
+    harvestDate?: Date | string | null
+    availableUntil?: Date | string | null
+    status?: $Enums.ProductStatus
+    location?: NullableJsonNullValueInput | InputJsonValue
+    organicCertified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    orders?: OrderItemUncheckedCreateNestedManyWithoutProductInput
+    supplyChain?: SupplyChainUncheckedCreateNestedOneWithoutProductInput
+    traceability?: TraceabilityRecordUncheckedCreateNestedManyWithoutProductInput
+    productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
+    bids?: BidUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutTransactionsInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutTransactionsInput, ProductUncheckedCreateWithoutTransactionsInput>
+  }
+
+  export type UserCreateWithoutTransactionsSentInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    phone?: string | null
+    address?: string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmerProfile?: FarmerProfileCreateNestedOneWithoutUserInput
+    intermediaryProfile?: IntermediaryProfileCreateNestedOneWithoutUserInput
+    consumerProfile?: ConsumerProfileCreateNestedOneWithoutUserInput
+    productsListed?: ProductCreateNestedManyWithoutFarmerInput
+    orders?: OrderCreateNestedManyWithoutBuyerInput
+    ratings?: RatingCreateNestedManyWithoutToUserInput
+    ratedBy?: RatingCreateNestedManyWithoutFromUserInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
+  }
+
+  export type UserUncheckedCreateWithoutTransactionsSentInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    phone?: string | null
+    address?: string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmerProfile?: FarmerProfileUncheckedCreateNestedOneWithoutUserInput
+    intermediaryProfile?: IntermediaryProfileUncheckedCreateNestedOneWithoutUserInput
+    consumerProfile?: ConsumerProfileUncheckedCreateNestedOneWithoutUserInput
+    productsListed?: ProductUncheckedCreateNestedManyWithoutFarmerInput
+    orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
+    ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
+    ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
+  }
+
+  export type UserCreateOrConnectWithoutTransactionsSentInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTransactionsSentInput, UserUncheckedCreateWithoutTransactionsSentInput>
+  }
+
+  export type UserCreateWithoutTransactionsReceivedInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    phone?: string | null
+    address?: string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmerProfile?: FarmerProfileCreateNestedOneWithoutUserInput
+    intermediaryProfile?: IntermediaryProfileCreateNestedOneWithoutUserInput
+    consumerProfile?: ConsumerProfileCreateNestedOneWithoutUserInput
+    productsListed?: ProductCreateNestedManyWithoutFarmerInput
+    orders?: OrderCreateNestedManyWithoutBuyerInput
+    ratings?: RatingCreateNestedManyWithoutToUserInput
+    ratedBy?: RatingCreateNestedManyWithoutFromUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
+    bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
+  }
+
+  export type UserUncheckedCreateWithoutTransactionsReceivedInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    role: $Enums.UserRole
+    phone?: string | null
+    address?: string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    farmerProfile?: FarmerProfileUncheckedCreateNestedOneWithoutUserInput
+    intermediaryProfile?: IntermediaryProfileUncheckedCreateNestedOneWithoutUserInput
+    consumerProfile?: ConsumerProfileUncheckedCreateNestedOneWithoutUserInput
+    productsListed?: ProductUncheckedCreateNestedManyWithoutFarmerInput
+    orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
+    ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
+    ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
+  }
+
+  export type UserCreateOrConnectWithoutTransactionsReceivedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTransactionsReceivedInput, UserUncheckedCreateWithoutTransactionsReceivedInput>
   }
 
   export type OrderCreateWithoutTransactionsInput = {
@@ -33877,7 +35286,7 @@ export namespace Prisma {
     create: XOR<OrderCreateWithoutTransactionsInput, OrderUncheckedCreateWithoutTransactionsInput>
   }
 
-  export type UserCreateWithoutTransactionsInput = {
+  export type UserCreateWithoutTransactionsOwnedInput = {
     id?: string
     email: string
     password: string
@@ -33895,10 +35304,14 @@ export namespace Prisma {
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratings?: RatingCreateNestedManyWithoutToUserInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
     bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
   }
 
-  export type UserUncheckedCreateWithoutTransactionsInput = {
+  export type UserUncheckedCreateWithoutTransactionsOwnedInput = {
     id?: string
     email: string
     password: string
@@ -33916,12 +35329,199 @@ export namespace Prisma {
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
     bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
   }
 
-  export type UserCreateOrConnectWithoutTransactionsInput = {
+  export type UserCreateOrConnectWithoutTransactionsOwnedInput = {
     where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
+    create: XOR<UserCreateWithoutTransactionsOwnedInput, UserUncheckedCreateWithoutTransactionsOwnedInput>
+  }
+
+  export type ProductUpsertWithoutTransactionsInput = {
+    update: XOR<ProductUpdateWithoutTransactionsInput, ProductUncheckedUpdateWithoutTransactionsInput>
+    create: XOR<ProductCreateWithoutTransactionsInput, ProductUncheckedCreateWithoutTransactionsInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutTransactionsInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutTransactionsInput, ProductUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type ProductUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: EnumProductCategoryFieldUpdateOperationsInput | $Enums.ProductCategory
+    quantity?: FloatFieldUpdateOperationsInput | number
+    unit?: StringFieldUpdateOperationsInput | string
+    basePrice?: FloatFieldUpdateOperationsInput | number
+    finalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    images?: ProductUpdateimagesInput | string[]
+    harvestDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
+    location?: NullableJsonNullValueInput | InputJsonValue
+    organicCertified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmer?: UserUpdateOneRequiredWithoutProductsListedNestedInput
+    orders?: OrderItemUpdateManyWithoutProductNestedInput
+    supplyChain?: SupplyChainUpdateOneWithoutProductNestedInput
+    traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
+    productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
+    bids?: BidUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    farmerId?: StringFieldUpdateOperationsInput | string
+    category?: EnumProductCategoryFieldUpdateOperationsInput | $Enums.ProductCategory
+    quantity?: FloatFieldUpdateOperationsInput | number
+    unit?: StringFieldUpdateOperationsInput | string
+    basePrice?: FloatFieldUpdateOperationsInput | number
+    finalPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    images?: ProductUpdateimagesInput | string[]
+    harvestDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
+    location?: NullableJsonNullValueInput | InputJsonValue
+    organicCertified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orders?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
+    supplyChain?: SupplyChainUncheckedUpdateOneWithoutProductNestedInput
+    traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
+    productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
+    bids?: BidUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type UserUpsertWithoutTransactionsSentInput = {
+    update: XOR<UserUpdateWithoutTransactionsSentInput, UserUncheckedUpdateWithoutTransactionsSentInput>
+    create: XOR<UserCreateWithoutTransactionsSentInput, UserUncheckedCreateWithoutTransactionsSentInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTransactionsSentInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTransactionsSentInput, UserUncheckedUpdateWithoutTransactionsSentInput>
+  }
+
+  export type UserUpdateWithoutTransactionsSentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmerProfile?: FarmerProfileUpdateOneWithoutUserNestedInput
+    intermediaryProfile?: IntermediaryProfileUpdateOneWithoutUserNestedInput
+    consumerProfile?: ConsumerProfileUpdateOneWithoutUserNestedInput
+    productsListed?: ProductUpdateManyWithoutFarmerNestedInput
+    orders?: OrderUpdateManyWithoutBuyerNestedInput
+    ratings?: RatingUpdateManyWithoutToUserNestedInput
+    ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTransactionsSentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmerProfile?: FarmerProfileUncheckedUpdateOneWithoutUserNestedInput
+    intermediaryProfile?: IntermediaryProfileUncheckedUpdateOneWithoutUserNestedInput
+    consumerProfile?: ConsumerProfileUncheckedUpdateOneWithoutUserNestedInput
+    productsListed?: ProductUncheckedUpdateManyWithoutFarmerNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
+    ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
+    ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
+  }
+
+  export type UserUpsertWithoutTransactionsReceivedInput = {
+    update: XOR<UserUpdateWithoutTransactionsReceivedInput, UserUncheckedUpdateWithoutTransactionsReceivedInput>
+    create: XOR<UserCreateWithoutTransactionsReceivedInput, UserUncheckedCreateWithoutTransactionsReceivedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTransactionsReceivedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTransactionsReceivedInput, UserUncheckedUpdateWithoutTransactionsReceivedInput>
+  }
+
+  export type UserUpdateWithoutTransactionsReceivedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmerProfile?: FarmerProfileUpdateOneWithoutUserNestedInput
+    intermediaryProfile?: IntermediaryProfileUpdateOneWithoutUserNestedInput
+    consumerProfile?: ConsumerProfileUpdateOneWithoutUserNestedInput
+    productsListed?: ProductUpdateManyWithoutFarmerNestedInput
+    orders?: OrderUpdateManyWithoutBuyerNestedInput
+    ratings?: RatingUpdateManyWithoutToUserNestedInput
+    ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTransactionsReceivedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmerProfile?: FarmerProfileUncheckedUpdateOneWithoutUserNestedInput
+    intermediaryProfile?: IntermediaryProfileUncheckedUpdateOneWithoutUserNestedInput
+    consumerProfile?: ConsumerProfileUncheckedUpdateOneWithoutUserNestedInput
+    productsListed?: ProductUncheckedUpdateManyWithoutFarmerNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
+    ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
+    ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
   }
 
   export type OrderUpsertWithoutTransactionsInput = {
@@ -33963,18 +35563,18 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutOrderNestedInput
   }
 
-  export type UserUpsertWithoutTransactionsInput = {
-    update: XOR<UserUpdateWithoutTransactionsInput, UserUncheckedUpdateWithoutTransactionsInput>
-    create: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
+  export type UserUpsertWithoutTransactionsOwnedInput = {
+    update: XOR<UserUpdateWithoutTransactionsOwnedInput, UserUncheckedUpdateWithoutTransactionsOwnedInput>
+    create: XOR<UserCreateWithoutTransactionsOwnedInput, UserUncheckedCreateWithoutTransactionsOwnedInput>
     where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutTransactionsInput = {
+  export type UserUpdateToOneWithWhereWithoutTransactionsOwnedInput = {
     where?: UserWhereInput
-    data: XOR<UserUpdateWithoutTransactionsInput, UserUncheckedUpdateWithoutTransactionsInput>
+    data: XOR<UserUpdateWithoutTransactionsOwnedInput, UserUncheckedUpdateWithoutTransactionsOwnedInput>
   }
 
-  export type UserUpdateWithoutTransactionsInput = {
+  export type UserUpdateWithoutTransactionsOwnedInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
@@ -33992,10 +35592,14 @@ export namespace Prisma {
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
     bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutTransactionsInput = {
+  export type UserUncheckedUpdateWithoutTransactionsOwnedInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
@@ -34013,7 +35617,11 @@ export namespace Prisma {
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
     bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
   }
 
   export type ProductCreateWithoutTraceabilityInput = {
@@ -34038,6 +35646,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainCreateNestedOneWithoutProductInput
     productAnalytics?: ProductAnalyticsCreateNestedOneWithoutProductInput
     bids?: BidCreateNestedManyWithoutProductInput
+    transactions?: TransactionCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutTraceabilityInput = {
@@ -34062,6 +35671,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedCreateNestedOneWithoutProductInput
     productAnalytics?: ProductAnalyticsUncheckedCreateNestedOneWithoutProductInput
     bids?: BidUncheckedCreateNestedManyWithoutProductInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutTraceabilityInput = {
@@ -34135,6 +35745,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUpdateOneWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
     bids?: BidUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutTraceabilityInput = {
@@ -34159,6 +35770,7 @@ export namespace Prisma {
     supplyChain?: SupplyChainUncheckedUpdateOneWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
     bids?: BidUncheckedUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type OrderUpsertWithoutTraceabilityInput = {
@@ -34217,8 +35829,12 @@ export namespace Prisma {
     productsListed?: ProductCreateNestedManyWithoutFarmerInput
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratings?: RatingCreateNestedManyWithoutToUserInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
     bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
   }
 
   export type UserUncheckedCreateWithoutRatedByInput = {
@@ -34238,8 +35854,12 @@ export namespace Prisma {
     productsListed?: ProductUncheckedCreateNestedManyWithoutFarmerInput
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratings?: RatingUncheckedCreateNestedManyWithoutToUserInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
     bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
   }
 
   export type UserCreateOrConnectWithoutRatedByInput = {
@@ -34264,8 +35884,12 @@ export namespace Prisma {
     productsListed?: ProductCreateNestedManyWithoutFarmerInput
     orders?: OrderCreateNestedManyWithoutBuyerInput
     ratedBy?: RatingCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionCreateNestedManyWithoutUserInput
     bidsCreated?: BidCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkCreateNestedManyWithoutToUserInput
   }
 
   export type UserUncheckedCreateWithoutRatingsInput = {
@@ -34285,8 +35909,12 @@ export namespace Prisma {
     productsListed?: ProductUncheckedCreateNestedManyWithoutFarmerInput
     orders?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     ratedBy?: RatingUncheckedCreateNestedManyWithoutFromUserInput
-    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    transactionsSent?: TransactionUncheckedCreateNestedManyWithoutSenderInput
+    transactionsReceived?: TransactionUncheckedCreateNestedManyWithoutReceiverInput
+    transactionsOwned?: TransactionUncheckedCreateNestedManyWithoutUserInput
     bidsCreated?: BidUncheckedCreateNestedManyWithoutIntermediaryInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedCreateNestedManyWithoutFromUserInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedCreateNestedManyWithoutToUserInput
   }
 
   export type UserCreateOrConnectWithoutRatingsInput = {
@@ -34322,8 +35950,12 @@ export namespace Prisma {
     productsListed?: ProductUpdateManyWithoutFarmerNestedInput
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUpdateManyWithoutToUserNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRatedByInput = {
@@ -34343,8 +35975,12 @@ export namespace Prisma {
     productsListed?: ProductUncheckedUpdateManyWithoutFarmerNestedInput
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratings?: RatingUncheckedUpdateManyWithoutToUserNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
   }
 
   export type UserUpsertWithoutRatingsInput = {
@@ -34375,8 +36011,12 @@ export namespace Prisma {
     productsListed?: ProductUpdateManyWithoutFarmerNestedInput
     orders?: OrderUpdateManyWithoutBuyerNestedInput
     ratedBy?: RatingUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUpdateManyWithoutToUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRatingsInput = {
@@ -34396,8 +36036,12 @@ export namespace Prisma {
     productsListed?: ProductUncheckedUpdateManyWithoutFarmerNestedInput
     orders?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     ratedBy?: RatingUncheckedUpdateManyWithoutFromUserNestedInput
-    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    transactionsSent?: TransactionUncheckedUpdateManyWithoutSenderNestedInput
+    transactionsReceived?: TransactionUncheckedUpdateManyWithoutReceiverNestedInput
+    transactionsOwned?: TransactionUncheckedUpdateManyWithoutUserNestedInput
     bidsCreated?: BidUncheckedUpdateManyWithoutIntermediaryNestedInput
+    supplyChainLinksFrom?: SupplyChainLinkUncheckedUpdateManyWithoutFromUserNestedInput
+    supplyChainLinksTo?: SupplyChainLinkUncheckedUpdateManyWithoutToUserNestedInput
   }
 
   export type PredictionCreateWithoutModelInput = {
@@ -34587,6 +36231,50 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type TransactionCreateManySenderInput = {
+    id?: string
+    productId?: string | null
+    receiverId: string
+    amount: number
+    quantity?: number | null
+    unit?: string | null
+    type: $Enums.TransactionType
+    status: $Enums.TransactionStatus
+    paymentMethod?: string | null
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    orderId?: string | null
+    userId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransactionCreateManyReceiverInput = {
+    id?: string
+    productId?: string | null
+    senderId: string
+    amount: number
+    quantity?: number | null
+    unit?: string | null
+    type: $Enums.TransactionType
+    status: $Enums.TransactionStatus
+    paymentMethod?: string | null
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    orderId?: string | null
+    userId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type TransactionCreateManyUserInput = {
     id?: string
     productId?: string | null
@@ -34624,6 +36312,36 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type SupplyChainLinkCreateManyFromUserInput = {
+    id?: string
+    supplyChainId: string
+    type: string
+    toUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceProviderId?: string | null
+  }
+
+  export type SupplyChainLinkCreateManyToUserInput = {
+    id?: string
+    supplyChainId: string
+    type: string
+    fromUserId: string
+    timestamp?: Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: number | null
+    certifications?: SupplyChainLinkCreatecertificationsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceProviderId?: string | null
+  }
+
   export type ProductUpdateWithoutFarmerInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -34646,6 +36364,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUpdateOneWithoutProductNestedInput
     bids?: BidUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutFarmerInput = {
@@ -34670,6 +36389,7 @@ export namespace Prisma {
     traceability?: TraceabilityRecordUncheckedUpdateManyWithoutProductNestedInput
     productAnalytics?: ProductAnalyticsUncheckedUpdateOneWithoutProductNestedInput
     bids?: BidUncheckedUpdateManyWithoutProductNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateManyWithoutFarmerInput = {
@@ -34790,11 +36510,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TransactionUpdateWithoutUserInput = {
+  export type TransactionUpdateWithoutSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    productId?: NullableStringFieldUpdateOperationsInput | string | null
-    senderId?: StringFieldUpdateOperationsInput | string
-    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     quantity?: NullableFloatFieldUpdateOperationsInput | number | null
     unit?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34809,6 +36526,141 @@ export namespace Prisma {
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneWithoutTransactionsNestedInput
+    receiver?: UserUpdateOneRequiredWithoutTransactionsReceivedNestedInput
+    order?: OrderUpdateOneWithoutTransactionsNestedInput
+    user?: UserUpdateOneWithoutTransactionsOwnedNestedInput
+  }
+
+  export type TransactionUncheckedUpdateWithoutSenderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    receiverId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionUncheckedUpdateManyWithoutSenderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    receiverId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionUpdateWithoutReceiverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneWithoutTransactionsNestedInput
+    sender?: UserUpdateOneRequiredWithoutTransactionsSentNestedInput
+    order?: OrderUpdateOneWithoutTransactionsNestedInput
+    user?: UserUpdateOneWithoutTransactionsOwnedNestedInput
+  }
+
+  export type TransactionUncheckedUpdateWithoutReceiverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionUncheckedUpdateManyWithoutReceiverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    senderId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneWithoutTransactionsNestedInput
+    sender?: UserUpdateOneRequiredWithoutTransactionsSentNestedInput
+    receiver?: UserUpdateOneRequiredWithoutTransactionsReceivedNestedInput
     order?: OrderUpdateOneWithoutTransactionsNestedInput
   }
 
@@ -34901,6 +36753,96 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SupplyChainLinkUpdateWithoutFromUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    supplyChain?: SupplyChainUpdateOneRequiredWithoutLinksNestedInput
+    toUser?: UserUpdateOneRequiredWithoutSupplyChainLinksToNestedInput
+    serviceProvider?: IntermediaryProfileUpdateOneWithoutSupplyChainLinksNestedInput
+  }
+
+  export type SupplyChainLinkUncheckedUpdateWithoutFromUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    supplyChainId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceProviderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SupplyChainLinkUncheckedUpdateManyWithoutFromUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    supplyChainId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceProviderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SupplyChainLinkUpdateWithoutToUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    supplyChain?: SupplyChainUpdateOneRequiredWithoutLinksNestedInput
+    fromUser?: UserUpdateOneRequiredWithoutSupplyChainLinksFromNestedInput
+    serviceProvider?: IntermediaryProfileUpdateOneWithoutSupplyChainLinksNestedInput
+  }
+
+  export type SupplyChainLinkUncheckedUpdateWithoutToUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    supplyChainId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceProviderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SupplyChainLinkUncheckedUpdateManyWithoutToUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    supplyChainId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: NullableJsonNullValueInput | InputJsonValue
+    details?: NullableJsonNullValueInput | InputJsonValue
+    carbonFootprint?: NullableFloatFieldUpdateOperationsInput | number | null
+    certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceProviderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type SupplyChainLinkCreateManyServiceProviderInput = {
     id?: string
     supplyChainId: string
@@ -34919,8 +36861,6 @@ export namespace Prisma {
   export type SupplyChainLinkUpdateWithoutServiceProviderInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    fromUserId?: StringFieldUpdateOperationsInput | string
-    toUserId?: StringFieldUpdateOperationsInput | string
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: NullableJsonNullValueInput | InputJsonValue
     details?: NullableJsonNullValueInput | InputJsonValue
@@ -34929,6 +36869,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     supplyChain?: SupplyChainUpdateOneRequiredWithoutLinksNestedInput
+    fromUser?: UserUpdateOneRequiredWithoutSupplyChainLinksFromNestedInput
+    toUser?: UserUpdateOneRequiredWithoutSupplyChainLinksToNestedInput
   }
 
   export type SupplyChainLinkUncheckedUpdateWithoutServiceProviderInput = {
@@ -34997,6 +36939,28 @@ export namespace Prisma {
     terms?: string | null
     status?: $Enums.BidStatus
     responseReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransactionCreateManyProductInput = {
+    id?: string
+    senderId: string
+    receiverId: string
+    amount: number
+    quantity?: number | null
+    unit?: string | null
+    type: $Enums.TransactionType
+    status: $Enums.TransactionStatus
+    paymentMethod?: string | null
+    paymentReference?: string | null
+    paymentDate?: Date | string | null
+    deliveryDate?: Date | string | null
+    notes?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: string | null
+    orderId?: string | null
+    userId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -35121,6 +37085,72 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TransactionUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sender?: UserUpdateOneRequiredWithoutTransactionsSentNestedInput
+    receiver?: UserUpdateOneRequiredWithoutTransactionsReceivedNestedInput
+    order?: OrderUpdateOneWithoutTransactionsNestedInput
+    user?: UserUpdateOneWithoutTransactionsOwnedNestedInput
+  }
+
+  export type TransactionUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    quantity?: NullableFloatFieldUpdateOperationsInput | number | null
+    unit?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentReference?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SupplyChainLinkCreateManySupplyChainInput = {
     id?: string
     type: string
@@ -35139,8 +37169,6 @@ export namespace Prisma {
   export type SupplyChainLinkUpdateWithoutSupplyChainInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    fromUserId?: StringFieldUpdateOperationsInput | string
-    toUserId?: StringFieldUpdateOperationsInput | string
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: NullableJsonNullValueInput | InputJsonValue
     details?: NullableJsonNullValueInput | InputJsonValue
@@ -35148,6 +37176,8 @@ export namespace Prisma {
     certifications?: SupplyChainLinkUpdatecertificationsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fromUser?: UserUpdateOneRequiredWithoutSupplyChainLinksFromNestedInput
+    toUser?: UserUpdateOneRequiredWithoutSupplyChainLinksToNestedInput
     serviceProvider?: IntermediaryProfileUpdateOneWithoutSupplyChainLinksNestedInput
   }
 
@@ -35260,9 +37290,6 @@ export namespace Prisma {
 
   export type TransactionUpdateWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    productId?: NullableStringFieldUpdateOperationsInput | string | null
-    senderId?: StringFieldUpdateOperationsInput | string
-    receiverId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     quantity?: NullableFloatFieldUpdateOperationsInput | number | null
     unit?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35277,7 +37304,10 @@ export namespace Prisma {
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneWithoutTransactionsNestedInput
+    product?: ProductUpdateOneWithoutTransactionsNestedInput
+    sender?: UserUpdateOneRequiredWithoutTransactionsSentNestedInput
+    receiver?: UserUpdateOneRequiredWithoutTransactionsReceivedNestedInput
+    user?: UserUpdateOneWithoutTransactionsOwnedNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutOrderInput = {

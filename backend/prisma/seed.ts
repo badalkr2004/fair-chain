@@ -13,7 +13,7 @@ async function main() {
   const [admin, farmer1, farmer2, intermediary1, consumer1] = await createUsers();
   
   // Create products
-  const products = await createProducts(farmer1.id, farmer2.id);
+  const products = await createProducts(farmer1!.id, farmer2!.id);
   
   // Create forecast model and predictions
   const forecastModel = await createForecastModel();

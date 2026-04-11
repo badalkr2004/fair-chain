@@ -128,7 +128,7 @@ export const addSupplyChainLink = async (supplyChainId: string, data: SupplyChai
  */
 export const getMySupplyChains = async () => {
   try {
-    return await api.get('/supply-chains/my');
+    return await api.get('/supply-chain?myOnly=true');
   } catch (error) {
     console.error('Error fetching my supply chains:', error);
     throw error;
@@ -140,7 +140,7 @@ export const getMySupplyChains = async () => {
  */
 export const getSupplyChainLinks = async (supplyChainId: string) => {
   try {
-    return await api.get(`/supply-chains/${supplyChainId}/links`);
+    return await api.get(`/supply-chain/${supplyChainId}`);
   } catch (error) {
     console.error('Error fetching supply chain links:', error);
     throw error;
@@ -155,7 +155,7 @@ export const updateSupplyChainStatus = async (supplyChainId: string, status: str
     const data: UpdateSupplyChainStatusDTO = { status };
     if (notes) data.notes = notes;
     
-    return await api.post(`/supply-chains/${supplyChainId}/status`, data);
+    return await api.put(`/supply-chain/${supplyChainId}`, data);
   } catch (error) {
     console.error('Error updating supply chain status:', error);
     throw error;
@@ -167,7 +167,7 @@ export const updateSupplyChainStatus = async (supplyChainId: string, status: str
  */
 export const getActiveSupplyChainsByProduct = async (productId: string) => {
   try {
-    return await api.get(`/supply-chains/product/${productId}/active`);
+    return await api.get(`/supply-chain/product/${productId}`);
   } catch (error) {
     console.error('Error fetching active supply chains for product:', error);
     throw error;
@@ -179,7 +179,7 @@ export const getActiveSupplyChainsByProduct = async (productId: string) => {
  */
 export const getMySupplyChainStats = async () => {
   try {
-    return await api.get('/supply-chains/my/stats');
+    return await api.get('/supply-chain');
   } catch (error) {
     console.error('Error fetching supply chain statistics:', error);
     throw error;

@@ -38,10 +38,13 @@ export interface UpdateBidDTO {
 }
 
 export interface RespondToBidDTO {
-  status: 'ACCEPTED' | 'REJECTED';
-  responseReason?: string;
+  action: 'ACCEPT' | 'REJECT';
+  reason?: string;
 }
 
+/**
+ * Create a new bid on a product
+ */
 export const createBid = async (bidData: CreateBidDTO) => {
   try {
     return await api.post('/bids', bidData);
@@ -51,6 +54,9 @@ export const createBid = async (bidData: CreateBidDTO) => {
   }
 };
 
+/**
+ * Get bids for a specific product
+ */
 export const getBidsForProduct = async (productId: string) => {
   try {
     return await api.get(`/bids/product/${productId}`);
@@ -60,15 +66,22 @@ export const getBidsForProduct = async (productId: string) => {
   }
 };
 
-export const getMyBids = async () => {
+/**
+ * Get all bids made by the logged-in intermediary
+ */
+export const getMyBids = async (status?: string) => {
   try {
-    return await api.get('/bids/my-bids');
+    const endpoint = status ? `/bids/my-bids?status=${status}` : '/bids/my-bids';
+    return await api.get(endpoint);
   } catch (error) {
     console.error('Error fetching my bids:', error);
     throw error;
   }
 };
 
+/**
+ * Update an existing bid
+ */
 export const updateBid = async (id: string, bidData: UpdateBidDTO) => {
   try {
     return await api.put(`/bids/${id}`, bidData);
@@ -78,6 +91,9 @@ export const updateBid = async (id: string, bidData: UpdateBidDTO) => {
   }
 };
 
+/**
+ * Cancel a bid
+ */
 export const cancelBid = async (id: string) => {
   try {
     return await api.post(`/bids/${id}/cancel`, {});
@@ -87,6 +103,9 @@ export const cancelBid = async (id: string) => {
   }
 };
 
+/**
+ * Respond to a bid (accept or reject) — for farmers
+ */
 export const respondToBid = async (id: string, responseData: RespondToBidDTO) => {
   try {
     return await api.post(`/bids/${id}/respond`, responseData);
@@ -94,4 +113,4 @@ export const respondToBid = async (id: string, responseData: RespondToBidDTO) =>
     console.error(`Error responding to bid ${id}:`, error);
     throw error;
   }
-}; 
+};
